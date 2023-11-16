@@ -1,0 +1,16 @@
+{
+  "name": "code-and-cognition",
+  "version": "1.0.0",
+  "description": "Code and cognition is a service based organization in Bangladesh which provides web development, video editing, graphics designing services and so on",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Code",
+    "cognition",
+    "service"
+  ],
+  "author": "Nur",
+  "license": "ISC"
+}
