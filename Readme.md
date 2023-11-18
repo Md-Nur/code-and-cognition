@@ -2,4 +2,4 @@
 
 ## A service based organization
 
-[Learn More About Database Design](https:khela-hobe.com)
+[Learn More About Database Design](https://code-n-cognition.vercel.app/)
