@@ -11,7 +11,7 @@ const connectDB = async () => {
       connectionInstance.connection.host
     );
   } catch (e) {
-    console.log("Mongo DB connection Error by Nur: ", e);
+    console.log("Mongo DB connection FAILD: ", e);
     process.exit(1);
   }
 };

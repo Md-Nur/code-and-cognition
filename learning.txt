@@ -1,0 +1,2 @@
+cors
+cors option - origin (process.env), 
