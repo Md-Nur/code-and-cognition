@@ -20,13 +20,17 @@ const userSchema = new Schema(
       required: [true, "Full name is required"],
       trim: true,
     },
-
     watchHistory: [
       {
         type: Schema.Types.ObjectId,
         ref: "history",
       },
     ],
+    typeOfUser: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
