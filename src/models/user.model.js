@@ -20,6 +20,10 @@ const userSchema = new Schema(
       required: [true, "Full name is required"],
       trim: true,
     },
+    avatar: {
+      type: String,
+      default: "",
+    },
     watchHistory: [
       {
         type: Schema.Types.ObjectId,
@@ -28,8 +32,8 @@ const userSchema = new Schema(
     ],
     typeOfUser: {
       type: String,
-      enum: ["admin", "user"],
-      default: "user",
+      enum: ["admin", "celler","buyer"],
+      default: "buyer",
     },
     password: {
       type: String,
@@ -55,7 +59,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
   return await bycript.compare(password, this.password);
 };
 
-userSchema.methods.generateToken = function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       id: this._id,

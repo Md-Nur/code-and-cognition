@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Error</title>
+</head>
+
+<body>
+    <pre>TypeError: Converting circular structure to JSON<br> &nbsp; &nbsp;--&gt; starting at object with constructor &#39;MongoClient&#39;<br> &nbsp; &nbsp;| &nbsp; &nbsp; property &#39;s&#39; -&gt; object with constructor &#39;Object&#39;<br> &nbsp; &nbsp;| &nbsp; &nbsp; property &#39;sessionPool&#39; -&gt; object with constructor &#39;ServerSessionPool&#39;<br> &nbsp; &nbsp;--- property &#39;client&#39; closes the circle<br> &nbsp; &nbsp;at JSON.stringify (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at stringify (D:\Projects\Code and Cognition\node_modules\express\lib\response.js:1150:12)<br> &nbsp; &nbsp;at ServerResponse.json (D:\Projects\Code and Cognition\node_modules\express\lib\response.js:271:14)<br> &nbsp; &nbsp;at file:///D:/Projects/Code%20and%20Cognition/src/controllers/user.controller.js:62:6<br> &nbsp; &nbsp;at process.processTicksAndRejections (node:internal/process/task_queues:95:5)</pre>
+</body>
+
+</html>
