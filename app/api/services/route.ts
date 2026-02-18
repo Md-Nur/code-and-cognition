@@ -1,0 +1,25 @@
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
+
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
+    try {
+        const_services = await prisma.service.findMany({
+            where: { status: "ACTIVE" },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                basePriceBDT: true,
+                basePriceUSD: true,
+                thumbnailUrl: true,
+            },
+            orderBy: { createdAt: "asc" },
+        });
+        return NextResponse.json(services);
+    } catch (error) {
+        console.error("Error fetching services:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}

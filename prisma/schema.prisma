@@ -1,0 +1,141 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  FOUNDER
+  CONTRACTOR
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum BookingStatus {
+  PENDING
+  REVIEWED
+  CONVERTED
+  REJECTED
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum Currency {
+  BDT
+  USD
+}
+
+enum SplitType {
+  COMPANY_FUND
+  FINDER_FEE
+  EXECUTION
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CONTRACTOR)
+  createdAt    DateTime @default(now())
+
+  finderProjects Project[]       @relation("Finder")
+  memberProjects ProjectMember[]
+  ledgerBalance  LedgerBalance?
+}
+
+model Service {
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  basePriceBDT Float
+  basePriceUSD Float
+  status       Status    @default(ACTIVE)
+  thumbnailUrl String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  bookings     Booking[]
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  clientName  String
+  clientEmail String
+  clientPhone String?
+  serviceId   String
+  service     Service       @relation(fields: [serviceId], references: [id])
+  budgetBDT   Float?
+  budgetUSD   Float?
+  message     String?
+  status      BookingStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  project     Project?
+}
+
+model Project {
+  id        String          @id @default(cuid())
+  title     String
+  bookingId String?         @unique
+  booking   Booking?        @relation(fields: [bookingId], references: [id])
+  finderId  String
+  finder    User            @relation("Finder", fields: [finderId], references: [id])
+  status    ProjectStatus   @default(ACTIVE)
+  createdAt DateTime        @default(now())
+  members   ProjectMember[]
+  payments  Payment[]
+}
+
+model ProjectMember {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  share     Float // percentage of the 70% execution pool this member gets
+
+  @@unique([projectId, userId])
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  projectId String
+  project   Project       @relation(fields: [projectId], references: [id])
+  amountBDT Float?
+  amountUSD Float?
+  currency  Currency
+  note      String?
+  paidAt    DateTime      @default(now())
+  splits    LedgerEntry[]
+}
+
+model LedgerEntry {
+  id        String    @id @default(cuid())
+  paymentId String
+  payment   Payment   @relation(fields: [paymentId], references: [id])
+  userId    String? // null = company fund
+  type      SplitType
+  amountBDT Float?
+  amountUSD Float?
+  createdAt DateTime  @default(now())
+}
+
+model LedgerBalance {
+  id       String @id @default(cuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id])
+  totalBDT Float  @default(0)
+  totalUSD Float  @default(0)
+}

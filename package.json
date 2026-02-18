@@ -1,33 +1,46 @@
 {
   "name": "code-and-cognition",
-  "version": "1.0.0",
-  "description": "Code and cognition is a service based organization in Bangladesh which provides web development, video editing, graphics designing services and so on",
-  "main": "index.js",
-  "type": "module",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio"
   },
-  "keywords": [
-    "Code",
-    "cognition",
-    "service"
-  ],
-  "author": "Nur",
-  "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^3.0.1",
-    "prettier": "^3.1.0"
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cloudinary": "^1.41.0",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.1",
-    "mongoose-paginate-v2": "^1.7.4",
-    "multer": "^1.4.5-lts.1"
-  }
+    "@auth/prisma-adapter": "^2.11.1",
+    "@hookform/resolvers": "^5.2.2",
+    "@prisma/client": "^7.4.0",
+    "bcryptjs": "^3.0.3",
+    "daisyui": "^5.5.18",
+    "next": "16.1.6",
+    "next-auth": "^5.0.0-beta.30",
+    "prisma": "^7.4.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-hook-form": "^7.71.1",
+    "recharts": "^3.7.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4.1.18",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  },
+  "browserslist": "> 1%"
 }
