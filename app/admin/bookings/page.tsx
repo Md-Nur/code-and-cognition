@@ -1,16 +1,26 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { Booking, Service } from "@prisma/client";
+import Link from "next/link";
 
-type BookingWithRelations = Booking & { service: Service };
+type BookingWithRelations = Booking & { service: Service; project: { id: string } | null };
 
 export default function AdminBookingsPage() {
     const [bookings, setBookings] = useState<BookingWithRelations[]>([]);
+    const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [formData, setFormData] = useState({
+        clientName: "",
+        clientEmail: "",
+        clientPhone: "",
+        serviceId: "",
+        budgetUSD: "",
+        message: "",
+    });
 
     useEffect(() => {
         fetchBookings();
+        fetchServices();
     }, []);
 
     async function fetchBookings() {
@@ -19,10 +29,13 @@ export default function AdminBookingsPage() {
         setLoading(false);
     }
 
-    async function updateStatus(id: string, status: string) {
-        // Optimistic Update
-        setBookings(bookings.map(b => b.id === id ? { ...b, status: status as any } : b));
+    async function fetchServices() {
+        const res = await fetch("/api/admin/services");
+        if (res.ok) setServices(await res.json());
+    }
 
+    async function updateStatus(id: string, status: string) {
+        setBookings(bookings.map(b => b.id === id ? { ...b, status: status as any } : b));
         await fetch("/api/admin/bookings", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -30,9 +43,45 @@ export default function AdminBookingsPage() {
         });
     }
 
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        try {
+            const res = await fetch("/api/admin/bookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...formData,
+                    budgetUSD: parseFloat(formData.budgetUSD) || 0,
+                }),
+            });
+
+            if (res.ok) {
+                setShowModal(false);
+                fetchBookings();
+                setFormData({
+                    clientName: "",
+                    clientEmail: "",
+                    clientPhone: "",
+                    serviceId: "",
+                    budgetUSD: "",
+                    message: "",
+                });
+            } else {
+                alert("Failed to create booking");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Booking Requests</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold">Booking Requests</h1>
+                <button onClick={() => setShowModal(true)} className="btn-brand">
+                    + Add Manual Booking
+                </button>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
@@ -86,14 +135,106 @@ export default function AdminBookingsPage() {
                                 </>
                             )}
                             {booking.status === "REVIEWED" && (
-                                <button className="btn-outline text-xs py-2 col-span-2">
-                                    Create Project →
+                                booking.project ? (
+                                    <Link
+                                        href={`/admin/projects/${booking.project.id}`}
+                                        className="btn-outline text-xs py-2 col-span-2 text-center"
+                                    >
+                                        View Project →
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href={`/admin/projects/new?bookingId=${booking.id}`}
+                                        className="btn-brand text-xs py-2 col-span-2 text-center"
+                                    >
+                                        Create Project →
+                                    </Link>
+                                )
+                            )}
+                            {booking.status === "REJECTED" && (
+                                <button
+                                    onClick={() => updateStatus(booking.id, "PENDING")}
+                                    className="btn-outline text-xs py-2 col-span-2"
+                                >
+                                    Restore to Pending
                                 </button>
                             )}
                         </div>
                     </div>
                 ))}
             </div>
+
+            {/* Manual Booking Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="glass-panel w-full max-w-md p-6 rounded-xl animate-fade-in-up">
+                        <h2 className="text-xl font-bold mb-4">Add Manual Booking</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="input-label">Client Name</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="input-field"
+                                        value={formData.clientName}
+                                        onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="input-label">Client Email</label>
+                                    <input
+                                        type="email"
+                                        required
+                                        className="input-field"
+                                        value={formData.clientEmail}
+                                        onChange={(e) => setFormData({ ...formData, clientEmail: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="input-label">Select Service</label>
+                                <select
+                                    required
+                                    className="select-field"
+                                    value={formData.serviceId}
+                                    onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
+                                >
+                                    <option value="">Choose a service...</option>
+                                    {services.map(s => (
+                                        <option key={s.id} value={s.id}>{s.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="input-label">Estimated Budget (USD)</label>
+                                <input
+                                    type="number"
+                                    className="input-field"
+                                    value={formData.budgetUSD}
+                                    onChange={(e) => setFormData({ ...formData, budgetUSD: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="input-label">Project Details</label>
+                                <textarea
+                                    className="input-field min-h-[100px]"
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                />
+                            </div>
+                            <div className="flex gap-4 pt-2">
+                                <button type="button" onClick={() => setShowModal(false)} className="btn-outline flex-1">
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn-brand flex-1">
+                                    Create Booking
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

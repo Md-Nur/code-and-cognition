@@ -19,6 +19,16 @@ export const bookingUpdateSchema = z.object({
     status: z.string().min(1),
 });
 
+export const bookingCreateSchema = z.object({
+    clientName: z.string().min(1),
+    clientEmail: z.string().email(),
+    clientPhone: z.string().optional().nullable(),
+    serviceId: z.string().min(1),
+    budgetBDT: z.number().optional().nullable(),
+    budgetUSD: z.number().optional().nullable(),
+    message: z.string().optional().nullable(),
+});
+
 export const projectSchema = z.object({
     title: z.string().min(1),
     bookingId: z.string().optional().nullable(),

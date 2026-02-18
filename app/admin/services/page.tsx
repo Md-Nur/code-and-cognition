@@ -13,6 +13,7 @@ export default function AdminServicesPage() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<ServiceWithSubs | null>(null);
+    const [deletingService, setDeletingService] = useState<ServiceWithSubs | null>(null);
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -102,12 +103,15 @@ export default function AdminServicesPage() {
         }
     }
 
-    async function handleDelete(id: string) {
-        if (!confirm("Are you sure you want to delete this service? This will also delete all sub-categories and may affect portfolio items.")) return;
+    async function handleDelete() {
+        if (!deletingService) return;
 
         try {
-            const res = await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
-            if (res.ok) fetchServices();
+            const res = await fetch(`/api/admin/services/${deletingService.id}`, { method: "DELETE" });
+            if (res.ok) {
+                setDeletingService(null);
+                fetchServices();
+            }
             else alert("Failed to delete service");
         } catch (error) {
             console.error("Delete Error:", error);
@@ -273,7 +277,7 @@ export default function AdminServicesPage() {
                                             Edit
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(service.id)}
+                                            onClick={() => setDeletingService(service)}
                                             className="text-xs font-bold text-red-400 hover:text-red-300 uppercase tracking-wider"
                                         >
                                             Delete
@@ -289,135 +293,173 @@ export default function AdminServicesPage() {
             {/* Service Form Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="glass-panel w-full max-w-lg p-8 rounded-xl animate-fade-in-up">
-                        <h2 className="text-2xl font-bold mb-6">
-                            {editingService ? "Edit Service" : "Add New Service"}
-                        </h2>
+                    <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up flex flex-col max-h-[90vh]">
+                        <div className="p-8 pb-4 border-b border-white/5">
+                            <h2 className="text-2xl font-bold">
+                                {editingService ? "Edit Service" : "Add New Service"}
+                            </h2>
+                        </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="input-label">Service Title</label>
-                                <input
-                                    type="text"
-                                    required
-                                    className="input-field"
-                                    placeholder="e.g. Web Development"
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                />
-                            </div>
+                        <div className="p-8 pt-4 overflow-y-auto flex-1 custom-scrollbar">
+                            <form id="service-form" onSubmit={handleSubmit} className="space-y-4">
+                                <div>
+                                    <label className="input-label">Service Title</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="input-field"
+                                        placeholder="e.g. Web Development"
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    />
+                                </div>
 
-                            <div>
-                                <label className="input-label">Description</label>
-                                <textarea
-                                    required
-                                    className="input-field min-h-[100px] py-3"
-                                    placeholder="Brief description of the service..."
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                />
-                            </div>
+                                <div>
+                                    <label className="input-label">Description</label>
+                                    <textarea
+                                        required
+                                        className="input-field min-h-[100px] py-3"
+                                        placeholder="Brief description of the service..."
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    />
+                                </div>
 
-                            <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
-                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Base Package</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="input-label">Price (BDT)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            className="input-field"
-                                            placeholder="৳ 50,000"
-                                            value={formData.basePriceBDT}
-                                            onChange={(e) => setFormData({ ...formData, basePriceBDT: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="input-label">Price (USD)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            className="input-field"
-                                            placeholder="$ 500"
-                                            value={formData.basePriceUSD}
-                                            onChange={(e) => setFormData({ ...formData, basePriceUSD: e.target.value })}
-                                        />
+                                <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Base Package</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="input-label">Price (BDT)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                className="input-field"
+                                                placeholder="৳ 50,000"
+                                                value={formData.basePriceBDT}
+                                                onChange={(e) => setFormData({ ...formData, basePriceBDT: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="input-label">Price (USD)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                className="input-field"
+                                                placeholder="$ 500"
+                                                value={formData.basePriceUSD}
+                                                onChange={(e) => setFormData({ ...formData, basePriceUSD: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
-                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Medium Package</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="input-label">Price (BDT)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            className="input-field"
-                                            placeholder="৳ 80,000"
-                                            value={formData.mediumPriceBDT}
-                                            onChange={(e) => setFormData({ ...formData, mediumPriceBDT: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="input-label">Price (USD)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            className="input-field"
-                                            placeholder="$ 800"
-                                            value={formData.mediumPriceUSD}
-                                            onChange={(e) => setFormData({ ...formData, mediumPriceUSD: e.target.value })}
-                                        />
+                                <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Medium Package</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="input-label">Price (BDT)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                className="input-field"
+                                                placeholder="৳ 80,000"
+                                                value={formData.mediumPriceBDT}
+                                                onChange={(e) => setFormData({ ...formData, mediumPriceBDT: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="input-label">Price (USD)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                className="input-field"
+                                                placeholder="$ 800"
+                                                value={formData.mediumPriceUSD}
+                                                onChange={(e) => setFormData({ ...formData, mediumPriceUSD: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
-                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Pro Package</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="input-label">Price (BDT)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            className="input-field"
-                                            placeholder="৳ 120,000"
-                                            value={formData.proPriceBDT}
-                                            onChange={(e) => setFormData({ ...formData, proPriceBDT: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="input-label">Price (USD)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            className="input-field"
-                                            placeholder="$ 1,200"
-                                            value={formData.proPriceUSD}
-                                            onChange={(e) => setFormData({ ...formData, proPriceUSD: e.target.value })}
-                                        />
+                                <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Pro Package</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="input-label">Price (BDT)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                className="input-field"
+                                                placeholder="৳ 120,000"
+                                                value={formData.proPriceBDT}
+                                                onChange={(e) => setFormData({ ...formData, proPriceBDT: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="input-label">Price (USD)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                className="input-field"
+                                                placeholder="$ 1,200"
+                                                value={formData.proPriceUSD}
+                                                onChange={(e) => setFormData({ ...formData, proPriceUSD: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
+                        </div>
 
-                            <div className="flex gap-4 pt-4 border-t border-white/5">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setIsModalOpen(false);
-                                        setEditingService(null);
-                                    }}
-                                    className="btn-outline flex-1"
-                                >
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn-brand flex-1">
-                                    {editingService ? "Update Service" : "Create Service"}
-                                </button>
-                            </div>
-                        </form>
+                        <div className="p-8 pt-4 border-t border-white/5 flex gap-4">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsModalOpen(false);
+                                    setEditingService(null);
+                                }}
+                                className="btn-outline flex-1"
+                            >
+                                Cancel
+                            </button>
+                            <button form="service-form" type="submit" className="btn-brand flex-1">
+                                {editingService ? "Update Service" : "Create Service"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deletingService && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                    <div className="glass-panel w-full max-w-md p-8 rounded-xl animate-fade-in-up border border-red-500/20">
+                        <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-6">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+
+                        <h2 className="text-xl font-bold mb-2">Delete Service?</h2>
+                        <p className="text-gray-400 mb-6 text-sm leading-relaxed">
+                            Are you sure you want to delete <span className="text-white font-semibold">"{deletingService.title}"</span>?
+                            This will also delete all <span className="text-white font-semibold">{deletingService.subCategories.length} sub-categories</span> and may affect portfolio items. This action cannot be undone.
+                        </p>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setDeletingService(null)}
+                                className="btn-outline flex-1"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex-1"
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

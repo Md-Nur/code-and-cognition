@@ -15,6 +15,9 @@ export default function AdminProjectDetailsPage() {
     const params = useParams();
     const [project, setProject] = useState<ProjectDetails | null>(null);
     const [loading, setLoading] = useState(true);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [showMemberModal, setShowMemberModal] = useState(false);
+    const [memberFormData, setMemberFormData] = useState({ userId: "", share: 0 });
 
     useEffect(() => {
         async function fetchProject() {
@@ -24,17 +27,49 @@ export default function AdminProjectDetailsPage() {
                 if (res.ok) {
                     const data = await res.json();
                     setProject(data);
-                } else {
-                    console.error("Failed to fetch project");
                 }
-            } catch (e) {
-                console.error(e);
             } finally {
                 setLoading(false);
             }
         }
         fetchProject();
+
+        async function fetchUsers() {
+            const res = await fetch("/api/admin/users");
+            if (res.ok) setAllUsers(await res.json());
+        }
+        fetchUsers();
     }, [params.id]);
+
+    async function handleAddMember(e: React.FormEvent) {
+        e.preventDefault();
+        try {
+            const res = await fetch(`/api/admin/projects/${project?.id}/members`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(memberFormData),
+            });
+            if (res.ok) {
+                setShowMemberModal(false);
+                // Refresh project data
+                const updated = await fetch(`/api/admin/projects/${project?.id}`).then(r => r.json());
+                setProject(updated);
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    async function handleRemoveMember(userId: string) {
+        if (!confirm("Remove this member?")) return;
+        try {
+            const res = await fetch(`/api/admin/projects/${project?.id}/members?userId=${userId}`, {
+                method: "DELETE",
+            });
+            if (res.ok) {
+                const updated = await fetch(`/api/admin/projects/${project?.id}`).then(r => r.json());
+                setProject(updated);
+            }
+        } catch (e) { console.error(e); }
+    }
 
     if (loading) return <div className="p-8 text-center text-gray-500">Loading project details...</div>;
     if (!project) return <div className="p-8 text-center text-red-500">Project not found.</div>;
@@ -87,7 +122,12 @@ export default function AdminProjectDetailsPage() {
                     <div className="glass-panel p-6 rounded-xl">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold">Execution Team</h3>
-                            <button className="text-xs text-agency-accent hover:text-white">+ Add Member</button>
+                            <button
+                                onClick={() => setShowMemberModal(true)}
+                                className="text-xs text-agency-accent hover:text-white"
+                            >
+                                + Add Member
+                            </button>
                         </div>
                         <div className="space-y-3">
                             {project.members.map((member) => (
@@ -101,6 +141,14 @@ export default function AdminProjectDetailsPage() {
                                             <p className="text-xs text-gray-500">{member.user.role} • {member.share}% Share</p>
                                         </div>
                                     </div>
+                                    <button
+                                        onClick={() => handleRemoveMember(member.userId)}
+                                        className="text-gray-600 hover:text-red-400 transition-colors"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
                                 </div>
                             ))}
                             {project.members.length === 0 && (
@@ -108,6 +156,51 @@ export default function AdminProjectDetailsPage() {
                             )}
                         </div>
                     </div>
+
+                    {/* Add Member Modal */}
+                    {showMemberModal && (
+                        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                            <div className="glass-panel w-full max-w-sm p-6 rounded-xl animate-fade-in-up">
+                                <h3 className="text-lg font-bold mb-4">Assign Team Member</h3>
+                                <form onSubmit={handleAddMember} className="space-y-4">
+                                    <div>
+                                        <label className="input-label">Select User</label>
+                                        <select
+                                            required
+                                            className="select-field"
+                                            value={memberFormData.userId}
+                                            onChange={(e) => setMemberFormData({ ...memberFormData, userId: e.target.value })}
+                                        >
+                                            <option value="">Choose a user...</option>
+                                            {allUsers.map(u => (
+                                                <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="input-label">Profit Share (%)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="0"
+                                            max="100"
+                                            className="input-field"
+                                            value={memberFormData.share}
+                                            onChange={(e) => setMemberFormData({ ...memberFormData, share: parseInt(e.target.value) })}
+                                        />
+                                    </div>
+                                    <div className="flex gap-4 pt-2">
+                                        <button type="button" onClick={() => setShowMemberModal(false)} className="btn-outline flex-1">
+                                            Cancel
+                                        </button>
+                                        <button type="submit" className="btn-brand flex-1">
+                                            Add to Team
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Column: Financials */}
