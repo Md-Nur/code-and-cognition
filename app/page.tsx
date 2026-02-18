@@ -1,15 +1,36 @@
+import type { Metadata } from "next";
 import Navbar from "./components/public/Navbar";
 import Hero from "./components/public/Hero";
 import ServicesGrid from "./components/public/ServicesGrid";
 import BookingForm from "./components/public/BookingForm";
 import Footer from "./components/public/Footer";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Home | Code & Cognition — Digital Agency",
+  description: "We build digital products that think. Web development, UI/UX design, video production, and growth marketing for ambitious brands.",
+};
+
+import { prisma } from "@/lib/prisma";
+
+export default async function Home() {
+  const services = await prisma.service.findMany({
+    where: { status: "ACTIVE" },
+    include: {
+      subCategories: {
+        select: {
+          id: true,
+          title: true,
+        }
+      }
+    },
+    orderBy: { createdAt: "asc" },
+  }) as any;
+
   return (
     <main className="min-h-screen bg-agency-black selection:bg-agency-accent selection:text-white">
       <Navbar />
       <Hero />
-      <ServicesGrid />
+      <ServicesGrid initialServices={services} />
 
       {/* Process Section */}
       <section id="process" className="section-container py-20 border-t border-white/5">

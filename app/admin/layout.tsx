@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -47,7 +47,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                 <div className="mt-auto pt-6 border-t border-white/5">
                     <button
-                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        onClick={async () => {
+                            await fetch("/api/auth/logout", { method: "POST" });
+                            window.location.href = "/login";
+                        }}
                         className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"
                     >
                         <span>🚪</span>

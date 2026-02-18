@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LedgerEntry, LedgerBalance, User, Project } from "@prisma/client";
 
@@ -13,6 +13,12 @@ type ContractorData = {
 export default function ContractorPage() {
     const [data, setData] = useState<ContractorData | null>(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    async function handleLogout() {
+        await fetch("/api/auth/logout", { method: "POST" });
+        router.push("/login");
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -44,7 +50,7 @@ export default function ContractorPage() {
                     </div>
 
                     <button
-                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        onClick={handleLogout}
                         className="btn-outline text-sm"
                     >
                         Log Out
