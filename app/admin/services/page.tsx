@@ -11,9 +11,48 @@ export default function AdminServicesPage() {
     const [addingSubTo, setAddingSubTo] = useState<string | null>(null);
     const [newSubTitle, setNewSubTitle] = useState("");
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingService, setEditingService] = useState<ServiceWithSubs | null>(null);
+    const [formData, setFormData] = useState({
+        title: "",
+        description: "",
+        basePriceBDT: "",
+        basePriceUSD: "",
+        mediumPriceBDT: "",
+        mediumPriceUSD: "",
+        proPriceBDT: "",
+        proPriceUSD: "",
+    });
+
     useEffect(() => {
         fetchServices();
     }, []);
+
+    useEffect(() => {
+        if (editingService) {
+            setFormData({
+                title: editingService.title,
+                description: editingService.description,
+                basePriceBDT: editingService.basePriceBDT.toString(),
+                basePriceUSD: editingService.basePriceUSD.toString(),
+                mediumPriceBDT: editingService.mediumPriceBDT.toString(),
+                mediumPriceUSD: editingService.mediumPriceUSD.toString(),
+                proPriceBDT: editingService.proPriceBDT.toString(),
+                proPriceUSD: editingService.proPriceUSD.toString(),
+            });
+        } else {
+            setFormData({
+                title: "",
+                description: "",
+                basePriceBDT: "",
+                basePriceUSD: "",
+                mediumPriceBDT: "",
+                mediumPriceUSD: "",
+                proPriceBDT: "",
+                proPriceUSD: "",
+            });
+        }
+    }, [editingService, isModalOpen]);
 
     async function fetchServices() {
         try {
@@ -24,6 +63,54 @@ export default function AdminServicesPage() {
             }
         } finally {
             setLoading(false);
+        }
+    }
+
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        const payload = {
+            ...formData,
+            basePriceBDT: parseFloat(formData.basePriceBDT) || 0,
+            basePriceUSD: parseFloat(formData.basePriceUSD) || 0,
+            mediumPriceBDT: parseFloat(formData.mediumPriceBDT) || 0,
+            mediumPriceUSD: parseFloat(formData.mediumPriceUSD) || 0,
+            proPriceBDT: parseFloat(formData.proPriceBDT) || 0,
+            proPriceUSD: parseFloat(formData.proPriceUSD) || 0,
+        };
+
+        try {
+            const url = editingService
+                ? `/api/admin/services/${editingService.id}`
+                : "/api/admin/services";
+            const method = editingService ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+                setIsModalOpen(false);
+                setEditingService(null);
+                fetchServices();
+            } else {
+                alert("Failed to save service");
+            }
+        } catch (error) {
+            console.error("Save Error:", error);
+        }
+    }
+
+    async function handleDelete(id: string) {
+        if (!confirm("Are you sure you want to delete this service? This will also delete all sub-categories and may affect portfolio items.")) return;
+
+        try {
+            const res = await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
+            if (res.ok) fetchServices();
+            else alert("Failed to delete service");
+        } catch (error) {
+            console.error("Delete Error:", error);
         }
     }
 
@@ -76,7 +163,13 @@ export default function AdminServicesPage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold font-display">Services Management</h1>
-                <button className="btn-brand">
+                <button
+                    onClick={() => {
+                        setEditingService(null);
+                        setIsModalOpen(true);
+                    }}
+                    className="btn-brand"
+                >
                     + Add New Service
                 </button>
             </div>
@@ -133,8 +226,29 @@ export default function AdminServicesPage() {
                                     </div>
                                 </td>
                                 <td className="p-4">
-                                    <div className="text-sm font-medium">৳{service.basePriceBDT.toLocaleString()}</div>
-                                    <div className="text-xs text-gray-500">${service.basePriceUSD.toLocaleString()}</div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center gap-4">
+                                            <span className="text-[10px] text-gray-500 uppercase font-bold">Base</span>
+                                            <div className="text-right">
+                                                <div className="text-sm font-medium">৳{service.basePriceBDT.toLocaleString()}</div>
+                                                <div className="text-[10px] text-gray-500">${service.basePriceUSD.toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center gap-4">
+                                            <span className="text-[10px] text-gray-500 uppercase font-bold">Med</span>
+                                            <div className="text-right">
+                                                <div className="text-sm font-medium">৳{service.mediumPriceBDT.toLocaleString()}</div>
+                                                <div className="text-[10px] text-gray-500">${service.mediumPriceUSD.toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center gap-4">
+                                            <span className="text-[10px] text-gray-500 uppercase font-bold">Pro</span>
+                                            <div className="text-right">
+                                                <div className="text-sm font-medium">৳{service.proPriceBDT.toLocaleString()}</div>
+                                                <div className="text-[10px] text-gray-500">${service.proPriceUSD.toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td className="p-4">
                                     <button
@@ -149,8 +263,21 @@ export default function AdminServicesPage() {
                                 </td>
                                 <td className="text-right p-4">
                                     <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="text-xs font-bold text-gray-400 hover:text-white uppercase tracking-wider">Edit</button>
-                                        <button className="text-xs font-bold text-red-400 hover:text-red-300 uppercase tracking-wider">Delete</button>
+                                        <button
+                                            onClick={() => {
+                                                setEditingService(service);
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="text-xs font-bold text-gray-400 hover:text-white uppercase tracking-wider"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(service.id)}
+                                            className="text-xs font-bold text-red-400 hover:text-red-300 uppercase tracking-wider"
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -158,6 +285,142 @@ export default function AdminServicesPage() {
                     </tbody>
                 </table>
             </div>
+
+            {/* Service Form Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="glass-panel w-full max-w-lg p-8 rounded-xl animate-fade-in-up">
+                        <h2 className="text-2xl font-bold mb-6">
+                            {editingService ? "Edit Service" : "Add New Service"}
+                        </h2>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="input-label">Service Title</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="input-field"
+                                    placeholder="e.g. Web Development"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="input-label">Description</label>
+                                <textarea
+                                    required
+                                    className="input-field min-h-[100px] py-3"
+                                    placeholder="Brief description of the service..."
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
+                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Base Package</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="input-label">Price (BDT)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            className="input-field"
+                                            placeholder="৳ 50,000"
+                                            value={formData.basePriceBDT}
+                                            onChange={(e) => setFormData({ ...formData, basePriceBDT: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="input-label">Price (USD)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            className="input-field"
+                                            placeholder="$ 500"
+                                            value={formData.basePriceUSD}
+                                            onChange={(e) => setFormData({ ...formData, basePriceUSD: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
+                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Medium Package</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="input-label">Price (BDT)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            className="input-field"
+                                            placeholder="৳ 80,000"
+                                            value={formData.mediumPriceBDT}
+                                            onChange={(e) => setFormData({ ...formData, mediumPriceBDT: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="input-label">Price (USD)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            className="input-field"
+                                            placeholder="$ 800"
+                                            value={formData.mediumPriceUSD}
+                                            onChange={(e) => setFormData({ ...formData, mediumPriceUSD: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
+                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Pro Package</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="input-label">Price (BDT)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            className="input-field"
+                                            placeholder="৳ 120,000"
+                                            value={formData.proPriceBDT}
+                                            onChange={(e) => setFormData({ ...formData, proPriceBDT: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="input-label">Price (USD)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            className="input-field"
+                                            placeholder="$ 1,200"
+                                            value={formData.proPriceUSD}
+                                            onChange={(e) => setFormData({ ...formData, proPriceUSD: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-4 pt-4 border-t border-white/5">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsModalOpen(false);
+                                        setEditingService(null);
+                                    }}
+                                    className="btn-outline flex-1"
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn-brand flex-1">
+                                    {editingService ? "Update Service" : "Create Service"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

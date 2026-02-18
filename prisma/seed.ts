@@ -27,6 +27,10 @@ async function main() {
             description: 'Full-stack web applications built with Next.js and Node.js.',
             basePriceBDT: 50000,
             basePriceUSD: 500,
+            mediumPriceBDT: 150000,
+            mediumPriceUSD: 1500,
+            proPriceBDT: 300000,
+            proPriceUSD: 3000,
             status: Status.ACTIVE,
         },
         {
@@ -34,6 +38,10 @@ async function main() {
             description: 'Modern, user-centric interface design and prototyping.',
             basePriceBDT: 30000,
             basePriceUSD: 300,
+            mediumPriceBDT: 80000,
+            mediumPriceUSD: 800,
+            proPriceBDT: 150000,
+            proPriceUSD: 1500,
             status: Status.ACTIVE,
         },
         {
@@ -41,6 +49,10 @@ async function main() {
             description: 'Cross-platform mobile apps using React Native or Flutter.',
             basePriceBDT: 60000,
             basePriceUSD: 600,
+            mediumPriceBDT: 180000,
+            mediumPriceUSD: 1800,
+            proPriceBDT: 350000,
+            proPriceUSD: 3500,
             status: Status.ACTIVE,
         },
         {
@@ -48,6 +60,10 @@ async function main() {
             description: 'Backend systems, API development, and third-party integrations.',
             basePriceBDT: 40000,
             basePriceUSD: 400,
+            mediumPriceBDT: 120000,
+            mediumPriceUSD: 1200,
+            proPriceBDT: 250000,
+            proPriceUSD: 2500,
             status: Status.ACTIVE,
         },
     ]

@@ -9,18 +9,11 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
     globalForPrisma.prisma ??
     (() => {
-        try {
-            console.log("Initializing PrismaClient with Driver Adapter...", {
-                urlExists: !!process.env.DATABASE_URL,
-                NODE_ENV: process.env.NODE_ENV
-            });
-            const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-            const adapter = new PrismaPg(pool);
-            return new PrismaClient({ adapter });
-        } catch (e) {
-            console.error("Prisma Init Failed:", e);
-            throw e;
-        }
+        const pool = new Pool({
+            connectionString: process.env.DATABASE_URL,
+        });
+        const adapter = new PrismaPg(pool);
+        return new PrismaClient({ adapter });
     })();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

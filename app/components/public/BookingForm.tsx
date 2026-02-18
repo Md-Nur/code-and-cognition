@@ -95,12 +95,12 @@ export default function BookingForm() {
                                 </div>
 
                                 <div>
-                                    <label className="input-label">Estimated Budget (USD)</label>
+                                    <label className="input-label">Estimated Budget (BDT)</label>
                                     <input
                                         type="number"
                                         {...register("budget", { valueAsNumber: true })}
                                         className="input-field"
-                                        placeholder="e.g. 5000"
+                                        placeholder="e.g. 50000"
                                     />
                                     {errors.budget && <span className="text-red-500 text-sm mt-1">{errors.budget.message}</span>}
                                 </div>

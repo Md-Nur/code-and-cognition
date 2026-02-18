@@ -49,12 +49,20 @@ export default function ContractorPage() {
                         <p className="text-gray-400">Welcome, {data?.balance?.user?.name}</p>
                     </div>
 
-                    <button
-                        onClick={handleLogout}
-                        className="btn-outline text-sm"
-                    >
-                        Log Out
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <Link href="/" className="btn-outline text-sm">
+                            🏠 Home
+                        </Link>
+                        <Link href="/admin/profile" className="btn-outline text-sm">
+                            👤 Profile
+                        </Link>
+                        <button
+                            onClick={handleLogout}
+                            className="bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-2 rounded-lg text-sm hover:bg-red-500/20 transition-colors"
+                        >
+                            Log Out
+                        </button>
+                    </div>
                 </div>
 
                 {/* Balance Cards */}

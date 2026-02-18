@@ -8,6 +8,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const pathname = usePathname();
 
     const navItems = [
+        { name: "Home", href: "/", icon: "🏠" },
         { name: "Dashboard", href: "/admin", icon: "📊" },
         { name: "Services", href: "/admin/services", icon: "🛠️" },
         { name: "Projects", href: "/admin/projects", icon: "🚀" },
@@ -16,6 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: "Ledger", href: "/admin/ledger", icon: "📈" },
         { name: "Users", href: "/admin/users", icon: "👥" },
         { name: "Bookings", href: "/admin/bookings", icon: "📩" },
+        { name: "Profile", href: "/admin/profile", icon: "👤" },
     ];
 
     return (

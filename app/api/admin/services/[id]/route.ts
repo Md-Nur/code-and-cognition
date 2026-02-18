@@ -1,42 +1,40 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
+import { serviceSchema } from "@/lib/validations/admin";
 
-export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { id } = await params;
+export const PUT = withAuth(async (req, { params }) => {
+    const { id } = params;
 
     try {
         const body = await req.json();
+        const validation = serviceSchema.partial().safeParse(body);
+
+        if (!validation.success) {
+            return ApiResponse.error(JSON.stringify(validation.error.format()));
+        }
+
         const service = await prisma.service.update({
             where: { id },
-            data: body,
+            data: validation.data as any,
         });
-        return NextResponse.json(service);
+        return ApiResponse.success(service);
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        console.error("Service Update Error:", error);
+        return ApiResponse.error("Internal Server Error", 500);
     }
-}
+}, Role.FOUNDER);
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { id } = await params;
+export const DELETE = withAuth(async (req, { params }) => {
+    const { id } = params;
 
     try {
         await prisma.service.delete({
             where: { id },
         });
-        return NextResponse.json({ success: true });
+        return ApiResponse.success({ success: true });
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        console.error("Service Delete Error:", error);
+        return ApiResponse.error("Internal Server Error", 500);
     }
-}
+}, Role.FOUNDER);

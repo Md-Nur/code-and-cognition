@@ -31,6 +31,10 @@ export const serviceSchema = z.object({
     description: z.string().min(1),
     basePriceBDT: z.number().min(0),
     basePriceUSD: z.number().min(0),
+    mediumPriceBDT: z.number().min(0).default(0),
+    mediumPriceUSD: z.number().min(0).default(0),
+    proPriceBDT: z.number().min(0).default(0),
+    proPriceUSD: z.number().min(0).default(0),
     status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
 });
 

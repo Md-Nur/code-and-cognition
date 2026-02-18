@@ -26,7 +26,7 @@ export async function POST(req: Request) {
                 clientName,
                 clientEmail,
                 serviceId,
-                budgetUSD: budget, // Assuming input is USD for now based on form
+                budgetBDT: budget, // Mapping form budget (BDT) to database budgetBDT
                 message,
                 status: "PENDING",
             },
