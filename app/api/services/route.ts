@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
-        const_services = await prisma.service.findMany({
+        const services = await prisma.service.findMany({
             where: { status: "ACTIVE" },
             select: {
                 id: true,

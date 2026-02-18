@@ -32,7 +32,7 @@ export async function processPaymentSplit(paymentId: string) {
     const finderFeeAmount = amount * finderFeeRatio;
     const executionPoolAmount = amount * executionPoolRatio;
 
-    const entries = [];
+    const entries: any[] = [];
 
     // 1. Company Fund Entry
     entries.push({

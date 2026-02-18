@@ -58,7 +58,7 @@ h6 {
 }
 
 .input-field {
-    @apply input input-bordered w-full bg-white/5 border-white/10 focus:border-agency-accent focus:outline-none text-white placeholder-gray-500 transition-colors;
+    @apply input w-full bg-white/5 border-white/10 focus:border-agency-accent focus:outline-none text-white placeholder-gray-500 transition-colors;
 }
 
 .data-table {

@@ -43,8 +43,8 @@ export default function AdminBookingsPage() {
                     <div key={booking.id} className="glass-panel p-6 rounded-xl flex flex-col hover:border-white/20 transition-colors">
                         <div className="flex justify-between items-start mb-4">
                             <span className={`text-xs px-2 py-1 rounded border uppercase font-bold tracking-wider ${booking.status === "PENDING" ? "border-yellow-500/30 text-yellow-400 bg-yellow-500/10" :
-                                    booking.status === "APPROVED" ? "border-green-500/30 text-green-400 bg-green-500/10" :
-                                        "border-red-500/30 text-red-400 bg-red-500/10"
+                                booking.status === "REVIEWED" ? "border-green-500/30 text-green-400 bg-green-500/10" :
+                                    "border-red-500/30 text-red-400 bg-red-500/10"
                                 }`}>
                                 {booking.status}
                             </span>
@@ -78,14 +78,14 @@ export default function AdminBookingsPage() {
                                         Reject
                                     </button>
                                     <button
-                                        onClick={() => updateStatus(booking.id, "APPROVED")}
+                                        onClick={() => updateStatus(booking.id, "REVIEWED")}
                                         className="btn-brand text-xs py-2"
                                     >
                                         Approve
                                     </button>
                                 </>
                             )}
-                            {booking.status === "APPROVED" && (
+                            {booking.status === "REVIEWED" && (
                                 <button className="btn-outline text-xs py-2 col-span-2">
                                     Create Project →
                                 </button>
