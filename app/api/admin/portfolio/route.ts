@@ -1,16 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { Role } from "@prisma/client";
-
-const serviceSchema = z.object({
-    title: z.string().min(1),
-    description: z.string().min(1),
-    basePriceBDT: z.number().min(0),
-    basePriceUSD: z.number().min(0),
-    status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
-});
 
 export async function GET() {
     const session = await auth();
@@ -18,13 +9,11 @@ export async function GET() {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const services = await prisma.service.findMany({
-        include: {
-            subCategories: true
-        },
+    const items = await prisma.portfolioItem.findMany({
+        include: { service: { select: { title: true } } },
         orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(services);
+    return NextResponse.json(items);
 }
 
 export async function POST(req: Request) {
@@ -35,17 +24,12 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const validation = serviceSchema.safeParse(body);
-
-        if (!validation.success) {
-            return NextResponse.json({ error: validation.error.format() }, { status: 400 });
-        }
-
-        const service = await prisma.service.create({
-            data: validation.data,
+        const item = await prisma.portfolioItem.create({
+            data: body,
         });
-        return NextResponse.json(service, { status: 201 });
+        return NextResponse.json(item, { status: 201 });
     } catch (error) {
+        console.error("Error creating portfolio item:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

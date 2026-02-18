@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -8,8 +9,17 @@ export default function Footer() {
             <div className="section-container">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     <div className="col-span-1 md:col-span-2">
-                        <Link href="/" className="text-2xl font-display font-bold tracking-tight mb-6 block">
-                            Code<span className="text-agency-accent">&</span>Cognition
+                        <Link href="/" className="flex items-center gap-2 mb-6">
+                            <Image
+                                src="/Main-Logo.png"
+                                alt="Code & Cognition Logo"
+                                width={32}
+                                height={32}
+                                className="w-auto h-8"
+                            />
+                            <span className="text-2xl font-display font-bold tracking-tight">
+                                Code<span className="text-agency-accent">&</span>Cognition
+                            </span>
                         </Link>
                         <p className="text-gray-400 max-w-sm mb-8">
                             We build digital products that think. Combining aesthetics with intelligence to craft world-class web experiences.

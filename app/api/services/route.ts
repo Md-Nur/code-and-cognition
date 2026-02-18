@@ -7,13 +7,13 @@ export async function GET() {
     try {
         const services = await prisma.service.findMany({
             where: { status: "ACTIVE" },
-            select: {
-                id: true,
-                title: true,
-                description: true,
-                basePriceBDT: true,
-                basePriceUSD: true,
-                thumbnailUrl: true,
+            include: {
+                subCategories: {
+                    select: {
+                        id: true,
+                        title: true,
+                    }
+                }
             },
             orderBy: { createdAt: "asc" },
         });

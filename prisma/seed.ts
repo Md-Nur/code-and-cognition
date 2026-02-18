@@ -4,15 +4,15 @@ import * as bcrypt from 'bcryptjs'
 import { prisma } from '../lib/prisma'
 
 async function main() {
-    const hashedPassword = await bcrypt.hash('admin123', 10)
+    const hashedPassword = await bcrypt.hash('tor duida bici te pori', 10)
 
     // 1. Seed Founder User
     const founder = await prisma.user.upsert({
-        where: { email: 'admin@codeandcognition.com' },
+        where: { email: 'codencognition.bd@gmail.com' },
         update: {},
         create: {
             name: 'Founder',
-            email: 'admin@codeandcognition.com',
+            email: 'codencognition.bd@gmail.com',
             passwordHash: hashedPassword,
             role: Role.FOUNDER,
         },

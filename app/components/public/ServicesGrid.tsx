@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { Service } from "@prisma/client";
 
 // Partial type for frontend display since we might not fetch everything
-type ServiceType = Pick<Service, "id" | "title" | "description" | "basePriceBDT" | "basePriceUSD" | "thumbnailUrl">;
+type ServiceType = Pick<Service, "id" | "title" | "description" | "basePriceBDT" | "basePriceUSD" | "thumbnailUrl"> & {
+    subCategories: { id: string, title: string }[]
+};
 
 export default function ServicesGrid() {
     const [services, setServices] = useState<ServiceType[]>([]);
@@ -29,7 +31,7 @@ export default function ServicesGrid() {
     }, []);
 
     return (
-        <section id="services" className="section-container py-20">
+        <section id="services" className="section-container py-20 pb-32">
             <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-4">
                 <div>
                     <span className="section-tag mb-4">Our Expertise</span>
@@ -68,7 +70,18 @@ export default function ServicesGrid() {
                             </div>
 
                             <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-                            <p className="text-gray-400 text-sm mb-6 flex-grow">{service.description}</p>
+                            <p className="text-gray-400 text-sm mb-4">{service.description}</p>
+
+                            {/* Sub-categories */}
+                            {service.subCategories && service.subCategories.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                    {service.subCategories.map((sub) => (
+                                        <span key={sub.id} className="text-[10px] uppercase tracking-wider font-semibold py-1 px-2 rounded-full bg-white/5 text-gray-400 border border-white/5">
+                                            {sub.title}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
 
                             <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
                                 <div>

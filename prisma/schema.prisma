@@ -58,16 +58,42 @@ model User {
 }
 
 model Service {
-  id           String    @id @default(cuid())
+  id             String          @id @default(cuid())
+  title          String
+  description    String
+  basePriceBDT   Float
+  basePriceUSD   Float
+  status         Status          @default(ACTIVE)
+  thumbnailUrl   String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  bookings       Booking[]
+  subCategories  SubCategory[]
+  portfolioItems PortfolioItem[]
+}
+
+model SubCategory {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PortfolioItem {
+  id           String   @id @default(cuid())
   title        String
   description  String
-  basePriceBDT Float
-  basePriceUSD Float
-  status       Status    @default(ACTIVE)
-  thumbnailUrl String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  bookings     Booking[]
+  imageUrl     String?
+  projectUrl   String?
+  serviceId    String
+  service      Service  @relation(fields: [serviceId], references: [id])
+  technologies String[] // Array of tech used
+  isFeatured   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Booking {

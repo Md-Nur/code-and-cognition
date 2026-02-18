@@ -11,6 +11,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: "Dashboard", href: "/admin", icon: "📊" },
         { name: "Services", href: "/admin/services", icon: "🛠️" },
         { name: "Projects", href: "/admin/projects", icon: "🚀" },
+        { name: "Portfolio", href: "/admin/portfolio", icon: "🎨" },
         { name: "Payments", href: "/admin/payments", icon: "💰" },
         { name: "Ledger", href: "/admin/ledger", icon: "📈" },
         { name: "Users", href: "/admin/users", icon: "👥" },
@@ -33,8 +34,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 key={item.name}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                                        ? "bg-agency-accent/10 text-agency-accent border border-agency-accent/20"
-                                        : "text-gray-400 hover:text-white hover:bg-white/5"
+                                    ? "bg-agency-accent/10 text-agency-accent border border-agency-accent/20"
+                                    : "text-gray-400 hover:text-white hover:bg-white/5"
                                     }`}
                             >
                                 <span>{item.icon}</span>
