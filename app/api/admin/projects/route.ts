@@ -1,22 +1,9 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
+import { projectSchema } from "@/lib/validations/admin";
 
-const projectSchema = z.object({
-    title: z.string().min(1),
-    bookingId: z.string().optional(),
-    finderId: z.string().min(1),
-    status: z.enum(["ACTIVE", "COMPLETED", "CANCELLED"]).optional(),
-});
-
-export async function GET() {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const GET = withAuth(async () => {
     const projects = await prisma.project.findMany({
         include: {
             finder: true,
@@ -25,28 +12,24 @@ export async function GET() {
         },
         orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(projects);
-}
+    return ApiResponse.success(projects);
+}, Role.FOUNDER);
 
-export async function POST(req: Request) {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const POST = withAuth(async (req) => {
     try {
         const body = await req.json();
         const validation = projectSchema.safeParse(body);
 
         if (!validation.success) {
-            return NextResponse.json({ error: validation.error.format() }, { status: 400 });
+            return ApiResponse.error(JSON.stringify(validation.error.format()));
         }
 
         const project = await prisma.project.create({
-            data: validation.data,
+            data: validation.data as any,
         });
-        return NextResponse.json(project, { status: 201 });
+        return ApiResponse.success(project, 201);
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        console.error("Project Create Error:", error);
+        return ApiResponse.error("Internal Server Error", 500);
     }
-}
+}, Role.FOUNDER);

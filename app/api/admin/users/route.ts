@@ -1,23 +1,10 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
 import * as bcrypt from 'bcryptjs';
 import { Role } from "@prisma/client";
+import { userSchema } from "@/lib/validations/admin";
 
-const userSchema = z.object({
-    name: z.string().min(1),
-    email: z.string().email(),
-    password: z.string().min(6),
-    role: z.nativeEnum(Role).default(Role.CONTRACTOR),
-});
-
-export async function GET() {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const GET = withAuth(async () => {
     const users = await prisma.user.findMany({
         orderBy: { createdAt: "desc" },
         select: {
@@ -29,21 +16,16 @@ export async function GET() {
             ledgerBalance: true,
         },
     });
-    return NextResponse.json(users);
-}
+    return ApiResponse.success(users);
+}, Role.FOUNDER);
 
-export async function POST(req: Request) {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const POST = withAuth(async (req) => {
     try {
         const body = await req.json();
         const validation = userSchema.safeParse(body);
 
         if (!validation.success) {
-            return NextResponse.json({ error: validation.error.format() }, { status: 400 });
+            return ApiResponse.error(JSON.stringify(validation.error.format()));
         }
 
         const { name, email, password, role } = validation.data;
@@ -64,8 +46,8 @@ export async function POST(req: Request) {
             },
         });
 
-        return NextResponse.json(user, { status: 201 });
+        return ApiResponse.success(user, 201);
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error or Email Exists" }, { status: 500 });
+        return ApiResponse.error("Internal Server Error or Email Exists", 500);
     }
-}
+}, Role.FOUNDER);

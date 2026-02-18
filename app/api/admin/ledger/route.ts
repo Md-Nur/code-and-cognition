@@ -1,14 +1,8 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { SplitType, Role } from "@prisma/client";
 
-export async function GET() {
-    const session = await auth();
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const GET = withAuth(async (req, context, session) => {
     const isFounder = session.user.role === Role.FOUNDER;
 
     // Founder sees all company fund entries and overall stats
@@ -23,7 +17,7 @@ export async function GET() {
             include: { user: true },
         });
 
-        return NextResponse.json({
+        return ApiResponse.success({
             companyFundEntries,
             userBalances,
         });
@@ -40,8 +34,8 @@ export async function GET() {
         where: { userId: session.user.id },
     });
 
-    return NextResponse.json({
+    return ApiResponse.success({
         entries: myEntries,
         balance: myBalance,
     });
-}
+});

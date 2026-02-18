@@ -1,23 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { SignJWT } from "jose";
+import { signToken } from "@/lib/jwt";
 import { cookies } from "next/headers";
-
-const SECRET_KEY = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "";
-
-if (!SECRET_KEY) {
-    throw new Error("AUTH_SECRET or NEXTAUTH_SECRET must be set");
-}
-
-const SECRET = new TextEncoder().encode(SECRET_KEY);
+import { ApiResponse } from "@/lib/api-handler";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
     try {
         const { email, password } = await req.json();
 
         if (!email || !password) {
-            return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+            return ApiResponse.error("Email and password are required");
         }
 
         const user = await prisma.user.findUnique({
@@ -25,25 +17,21 @@ export async function POST(req: Request) {
         });
 
         if (!user) {
-            return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+            return ApiResponse.error("Invalid credentials", 401);
         }
 
         const isValid = await bcrypt.compare(password, user.passwordHash);
 
         if (!isValid) {
-            return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+            return ApiResponse.error("Invalid credentials", 401);
         }
 
         // Create JWT
-        const token = await new SignJWT({
+        const token = await signToken({
             id: user.id,
             email: user.email,
             role: user.role
-        })
-            .setProtectedHeader({ alg: "HS256" })
-            .setIssuedAt()
-            .setExpirationTime("24h")
-            .sign(SECRET);
+        });
 
         // Set cookie
         const cookieStore = await cookies();
@@ -55,7 +43,7 @@ export async function POST(req: Request) {
             path: "/",
         });
 
-        return NextResponse.json({
+        return ApiResponse.success({
             user: {
                 id: user.id,
                 name: user.name,
@@ -65,6 +53,6 @@ export async function POST(req: Request) {
         });
     } catch (error) {
         console.error("Login Error:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return ApiResponse.error("Internal Server Error", 500);
     }
 }

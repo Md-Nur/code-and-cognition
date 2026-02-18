@@ -1,28 +1,26 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
+import { subcategorySchema } from "@/lib/validations/admin";
 
-export async function POST(req: Request) {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const POST = withAuth(async (req) => {
     try {
         const body = await req.json();
-        const { title, serviceId, description } = body;
+        const validation = subcategorySchema.safeParse(body);
 
-        if (!title || !serviceId) {
-            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        if (!validation.success) {
+            return ApiResponse.error(JSON.stringify(validation.error.format()));
         }
+
+        const { title, serviceId, description } = body;
 
         const subCategory = await prisma.subCategory.create({
             data: { title, serviceId, description },
         });
 
-        return NextResponse.json(subCategory, { status: 201 });
+        return ApiResponse.success(subCategory, 201);
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        console.error("Subcategory Create Error:", error);
+        return ApiResponse.error("Internal Server Error", 500);
     }
-}
+}, Role.FOUNDER);

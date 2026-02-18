@@ -1,35 +1,31 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
+import { bookingUpdateSchema } from "@/lib/validations/admin";
 
-export async function GET() {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const GET = withAuth(async () => {
     const bookings = await prisma.booking.findMany({
         include: { service: true, project: true },
         orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(bookings);
-}
+    return ApiResponse.success(bookings);
+}, Role.FOUNDER);
 
-export async function PATCH(req: Request) {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const PATCH = withAuth(async (req) => {
     try {
         const { id, status } = await req.json();
+
+        const validation = bookingUpdateSchema.safeParse({ status });
+        if (!validation.success) {
+            return ApiResponse.error("Invalid status");
+        }
+
         const booking = await prisma.booking.update({
             where: { id },
             data: { status },
         });
-        return NextResponse.json(booking);
+        return ApiResponse.success(booking);
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return ApiResponse.error("Internal Server Error", 500);
     }
-}
+}, Role.FOUNDER);

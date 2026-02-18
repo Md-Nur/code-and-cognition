@@ -1,35 +1,24 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
 
-export async function GET() {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const GET = withAuth(async () => {
     const items = await prisma.portfolioItem.findMany({
         include: { service: { select: { title: true } } },
         orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(items);
-}
+    return ApiResponse.success(items);
+}, Role.FOUNDER);
 
-export async function POST(req: Request) {
-    const session = await auth();
-    if (session?.user?.role !== Role.FOUNDER) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+export const POST = withAuth(async (req) => {
     try {
         const body = await req.json();
         const item = await prisma.portfolioItem.create({
             data: body,
         });
-        return NextResponse.json(item, { status: 201 });
+        return ApiResponse.success(item, 201);
     } catch (error) {
         console.error("Error creating portfolio item:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return ApiResponse.error("Internal Server Error", 500);
     }
-}
+}, Role.FOUNDER);
