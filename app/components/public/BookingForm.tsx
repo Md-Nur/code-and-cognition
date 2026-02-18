@@ -84,7 +84,7 @@ export default function BookingForm() {
                             <div className="animate-fade-in-up space-y-6">
                                 <div>
                                     <label className="input-label">Select Service</label>
-                                    <select {...register("serviceId")} className="input-field">
+                                    <select {...register("serviceId")} className="select-field">
                                         <option value="">Select a service...</option>
                                         <option value="1">Web Application Development</option>
                                         <option value="2">UI/UX Design</option>

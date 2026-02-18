@@ -115,7 +115,7 @@ export default function AdminPaymentsPage() {
                                 <label className="input-label">Project</label>
                                 <select
                                     required
-                                    className="input-field"
+                                    className="select-field"
                                     value={formData.projectId}
                                     onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
                                 >
@@ -141,7 +141,7 @@ export default function AdminPaymentsPage() {
                                 <div>
                                     <label className="input-label">Currency</label>
                                     <select
-                                        className="input-field"
+                                        className="select-field"
                                         value={formData.currency}
                                         onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                                     >

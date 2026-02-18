@@ -61,6 +61,14 @@ h6 {
     @apply input w-full bg-white/5 border-white/10 focus:border-agency-accent focus:outline-none text-white placeholder-gray-500 transition-colors;
 }
 
+.select-field {
+    @apply select w-full bg-white/5 border-white/10 focus:border-agency-accent focus:outline-none text-white transition-colors;
+}
+
+.select-field option {
+    @apply bg-agency-black text-white;
+}
+
 .data-table {
     @apply w-full text-sm text-left;
 }

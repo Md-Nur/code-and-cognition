@@ -145,7 +145,7 @@ export default function AdminUsersPage() {
                             <div>
                                 <label className="input-label">Role</label>
                                 <select
-                                    className="input-field"
+                                    className="select-field"
                                     value={formData.role}
                                     onChange={(e) => setFormData({ ...formData, role: e.target.value as Role })}
                                 >
