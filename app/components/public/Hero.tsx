@@ -19,7 +19,7 @@ export default function Hero() {
             </div>
 
             <div className="section-container relative z-10 w-full">
-                <div className="max-w-4xl mx-auto text-center">
+                <div className="text-center">
                     <div className={`transition-all duration-700 transform ${mounted ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>
                         <span className="section-tag mb-6">Digital Agency</span>
 
