@@ -39,6 +39,40 @@ h6 {
     @apply bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-purple-500;
 }
 
+/* Layout Utilities */
+.section-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.section-tag {
+    @apply inline-block text-sm font-medium text-agency-accent bg-agency-accent/10 px-3 py-1 rounded-full border border-agency-accent/20;
+}
+
+/* Component Utilities */
+.btn-brand {
+    @apply btn bg-agency-accent hover:bg-agency-accent/90 text-white border-none shadow-lg shadow-agency-accent/20 hover:shadow-agency-accent/40 transition-all duration-300;
+}
+
+.input-label {
+    @apply block text-sm font-medium text-gray-400 mb-1;
+}
+
+.input-field {
+    @apply input input-bordered w-full bg-white/5 border-white/10 focus:border-agency-accent focus:outline-none text-white placeholder-gray-500 transition-colors;
+}
+
+.data-table {
+    @apply w-full text-sm text-left;
+}
+
+.data-table th {
+    @apply font-semibold text-gray-400 border-b border-white/10 bg-white/5;
+}
+
+.data-table td {
+    @apply py-3 border-b border-white/5;
+}
+
 /* ─── Animations ─────────────────────────────────────────────────────────── */
 @keyframes float {
 
