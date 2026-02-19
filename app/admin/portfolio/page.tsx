@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PortfolioItem, Service, SubCategory } from "@prisma/client";
+import ImageUpload from "@/app/components/admin/ImageUpload";
 
 type ItemWithService = PortfolioItem & {
     service: { title: string },
@@ -15,7 +16,6 @@ export default function AdminPortfolioPage() {
     const [services, setServices] = useState<ServiceWithSubs[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
-    const [uploading, setUploading] = useState(false);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -52,33 +52,6 @@ export default function AdminPortfolioPage() {
         }
     }
 
-    async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(true);
-        try {
-            const formData = new FormData();
-            formData.append("image", file);
-
-            const res = await fetch("/api/admin/upload", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                setFormData(prev => ({ ...prev, imageUrl: data.imageUrl }));
-            } else {
-                alert("Failed to upload image");
-            }
-        } catch (error) {
-            console.error("Upload error:", error);
-            alert("Error uploading image");
-        } finally {
-            setUploading(false);
-        }
-    }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -177,23 +150,12 @@ export default function AdminPortfolioPage() {
                             </div>
                         </div>
                         <div className="space-y-4">
-                            <div>
-                                <label className="input-label">Image Upload</label>
-                                <div className="flex flex-col gap-2">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-agency-accent file:text-white hover:file:bg-agency-accent/80 transition-all"
-                                    />
-                                    {uploading && <div className="text-xs text-agency-accent animate-pulse">Uploading to Imgbb...</div>}
-                                    {formData.imageUrl && (
-                                        <div className="relative mt-2 rounded-lg overflow-hidden border border-white/10 aspect-video">
-                                            <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <ImageUpload
+                                label="Project Image"
+                                value={formData.imageUrl}
+                                onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                                description="Upload a high-quality cover image for the project."
+                            />
                             <div>
                                 <label className="input-label">Live Project URL</label>
                                 <input
@@ -225,9 +187,8 @@ export default function AdminPortfolioPage() {
                             <button
                                 type="submit"
                                 className="btn-brand w-full"
-                                disabled={uploading}
                             >
-                                {uploading ? "Waiting for upload..." : "Save Project"}
+                                Save Project
                             </button>
                         </div>
                     </form>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Service, SubCategory } from "@prisma/client";
+import ImageUpload from "@/app/components/admin/ImageUpload";
 
 type SubCategoryWithPricing = SubCategory;
 type ServiceWithSubs = Service & { subCategories: SubCategoryWithPricing[] };
@@ -21,7 +22,6 @@ const emptySubForm = {
 export default function AdminServicesPage() {
     const [services, setServices] = useState<ServiceWithSubs[]>([]);
     const [loading, setLoading] = useState(true);
-    const [uploading, setUploading] = useState<string | null>(null); // "service" | "sub"
 
     // Service CRUD
     const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
@@ -77,37 +77,6 @@ export default function AdminServicesPage() {
         }
     }
 
-    async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>, type: "service" | "sub") {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(type);
-        try {
-            const formData = new FormData();
-            formData.append("image", file);
-
-            const res = await fetch("/api/admin/upload", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                if (type === "service") {
-                    setServiceForm(prev => ({ ...prev, thumbnailUrl: data.imageUrl }));
-                } else {
-                    setSubForm(prev => ({ ...prev, imageUrl: data.imageUrl }));
-                }
-            } else {
-                alert("Failed to upload image");
-            }
-        } catch (error) {
-            console.error("Upload error:", error);
-            alert("Error uploading image");
-        } finally {
-            setUploading(null);
-        }
-    }
 
     async function handleServiceSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -347,29 +316,20 @@ export default function AdminServicesPage() {
                                 <textarea required className="input-field min-h-[100px] py-3" placeholder="Brief description..."
                                     value={serviceForm.description} onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })} />
                             </div>
-                            <div>
-                                <label className="input-label">Thumbnail Image</label>
-                                <div className="space-y-2">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => handleImageUpload(e, "service")}
-                                        className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-agency-accent file:text-white hover:file:bg-agency-accent/80 transition-all"
-                                    />
-                                    {uploading === "service" && <div className="text-xs text-agency-accent animate-pulse">Uploading to Imgbb...</div>}
-                                    {serviceForm.thumbnailUrl && (
-                                        <img src={serviceForm.thumbnailUrl} alt="Preview" className="mt-2 rounded-lg w-full h-32 object-cover border border-white/10" />
-                                    )}
-                                </div>
-                            </div>
+                            <ImageUpload
+                                label="Thumbnail Image"
+                                value={serviceForm.thumbnailUrl}
+                                onChange={(url) => setServiceForm({ ...serviceForm, thumbnailUrl: url })}
+                                description="This image will represent the service category."
+                            />
                             <p className="text-xs text-gray-500 bg-white/5 rounded-lg px-4 py-3">
                                 💡 Pricing tiers (Basic / Plus / Pro) are set individually on each sub-service below.
                             </p>
                         </form>
                         <div className="p-8 pt-0 flex gap-4">
                             <button type="button" onClick={() => { setIsServiceModalOpen(false); setEditingService(null); }} className="btn-outline flex-1">Cancel</button>
-                            <button form="service-form" type="submit" className="btn-brand flex-1" disabled={uploading === "service"}>
-                                {uploading === "service" ? "Uploading..." : (editingService ? "Update Service" : "Create Service")}
+                            <button form="service-form" type="submit" className="btn-brand flex-1">
+                                {editingService ? "Update Service" : "Create Service"}
                             </button>
                         </div>
                     </div>
@@ -396,21 +356,12 @@ export default function AdminServicesPage() {
                                     <input type="text" className="input-field" placeholder="Short description..."
                                         value={subForm.description} onChange={(e) => setSubForm({ ...subForm, description: e.target.value })} />
                                 </div>
-                                <div>
-                                    <label className="input-label">Sub-service Image</label>
-                                    <div className="space-y-2">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleImageUpload(e, "sub")}
-                                            className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-agency-accent file:text-white hover:file:bg-agency-accent/80 transition-all"
-                                        />
-                                        {uploading === "sub" && <div className="text-xs text-agency-accent animate-pulse">Uploading to Imgbb...</div>}
-                                        {subForm.imageUrl && (
-                                            <img src={subForm.imageUrl} alt="Preview" className="mt-2 rounded-lg w-full h-28 object-cover border border-white/10" />
-                                        )}
-                                    </div>
-                                </div>
+                                <ImageUpload
+                                    label="Sub-service Image"
+                                    value={subForm.imageUrl}
+                                    onChange={(url) => setSubForm({ ...subForm, imageUrl: url })}
+                                    description="Visual representation for this specific sub-service."
+                                />
                                 {pricingField("Basic Package", "basePriceBDT", "basePriceUSD")}
                                 {pricingField("Plus Package", "mediumPriceBDT", "mediumPriceUSD")}
                                 {pricingField("Pro Package", "proPriceBDT", "proPriceUSD")}
@@ -418,8 +369,8 @@ export default function AdminServicesPage() {
                         </div>
                         <div className="p-8 pt-4 border-t border-white/5 flex gap-4">
                             <button type="button" onClick={() => { setSubModalFor(null); setEditingSub(null); }} className="btn-outline flex-1">Cancel</button>
-                            <button form="sub-form" type="submit" className="btn-brand flex-1" disabled={uploading === "sub"}>
-                                {uploading === "sub" ? "Uploading..." : (editingSub ? "Update Sub-service" : "Create Sub-service")}
+                            <button form="sub-form" type="submit" className="btn-brand flex-1">
+                                {editingSub ? "Update Sub-service" : "Create Sub-service"}
                             </button>
                         </div>
                     </div>
