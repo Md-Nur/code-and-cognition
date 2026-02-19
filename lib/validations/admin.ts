@@ -39,6 +39,7 @@ export const projectSchema = z.object({
 export const serviceSchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
+    thumbnailUrl: z.string().optional().nullable(),
     status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
 });
 

@@ -1,19 +1,15 @@
-In home page What does it mean by Partnership process. Does it understandable with a client who is a non technical person?
+In this website make sure the portfolio and our previous work are the same one thing. they are not different and client can see it easily. Is the running task is called projects? then there have a didcated page for portfolio not running projects. After finishing a project that automatically move to portfolio
 
-In this website make sure the portfolio and our previous work are the same one thing. they are not different and client can see it easily. Is the running task is called projects? then there have a didcated page for portfolio not running projects
-
-You can add a chat with whatsapp or messenger option so that client can easily chat with us
+You can add a chat with whatsapp or other social media option so that client can easily chat with us
 
 When I tries to add a portfolio, there ask for image url, but there is no option to upload image and in the select services there is no option to select sub-services
 
-Error [PrismaClientKnownRequestError]: 
-Invalid `prisma.service.findMany()` invocation:
+if any user is admin, then show an admin button instead of login button
 
+add an search option for services and sub-services so that client can easily find the services. the search must be efficient, fast and user-friendly
 
-The column `(not available)` does not exist in the current database.
-    at async l (.next/server/chunks/ssr/[root-of-the-server]__817b14f2._.js:1:3807) {
-  code: 'P2022',
-  meta: [Object],
-  clientVersion: '7.4.0',
-  digest: '117767220'
-}
+Facebook Link: https://www.facebook.com/CodeNCognition
+Add the facebook link in the footer and the thread icon is not appropriate
+
+One thing is that our landing page is all one, but we will have multiple landing pages, that is, if you click on the service menu bar, another landing page will open, where all the services will be together, then if you click on them again, for example, if you click on Digital Marketing and Advanced ACO, another landing page will open, which will have Facebook Marketing and Instagram Marketing separately. Don't chage the current cards just add new buttons on the cards
+

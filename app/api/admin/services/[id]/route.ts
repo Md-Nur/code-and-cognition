@@ -3,8 +3,8 @@ import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
 import { serviceSchema } from "@/lib/validations/admin";
 
-export const PUT = withAuth(async (req, { params }) => {
-    const { id } = params;
+export const PUT = withAuth(async (req, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
 
     try {
         const body = await req.json();
@@ -25,8 +25,8 @@ export const PUT = withAuth(async (req, { params }) => {
     }
 }, Role.FOUNDER);
 
-export const DELETE = withAuth(async (req, { params }) => {
-    const { id } = params;
+export const DELETE = withAuth(async (req, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
 
     try {
         await prisma.service.delete({
