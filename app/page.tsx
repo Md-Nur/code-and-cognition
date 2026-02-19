@@ -53,16 +53,16 @@ export default async function Home() {
       {/* Process Section */}
       <section id="process" className="section-container py-20 border-t border-white/5">
         <div className="text-center mb-16">
-          <span className="section-tag mb-4">Our Methodology</span>
+          <span className="section-tag mb-4">How We Work Together</span>
           <h2 className="text-4xl font-bold tracking-tight">The Partnership Process</h2>
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">We don't just build features; we build solutions that drive measurable growth and long-term value for your business.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { step: "01", title: "Strategic Discovery", desc: "We dive deep into your business objectives and user needs to create a roadmap for success." },
-            { step: "02", title: "Precision Creation", desc: "Our team iterates with focus on visual excellence, user engagement, and technical scalability." },
-            { step: "03", title: "Seamless Delivery", desc: "Beyond launch, we ensure your product is optimized for performance and ready to scale." }
+            { step: "01", title: "Discover & Strategize", desc: "We learn about your business goals and what your customers need to create a clear plan for your project." },
+            { step: "02", title: "Design & Build", desc: "We create high-quality, easy-to-use products that look great and work perfectly across all devices." },
+            { step: "03", title: "Launch & Support", desc: "We help you launch and stay by your side to ensure everything runs smoothly as your business grows." }
           ].map((item) => (
             <div key={item.step} className="glass-panel p-8 rounded-2xl relative group hover:border-agency-accent/50 transition-colors">
               <div className="text-6xl font-display font-bold text-white/5 mb-6 group-hover:text-agency-accent/10 transition-colors">{item.step}</div>
