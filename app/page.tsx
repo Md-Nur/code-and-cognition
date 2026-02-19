@@ -13,8 +13,10 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 export default async function Home() {
+  const session = await auth();
   const services = await prisma.service.findMany({
     where: { status: "ACTIVE" },
     include: {
@@ -46,7 +48,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-agency-black selection:bg-agency-accent selection:text-white">
-      <Navbar />
+      <Navbar user={session?.user} />
       <Hero />
       <ServicesGrid initialServices={services} />
 

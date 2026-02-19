@@ -5,7 +5,16 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-export default function Navbar() {
+interface NavbarProps {
+    user?: {
+        id: string;
+        email: string;
+        role: string;
+        name: string;
+    } | null;
+}
+
+export default function Navbar({ user }: NavbarProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
@@ -67,9 +76,15 @@ export default function Navbar() {
                         Start a Project
                     </Link>
 
-                    <Link href="/login" className="hidden md:inline-flex text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                        Login
-                    </Link>
+                    {user?.role === "FOUNDER" ? (
+                        <Link href="/admin" className="hidden md:inline-flex text-sm font-medium text-agency-accent hover:text-white transition-colors">
+                            Admin
+                        </Link>
+                    ) : (
+                        <Link href="/login" className="hidden md:inline-flex text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            Login
+                        </Link>
+                    )}
 
                     {/* Mobile Menu Button */}
                     <button
@@ -173,13 +188,23 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex flex-col gap-4 mt-auto">
-                        <Link
-                            href="/login"
-                            onClick={() => setIsMenuOpen(false)}
-                            className="text-xl font-medium text-gray-400 hover:text-white transition-colors"
-                        >
-                            Login
-                        </Link>
+                        {user?.role === "FOUNDER" ? (
+                            <Link
+                                href="/admin"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="text-xl font-medium text-agency-accent hover:text-white transition-colors"
+                            >
+                                Admin
+                            </Link>
+                        ) : (
+                            <Link
+                                href="/login"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="text-xl font-medium text-gray-400 hover:text-white transition-colors"
+                            >
+                                Login
+                            </Link>
+                        )}
                         <Link
                             href="/#contact"
                             onClick={() => setIsMenuOpen(false)}
