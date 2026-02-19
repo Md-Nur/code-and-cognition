@@ -1,1 +1,0 @@
-The Navbar has Home, Services, Portfolio, Process, Track My Order, About Us, View Cart, you can use ( 🛒 ) emojis.

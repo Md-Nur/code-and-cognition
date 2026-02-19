@@ -10,7 +10,7 @@ const addMemberSchema = z.object({
 
 export const POST = withAuth(async (req, { params }) => {
     try {
-        const { id: projectId } = params;
+        const { id: projectId } = await params;
         const body = await req.json();
         const validation = addMemberSchema.safeParse(body);
 
@@ -44,7 +44,7 @@ export const POST = withAuth(async (req, { params }) => {
 
 export const DELETE = withAuth(async (req, { params }) => {
     try {
-        const { id: projectId } = params;
+        const { id: projectId } = await params;
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get("userId");
 
