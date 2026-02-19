@@ -2,7 +2,7 @@ in sub service page "Let's Build Something Amazing" component should set the ser
 
 One thing, that is, here is the option to edit and delete payments. Yes, for now, I would see if the revenue minus is shown on the dashboard.
 
-Big agencies like Accenture, TCS, or even high-end boutique agencies use Client Portals to bridge the gap between "working on a project" and "making the client feel secure. I also make my website like them
+Big agencies like Accenture, TCS, or even high-end boutique agencies use Client Portals to bridge the gap between "working on a project" and "making the client feel secure. I also make my website like them (Professional Client Experience (CX))
 
 
 Your Prisma schema is exceptionally well-structured. You’ve already laid the groundwork for a high-level agency system by including `ProjectMember`, `LedgerEntry`, and `LedgerBalance`.
