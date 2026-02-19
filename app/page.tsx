@@ -4,6 +4,8 @@ import Hero from "./components/public/Hero";
 import ServicesGrid from "./components/public/ServicesGrid";
 import BookingForm from "./components/public/BookingForm";
 import Footer from "./components/public/Footer";
+import Testimonials from "./components/public/Testimonials";
+import Clients from "./components/public/Clients";
 
 export const metadata: Metadata = {
   title: "Home | Code & Cognition — Digital Product Studio",
@@ -17,6 +19,8 @@ import { auth } from "@/lib/auth";
 
 export default async function Home() {
   const session = await auth();
+
+  // Fetch Services
   const services = await prisma.service.findMany({
     where: { status: "ACTIVE" },
     include: {
@@ -46,10 +50,21 @@ export default async function Home() {
     orderBy: { createdAt: "asc" },
   }) as any;
 
+  // Fetch Testimonials
+  const testimonials = await prisma.testimonial.findMany({
+    orderBy: { order: "asc" },
+  });
+
+  // Fetch Clients
+  const clients = await prisma.client.findMany({
+    orderBy: { order: "asc" },
+  });
+
   return (
     <main className="min-h-screen bg-agency-black selection:bg-agency-accent selection:text-white">
       <Navbar user={session?.user} />
       <Hero />
+      <Clients clients={clients} />
       <ServicesGrid initialServices={services} />
 
       {/* Process Section */}
@@ -75,6 +90,7 @@ export default async function Home() {
         </div>
       </section>
 
+      <Testimonials testimonials={testimonials} />
       <BookingForm />
       <Footer />
     </main>

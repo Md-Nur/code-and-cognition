@@ -55,3 +55,20 @@ export const subcategorySchema = z.object({
     proPriceBDT: z.number().min(0).default(0),
     proPriceUSD: z.number().min(0).default(0),
 });
+
+export const testimonialSchema = z.object({
+    name: z.string().min(1),
+    role: z.string().optional().nullable(),
+    company: z.string().optional().nullable(),
+    content: z.string().min(1),
+    avatarUrl: z.string().optional().nullable(),
+    rating: z.number().min(1).max(5).default(5),
+    order: z.number().default(0),
+});
+
+export const clientSchema = z.object({
+    name: z.string().min(1),
+    logoUrl: z.string().min(1),
+    website: z.string().optional().nullable(),
+    order: z.number().default(0),
+});
