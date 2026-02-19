@@ -35,6 +35,23 @@ export async function POST(req: Request) {
             },
         });
 
+        // Notify founders
+        const founders = await prisma.user.findMany({
+            where: { role: "FOUNDER" },
+        });
+
+        for (const founder of founders) {
+            await prisma.notification.create({
+                data: {
+                    userId: founder.id,
+                    title: "New Booking Request",
+                    message: `${clientName} has requested a new booking.`,
+                    type: "BOOKING_NEW",
+                    link: `/admin/bookings`, // Link to admin bookings page
+                },
+            });
+        }
+
         return NextResponse.json(booking, { status: 201 });
     } catch (error) {
         console.error("Error creating booking:", error);

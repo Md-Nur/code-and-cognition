@@ -7,15 +7,51 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  name           String
-  email          String          @unique
-  passwordHash   String
-  role           Role            @default(CONTRACTOR)
-  createdAt      DateTime        @default(now())
-  ledgerBalance  LedgerBalance?
-  finderProjects Project[]       @relation("Finder")
-  memberProjects ProjectMember[]
+  id               String          @id @default(cuid())
+  name             String
+  email            String          @unique
+  passwordHash     String
+  role             Role            @default(CONTRACTOR)
+  createdAt        DateTime        @default(now())
+  ledgerBalance    LedgerBalance?
+  finderProjects   Project[]       @relation("Finder")
+  memberProjects   ProjectMember[]
+  sentMessages     Message[]       @relation("SentMessages")
+  receivedMessages Message[]       @relation("ReceivedMessages")
+  notifications    Notification[]
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  content    String
+  senderId   String
+  receiverId String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+enum NotificationType {
+  BOOKING_NEW
+  BOOKING_STATUS_CHANGE
+  PROJECT_NEW
+  PROJECT_STATUS_CHANGE
+  MESSAGE_NEW
+  PAYMENT_RECEIVED
+  SYSTEM
 }
 
 model Service {

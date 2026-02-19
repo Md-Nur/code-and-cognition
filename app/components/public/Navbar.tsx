@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import NotificationBell from "@/app/components/NotificationBell";
 
 interface NavbarProps {
     user?: {
@@ -69,12 +70,22 @@ export default function Navbar({ user }: NavbarProps) {
                             {link.name}
                         </Link>
                     ))}
+                    {user && (
+                        <Link
+                            href="/messages"
+                            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                        >
+                            Messages
+                        </Link>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-4">
                     <Link href="/#contact" className="hidden md:inline-flex btn-brand text-sm">
                         Start a Project
                     </Link>
+
+                    {user && <NotificationBell />}
 
                     {user?.role === "FOUNDER" ? (
                         <Link href="/admin" className="hidden md:inline-flex text-sm font-medium text-agency-accent hover:text-white transition-colors">
@@ -122,6 +133,15 @@ export default function Navbar({ user }: NavbarProps) {
                                 {link.name}
                             </Link>
                         ))}
+                        {user && (
+                            <Link
+                                href="/messages"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="text-3xl font-bold tracking-tight hover:text-agency-accent transition-colors"
+                            >
+                                Messages
+                            </Link>
+                        )}
                     </div>
 
                     <div className="mt-8">
