@@ -31,13 +31,9 @@ export default function Navbar({ user }: NavbarProps) {
     }, []);
 
     const navLinks = [
-        { name: "Home", href: "/" },
         { name: "Services", href: "/services" },
         { name: "Portfolio", href: "/portfolio" },
         { name: "Process", href: "/#process" },
-        { name: "Track My Order", href: "/track-order" },
-        { name: "About Us", href: "/about" },
-        { name: "View Cart 🛒", href: "/cart" },
     ];
 
     if (!mounted) return null;
@@ -79,7 +75,7 @@ export default function Navbar({ user }: NavbarProps) {
                             href="/messages"
                             className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
                         >
-                            Messages
+                            <span title="Messages">💬</span>
                         </Link>
                     )}
                 </div>
@@ -143,7 +139,7 @@ export default function Navbar({ user }: NavbarProps) {
                                 onClick={() => setIsMenuOpen(false)}
                                 className="text-3xl font-bold tracking-tight hover:text-agency-accent transition-colors"
                             >
-                                Messages
+                                <span title="Messages" className="text-4xl">💬</span>
                             </Link>
                         )}
                     </div>
