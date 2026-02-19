@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 import { Role } from "@prisma/client";
 
-export type ApiHandler = (req: Request, context: any, session: any) => Promise<NextResponse>;
+export type ApiHandler = (req: NextRequest, context: any, session: any) => Promise<NextResponse>;
 
 export function withAuth(handler: ApiHandler, requiredRole?: Role) {
-    return async (req: Request, context: any) => {
+    return async (req: NextRequest, context: any) => {
         try {
             const session = await auth();
 

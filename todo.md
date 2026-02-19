@@ -1,4 +1,3 @@
-
 if any user is admin, then show an admin button instead of login button
 
 add an search option for services and sub-services so that client can easily find the services. the search must be efficient, fast and user-friendly

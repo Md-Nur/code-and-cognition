@@ -3,7 +3,7 @@ import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
 import { uploadToImgbb } from "@/lib/imgbb";
 
-export const POST = withAuth(async (req: NextRequest) => {
+export const POST = withAuth(async (req: NextRequest, context: any, session: any) => {
     try {
         const formData = await req.formData();
         const file = formData.get("image") as File;
