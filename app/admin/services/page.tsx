@@ -26,7 +26,7 @@ export default function AdminServicesPage() {
     const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<ServiceWithSubs | null>(null);
     const [deletingService, setDeletingService] = useState<ServiceWithSubs | null>(null);
-    const [serviceForm, setServiceForm] = useState({ title: "", description: "" });
+    const [serviceForm, setServiceForm] = useState({ title: "", description: "", thumbnailUrl: "" });
 
     // Sub-category CRUD
     const [subModalFor, setSubModalFor] = useState<string | null>(null); // serviceId
@@ -40,9 +40,9 @@ export default function AdminServicesPage() {
 
     useEffect(() => {
         if (editingService) {
-            setServiceForm({ title: editingService.title, description: editingService.description });
+            setServiceForm({ title: editingService.title, description: editingService.description, thumbnailUrl: editingService.thumbnailUrl ?? "" });
         } else {
-            setServiceForm({ title: "", description: "" });
+            setServiceForm({ title: "", description: "", thumbnailUrl: "" });
         }
     }, [editingService, isServiceModalOpen]);
 
@@ -314,6 +314,14 @@ export default function AdminServicesPage() {
                                 <textarea required className="input-field min-h-[100px] py-3" placeholder="Brief description..."
                                     value={serviceForm.description} onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })} />
                             </div>
+                            <div>
+                                <label className="input-label">Thumbnail Image URL (optional)</label>
+                                <input type="text" className="input-field" placeholder="https://example.com/image.jpg"
+                                    value={serviceForm.thumbnailUrl} onChange={(e) => setServiceForm({ ...serviceForm, thumbnailUrl: e.target.value })} />
+                                {serviceForm.thumbnailUrl && (
+                                    <img src={serviceForm.thumbnailUrl} alt="Preview" className="mt-2 rounded-lg w-full h-32 object-cover border border-white/10" />
+                                )}
+                            </div>
                             <p className="text-xs text-gray-500 bg-white/5 rounded-lg px-4 py-3">
                                 💡 Pricing tiers (Basic / Plus / Pro) are set individually on each sub-service below.
                             </p>
@@ -352,6 +360,9 @@ export default function AdminServicesPage() {
                                     <label className="input-label">Image URL (optional)</label>
                                     <input type="text" className="input-field" placeholder="https://..."
                                         value={subForm.imageUrl} onChange={(e) => setSubForm({ ...subForm, imageUrl: e.target.value })} />
+                                    {subForm.imageUrl && (
+                                        <img src={subForm.imageUrl} alt="Preview" className="mt-2 rounded-lg w-full h-28 object-cover border border-white/10" />
+                                    )}
                                 </div>
                                 {pricingField("Basic Package", "basePriceBDT", "basePriceUSD")}
                                 {pricingField("Plus Package", "mediumPriceBDT", "mediumPriceUSD")}

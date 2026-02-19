@@ -1,5 +1,3 @@
-Services Management page there have no hover option in mobile to delete or edit button
-
 Editing or updating an existing service doesn't work, it seems there is a bug in that function.
 
 I home page What does it mean by Partnership process. Does it understandable with a client who is a non technical person?
@@ -8,3 +6,4 @@ In this website make sure the portfolio and our previous work are the same one t
 
 You can add a chat with whatsapp or messenger option so that client can easily chat with us
 
+When I tries to add a portfolio, there ask for image url, but there is no option to upload image and in the select services there is no option to select sub-services
