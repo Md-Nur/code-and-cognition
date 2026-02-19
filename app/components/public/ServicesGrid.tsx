@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { debounce } from "lodash";
+import Link from "next/link";
 
 
 type SubCategory = {
@@ -130,7 +131,16 @@ function ServiceCard({ service }: { service: ServiceType }) {
                 </div>
             )}
 
-            <div className="mt-auto pt-6 border-t border-white/5">
+            <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-3">
+                <Link
+                    href={`/services/${service.id}`}
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold border border-white/10 hover:border-agency-accent/50 hover:bg-white/5 transition-all"
+                >
+                    Explore Services
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </Link>
                 <a
                     href="#contact"
                     className="btn-brand w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold"

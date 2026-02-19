@@ -30,7 +30,7 @@ export default function Navbar({ user }: NavbarProps) {
     }, []);
 
     const navLinks = [
-        { name: "Services", href: "/#services" },
+        { name: "Services", href: "/services" },
         { name: "Process", href: "/#process" },
         { name: "Portfolio", href: "/portfolio" },
     ];
