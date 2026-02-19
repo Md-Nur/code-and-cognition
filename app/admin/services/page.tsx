@@ -3,28 +3,36 @@
 import { useEffect, useState } from "react";
 import { Service, SubCategory } from "@prisma/client";
 
-type ServiceWithSubs = Service & { subCategories: SubCategory[] };
+type SubCategoryWithPricing = SubCategory;
+type ServiceWithSubs = Service & { subCategories: SubCategoryWithPricing[] };
+
+const emptySubForm = {
+    title: "",
+    description: "",
+    imageUrl: "",
+    basePriceBDT: "",
+    basePriceUSD: "",
+    mediumPriceBDT: "",
+    mediumPriceUSD: "",
+    proPriceBDT: "",
+    proPriceUSD: "",
+};
 
 export default function AdminServicesPage() {
     const [services, setServices] = useState<ServiceWithSubs[]>([]);
     const [loading, setLoading] = useState(true);
-    const [addingSubTo, setAddingSubTo] = useState<string | null>(null);
-    const [newSubTitle, setNewSubTitle] = useState("");
-    const [newSubImageUrl, setNewSubImageUrl] = useState("");
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // Service CRUD
+    const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<ServiceWithSubs | null>(null);
     const [deletingService, setDeletingService] = useState<ServiceWithSubs | null>(null);
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        basePriceBDT: "",
-        basePriceUSD: "",
-        mediumPriceBDT: "",
-        mediumPriceUSD: "",
-        proPriceBDT: "",
-        proPriceUSD: "",
-    });
+    const [serviceForm, setServiceForm] = useState({ title: "", description: "" });
+
+    // Sub-category CRUD
+    const [subModalFor, setSubModalFor] = useState<string | null>(null); // serviceId
+    const [editingSub, setEditingSub] = useState<SubCategoryWithPricing | null>(null);
+    const [subForm, setSubForm] = useState(emptySubForm);
+    const [deletingSub, setDeletingSub] = useState<SubCategoryWithPricing | null>(null);
 
     useEffect(() => {
         fetchServices();
@@ -32,29 +40,29 @@ export default function AdminServicesPage() {
 
     useEffect(() => {
         if (editingService) {
-            setFormData({
-                title: editingService.title,
-                description: editingService.description,
-                basePriceBDT: editingService.basePriceBDT.toString(),
-                basePriceUSD: editingService.basePriceUSD.toString(),
-                mediumPriceBDT: editingService.mediumPriceBDT.toString(),
-                mediumPriceUSD: editingService.mediumPriceUSD.toString(),
-                proPriceBDT: editingService.proPriceBDT.toString(),
-                proPriceUSD: editingService.proPriceUSD.toString(),
+            setServiceForm({ title: editingService.title, description: editingService.description });
+        } else {
+            setServiceForm({ title: "", description: "" });
+        }
+    }, [editingService, isServiceModalOpen]);
+
+    useEffect(() => {
+        if (editingSub) {
+            setSubForm({
+                title: editingSub.title,
+                description: editingSub.description ?? "",
+                imageUrl: editingSub.imageUrl ?? "",
+                basePriceBDT: editingSub.basePriceBDT.toString(),
+                basePriceUSD: editingSub.basePriceUSD.toString(),
+                mediumPriceBDT: editingSub.mediumPriceBDT.toString(),
+                mediumPriceUSD: editingSub.mediumPriceUSD.toString(),
+                proPriceBDT: editingSub.proPriceBDT.toString(),
+                proPriceUSD: editingSub.proPriceUSD.toString(),
             });
         } else {
-            setFormData({
-                title: "",
-                description: "",
-                basePriceBDT: "",
-                basePriceUSD: "",
-                mediumPriceBDT: "",
-                mediumPriceUSD: "",
-                proPriceBDT: "",
-                proPriceUSD: "",
-            });
+            setSubForm(emptySubForm);
         }
-    }, [editingService, isModalOpen]);
+    }, [editingSub, subModalFor]);
 
     async function fetchServices() {
         try {
@@ -68,373 +76,250 @@ export default function AdminServicesPage() {
         }
     }
 
-    async function handleSubmit(e: React.FormEvent) {
+    async function handleServiceSubmit(e: React.FormEvent) {
         e.preventDefault();
-        const payload = {
-            ...formData,
-            basePriceBDT: parseFloat(formData.basePriceBDT) || 0,
-            basePriceUSD: parseFloat(formData.basePriceUSD) || 0,
-            mediumPriceBDT: parseFloat(formData.mediumPriceBDT) || 0,
-            mediumPriceUSD: parseFloat(formData.mediumPriceUSD) || 0,
-            proPriceBDT: parseFloat(formData.proPriceBDT) || 0,
-            proPriceUSD: parseFloat(formData.proPriceUSD) || 0,
-        };
-
-        try {
-            const url = editingService
-                ? `/api/admin/services/${editingService.id}`
-                : "/api/admin/services";
-            const method = editingService ? "PUT" : "POST";
-
-            const res = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-
-            if (res.ok) {
-                setIsModalOpen(false);
-                setEditingService(null);
-                fetchServices();
-            } else {
-                alert("Failed to save service");
-            }
-        } catch (error) {
-            console.error("Save Error:", error);
+        const url = editingService ? `/api/admin/services/${editingService.id}` : "/api/admin/services";
+        const method = editingService ? "PUT" : "POST";
+        const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(serviceForm),
+        });
+        if (res.ok) {
+            setIsServiceModalOpen(false);
+            setEditingService(null);
+            fetchServices();
+        } else {
+            alert("Failed to save service");
         }
     }
 
-    async function handleDelete() {
+    async function handleServiceDelete() {
         if (!deletingService) return;
-
-        try {
-            const res = await fetch(`/api/admin/services/${deletingService.id}`, { method: "DELETE" });
-            if (res.ok) {
-                setDeletingService(null);
-                fetchServices();
-            }
-            else alert("Failed to delete service");
-        } catch (error) {
-            console.error("Delete Error:", error);
-        }
+        const res = await fetch(`/api/admin/services/${deletingService.id}`, { method: "DELETE" });
+        if (res.ok) {
+            setDeletingService(null);
+            fetchServices();
+        } else alert("Failed to delete service");
     }
 
-    async function toggleStatus(service: Service) {
+    async function toggleStatus(service: ServiceWithSubs) {
         const newStatus = service.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
         setServices(services.map(s => s.id === service.id ? { ...s, status: newStatus } : s));
+        await fetch(`/api/admin/services/${service.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+        });
+    }
 
-        try {
-            await fetch(`/api/admin/services/${service.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: newStatus }),
-            });
-        } catch (error) {
-            console.error("Failed to update status", error);
+    async function handleSubSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        const payload = {
+            ...subForm,
+            serviceId: subModalFor,
+            basePriceBDT: parseFloat(subForm.basePriceBDT) || 0,
+            basePriceUSD: parseFloat(subForm.basePriceUSD) || 0,
+            mediumPriceBDT: parseFloat(subForm.mediumPriceBDT) || 0,
+            mediumPriceUSD: parseFloat(subForm.mediumPriceUSD) || 0,
+            proPriceBDT: parseFloat(subForm.proPriceBDT) || 0,
+            proPriceUSD: parseFloat(subForm.proPriceUSD) || 0,
+        };
+
+        const url = editingSub ? `/api/admin/subcategories/${editingSub.id}` : "/api/admin/subcategories";
+        const method = editingSub ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+            setSubModalFor(null);
+            setEditingSub(null);
             fetchServices();
+        } else {
+            alert("Failed to save sub-service");
         }
     }
 
-    async function addSubCategory(serviceId: string) {
-        if (!newSubTitle.trim()) return;
-
-        try {
-            const res = await fetch("/api/admin/subcategories", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: newSubTitle, serviceId, imageUrl: newSubImageUrl }),
-            });
-            if (res.ok) {
-                setNewSubTitle("");
-                setNewSubImageUrl("");
-                setAddingSubTo(null);
-                fetchServices();
-            }
-        } catch (error) {
-            console.error("Failed to add sub-category", error);
-        }
+    async function handleSubDelete() {
+        if (!deletingSub) return;
+        const res = await fetch(`/api/admin/subcategories/${deletingSub.id}`, { method: "DELETE" });
+        if (res.ok) {
+            setDeletingSub(null);
+            fetchServices();
+        } else alert("Failed to delete sub-service");
     }
 
-    async function deleteSubCategory(id: string) {
-        if (!confirm("Are you sure?")) return;
-        try {
-            const res = await fetch(`/api/admin/subcategories/${id}`, { method: "DELETE" });
-            if (res.ok) fetchServices();
-        } catch (error) {
-            console.error("Failed to delete", error);
-        }
-    }
+    const pricingField = (label: string, bdtKey: keyof typeof subForm, usdKey: keyof typeof subForm) => (
+        <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-3">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</h4>
+            <div className="grid grid-cols-2 gap-3">
+                <div>
+                    <label className="input-label">Price (BDT)</label>
+                    <input type="number" min="0" className="input-field" placeholder="৳" value={subForm[bdtKey]}
+                        onChange={(e) => setSubForm({ ...subForm, [bdtKey]: e.target.value })} />
+                </div>
+                <div>
+                    <label className="input-label">Price (USD)</label>
+                    <input type="number" min="0" className="input-field" placeholder="$" value={subForm[usdKey]}
+                        onChange={(e) => setSubForm({ ...subForm, [usdKey]: e.target.value })} />
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold font-display">Services Management</h1>
                 <button
-                    onClick={() => {
-                        setEditingService(null);
-                        setIsModalOpen(true);
-                    }}
+                    onClick={() => { setEditingService(null); setIsServiceModalOpen(true); }}
                     className="btn-brand w-full sm:w-auto"
                 >
                     + Add New Service
                 </button>
             </div>
 
-            <div className="glass-panel overflow-hidden rounded-xl border border-white/5 table-container">
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th className="text-left p-4">Service & Sub-categories</th>
-                            <th className="text-left p-4">Base Price</th>
-                            <th className="text-left p-4">Status</th>
-                            <th className="text-right p-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={4} className="text-center py-20 text-gray-500">Loading services...</td></tr>
-                        ) : services.map((service) => (
-                            <tr key={service.id} className="border-b border-white/5 group hover:bg-white/[0.02] transition-colors">
-                                <td className="p-4">
-                                    <div className="font-bold text-lg mb-2">{service.title}</div>
-                                    <div className="flex flex-wrap gap-2 items-center">
-                                        {service.subCategories.map(sub => (
-                                            <span key={sub.id} className="text-[10px] uppercase font-bold py-1 px-2 rounded bg-white/5 border border-white/10 flex items-center gap-2 group/sub">
-                                                {sub.imageUrl && (
-                                                    <img src={sub.imageUrl} alt="" className="w-4 h-4 rounded object-cover" />
-                                                )}
-                                                {sub.title}
-                                                <button
-                                                    onClick={() => deleteSubCategory(sub.id)}
-                                                    className="text-red-500 lg:opacity-0 lg:group-hover/sub:opacity-100 hover:text-red-400 transition-opacity"
-                                                >
-                                                    ×
-                                                </button>
-                                            </span>
-                                        ))}
-                                        {addingSubTo === service.id ? (
-                                            <div className="flex flex-col gap-2 p-2 border border-white/10 rounded bg-white/5 mt-2 w-full max-w-[200px]">
-                                                <input
-                                                    autoFocus
-                                                    placeholder="Title"
-                                                    className="text-[10px] bg-agency-black border border-white/10 rounded px-2 py-1 outline-none"
-                                                    value={newSubTitle}
-                                                    onChange={(e) => setNewSubTitle(e.target.value)}
-                                                />
-                                                <input
-                                                    placeholder="Image URL"
-                                                    className="text-[10px] bg-agency-black border border-white/10 rounded px-2 py-1 outline-none"
-                                                    value={newSubImageUrl}
-                                                    onChange={(e) => setNewSubImageUrl(e.target.value)}
-                                                />
-                                                <div className="flex justify-end gap-2">
-                                                    <button onClick={() => addSubCategory(service.id)} className="text-green-500 text-[10px] font-bold">SAVE</button>
-                                                    <button onClick={() => setAddingSubTo(null)} className="text-gray-500 text-[10px] font-bold">CANCEL</button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                onClick={() => setAddingSubTo(service.id)}
-                                                className="text-[10px] uppercase font-bold text-agency-accent hover:underline"
-                                            >
-                                                + Add Sub-cat
-                                            </button>
-                                        )}
-                                    </div>
-                                </td>
-                                <td className="p-4">
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between items-center gap-4">
-                                            <span className="text-[10px] text-gray-500 uppercase font-bold">Base</span>
-                                            <div className="text-right">
-                                                <div className="text-sm font-medium">৳{service.basePriceBDT.toLocaleString()}</div>
-                                                <div className="text-[10px] text-gray-500">${service.basePriceUSD.toLocaleString()}</div>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-between items-center gap-4">
-                                            <span className="text-[10px] text-gray-500 uppercase font-bold">Med</span>
-                                            <div className="text-right">
-                                                <div className="text-sm font-medium">৳{service.mediumPriceBDT.toLocaleString()}</div>
-                                                <div className="text-[10px] text-gray-500">${service.mediumPriceUSD.toLocaleString()}</div>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-between items-center gap-4">
-                                            <span className="text-[10px] text-gray-500 uppercase font-bold">Pro</span>
-                                            <div className="text-right">
-                                                <div className="text-sm font-medium">৳{service.proPriceBDT.toLocaleString()}</div>
-                                                <div className="text-[10px] text-gray-500">${service.proPriceUSD.toLocaleString()}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="p-4">
-                                    <button
-                                        onClick={() => toggleStatus(service)}
-                                        className={`text-xs px-2 py-1 rounded border transition-colors ${service.status === "ACTIVE"
-                                            ? "border-green-500/30 text-green-400 bg-green-500/10 hover:bg-green-500/20"
-                                            : "border-red-500/30 text-red-400 bg-red-500/10 hover:bg-red-500/20"
-                                            }`}
-                                    >
-                                        {service.status}
-                                    </button>
-                                </td>
-                                <td className="text-right p-4">
-                                    <div className="flex justify-end gap-3 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                                        <button
-                                            onClick={() => {
-                                                setEditingService(service);
-                                                setIsModalOpen(true);
-                                            }}
-                                            className="text-xs font-bold text-gray-400 hover:text-white uppercase tracking-wider"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => setDeletingService(service)}
-                                            className="text-xs font-bold text-red-400 hover:text-red-300 uppercase tracking-wider"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className="space-y-4">
+                {loading ? (
+                    <div className="text-center py-20 text-gray-500">Loading services...</div>
+                ) : services.map((service) => (
+                    <div key={service.id} className="glass-panel rounded-xl border border-white/5 overflow-hidden">
+                        {/* Service Header */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-5 border-b border-white/5">
+                            <div>
+                                <div className="font-bold text-lg">{service.title}</div>
+                                <div className="text-sm text-gray-400 mt-1">{service.description}</div>
+                            </div>
+                            <div className="flex items-center gap-3 shrink-0">
+                                <button
+                                    onClick={() => toggleStatus(service)}
+                                    className={`text-xs px-2 py-1 rounded border transition-colors ${service.status === "ACTIVE"
+                                        ? "border-green-500/30 text-green-400 bg-green-500/10 hover:bg-green-500/20"
+                                        : "border-red-500/30 text-red-400 bg-red-500/10 hover:bg-red-500/20"
+                                        }`}
+                                >
+                                    {service.status}
+                                </button>
+                                <button
+                                    onClick={() => { setEditingService(service); setIsServiceModalOpen(true); }}
+                                    className="text-xs font-bold text-gray-400 hover:text-white uppercase tracking-wider"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => setDeletingService(service)}
+                                    className="text-xs font-bold text-red-400 hover:text-red-300 uppercase tracking-wider"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Sub-services Table */}
+                        <div className="p-5">
+                            <div className="flex justify-between items-center mb-3">
+                                <span className="text-[10px] uppercase font-bold tracking-widest text-gray-500">
+                                    Sub-services ({service.subCategories.length})
+                                </span>
+                                <button
+                                    onClick={() => { setEditingSub(null); setSubModalFor(service.id); }}
+                                    className="text-[10px] uppercase font-bold text-agency-accent hover:underline"
+                                >
+                                    + Add Sub-service
+                                </button>
+                            </div>
+
+                            {service.subCategories.length === 0 ? (
+                                <div className="text-sm text-gray-600 italic py-2">No sub-services yet. Add one to define pricing tiers.</div>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b border-white/5">
+                                                <th className="text-left py-2 pr-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Sub-service</th>
+                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Basic</th>
+                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Plus</th>
+                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Pro</th>
+                                                <th className="text-right py-2 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {service.subCategories.map(sub => (
+                                                <tr key={sub.id} className="border-b border-white/5 last:border-0 group hover:bg-white/[0.02]">
+                                                    <td className="py-3 pr-4">
+                                                        <div className="flex items-center gap-2">
+                                                            {sub.imageUrl && (
+                                                                <img src={sub.imageUrl} alt="" className="w-5 h-5 rounded object-cover" />
+                                                            )}
+                                                            <div>
+                                                                <div className="font-medium">{sub.title}</div>
+                                                                {sub.description && <div className="text-[10px] text-gray-500">{sub.description}</div>}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-3 px-4 text-right">
+                                                        <div className="font-medium">৳{sub.basePriceBDT.toLocaleString()}</div>
+                                                        <div className="text-[10px] text-gray-500">${sub.basePriceUSD}</div>
+                                                    </td>
+                                                    <td className="py-3 px-4 text-right">
+                                                        <div className="font-medium">৳{sub.mediumPriceBDT.toLocaleString()}</div>
+                                                        <div className="text-[10px] text-gray-500">${sub.mediumPriceUSD}</div>
+                                                    </td>
+                                                    <td className="py-3 px-4 text-right">
+                                                        <div className="font-medium">৳{sub.proPriceBDT.toLocaleString()}</div>
+                                                        <div className="text-[10px] text-gray-500">${sub.proPriceUSD}</div>
+                                                    </td>
+                                                    <td className="py-3 text-right">
+                                                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <button
+                                                                onClick={() => { setEditingSub(sub); setSubModalFor(service.id); }}
+                                                                className="text-xs font-bold text-gray-400 hover:text-white uppercase"
+                                                            >Edit</button>
+                                                            <button
+                                                                onClick={() => setDeletingSub(sub)}
+                                                                className="text-xs font-bold text-red-400 hover:text-red-300 uppercase"
+                                                            >Delete</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {/* Service Form Modal */}
-            {isModalOpen && (
+            {isServiceModalOpen && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up flex flex-col max-h-[90vh]">
+                    <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up">
                         <div className="p-8 pb-4 border-b border-white/5">
-                            <h2 className="text-2xl font-bold">
-                                {editingService ? "Edit Service" : "Add New Service"}
-                            </h2>
+                            <h2 className="text-2xl font-bold">{editingService ? "Edit Service" : "Add New Service"}</h2>
                         </div>
-
-                        <div className="p-8 pt-4 overflow-y-auto flex-1 custom-scrollbar">
-                            <form id="service-form" onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label className="input-label">Service Title</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="input-field"
-                                        placeholder="e.g. Web Development"
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="input-label">Description</label>
-                                    <textarea
-                                        required
-                                        className="input-field min-h-[100px] py-3"
-                                        placeholder="Brief description of the service..."
-                                        value={formData.description}
-                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    />
-                                </div>
-
-                                <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
-                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Base Package</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="input-label">Price (BDT)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                className="input-field"
-                                                placeholder="৳ 50,000"
-                                                value={formData.basePriceBDT}
-                                                onChange={(e) => setFormData({ ...formData, basePriceBDT: e.target.value })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="input-label">Price (USD)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                className="input-field"
-                                                placeholder="$ 500"
-                                                value={formData.basePriceUSD}
-                                                onChange={(e) => setFormData({ ...formData, basePriceUSD: e.target.value })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
-                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Medium Package</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="input-label">Price (BDT)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                className="input-field"
-                                                placeholder="৳ 80,000"
-                                                value={formData.mediumPriceBDT}
-                                                onChange={(e) => setFormData({ ...formData, mediumPriceBDT: e.target.value })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="input-label">Price (USD)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                className="input-field"
-                                                placeholder="$ 800"
-                                                value={formData.mediumPriceUSD}
-                                                onChange={(e) => setFormData({ ...formData, mediumPriceUSD: e.target.value })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-4">
-                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Pro Package</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="input-label">Price (BDT)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                className="input-field"
-                                                placeholder="৳ 120,000"
-                                                value={formData.proPriceBDT}
-                                                onChange={(e) => setFormData({ ...formData, proPriceBDT: e.target.value })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="input-label">Price (USD)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                className="input-field"
-                                                placeholder="$ 1,200"
-                                                value={formData.proPriceUSD}
-                                                onChange={(e) => setFormData({ ...formData, proPriceUSD: e.target.value })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div className="p-8 pt-4 border-t border-white/5 flex gap-4">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setIsModalOpen(false);
-                                    setEditingService(null);
-                                }}
-                                className="btn-outline flex-1"
-                            >
-                                Cancel
-                            </button>
+                        <form id="service-form" onSubmit={handleServiceSubmit} className="p-8 pt-4 space-y-4">
+                            <div>
+                                <label className="input-label">Service Title</label>
+                                <input type="text" required className="input-field" placeholder="e.g. Digital Marketing"
+                                    value={serviceForm.title} onChange={(e) => setServiceForm({ ...serviceForm, title: e.target.value })} />
+                            </div>
+                            <div>
+                                <label className="input-label">Description</label>
+                                <textarea required className="input-field min-h-[100px] py-3" placeholder="Brief description..."
+                                    value={serviceForm.description} onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })} />
+                            </div>
+                            <p className="text-xs text-gray-500 bg-white/5 rounded-lg px-4 py-3">
+                                💡 Pricing tiers (Basic / Plus / Pro) are set individually on each sub-service below.
+                            </p>
+                        </form>
+                        <div className="p-8 pt-0 flex gap-4">
+                            <button type="button" onClick={() => { setIsServiceModalOpen(false); setEditingService(null); }} className="btn-outline flex-1">Cancel</button>
                             <button form="service-form" type="submit" className="btn-brand flex-1">
                                 {editingService ? "Update Service" : "Create Service"}
                             </button>
@@ -443,35 +328,74 @@ export default function AdminServicesPage() {
                 </div>
             )}
 
-            {/* Delete Confirmation Modal */}
+            {/* Sub-service Form Modal */}
+            {subModalFor && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up flex flex-col max-h-[90vh]">
+                        <div className="p-8 pb-4 border-b border-white/5">
+                            <h2 className="text-2xl font-bold">{editingSub ? "Edit Sub-service" : "Add Sub-service"}</h2>
+                            <p className="text-sm text-gray-400 mt-1">Define Basic, Plus, and Pro pricing for this sub-service.</p>
+                        </div>
+                        <div className="p-8 pt-4 overflow-y-auto flex-1 custom-scrollbar">
+                            <form id="sub-form" onSubmit={handleSubSubmit} className="space-y-4">
+                                <div>
+                                    <label className="input-label">Sub-service Title</label>
+                                    <input type="text" required className="input-field" placeholder="e.g. Facebook Marketing"
+                                        value={subForm.title} onChange={(e) => setSubForm({ ...subForm, title: e.target.value })} />
+                                </div>
+                                <div>
+                                    <label className="input-label">Description (optional)</label>
+                                    <input type="text" className="input-field" placeholder="Short description..."
+                                        value={subForm.description} onChange={(e) => setSubForm({ ...subForm, description: e.target.value })} />
+                                </div>
+                                <div>
+                                    <label className="input-label">Image URL (optional)</label>
+                                    <input type="text" className="input-field" placeholder="https://..."
+                                        value={subForm.imageUrl} onChange={(e) => setSubForm({ ...subForm, imageUrl: e.target.value })} />
+                                </div>
+                                {pricingField("Basic Package", "basePriceBDT", "basePriceUSD")}
+                                {pricingField("Plus Package", "mediumPriceBDT", "mediumPriceUSD")}
+                                {pricingField("Pro Package", "proPriceBDT", "proPriceUSD")}
+                            </form>
+                        </div>
+                        <div className="p-8 pt-4 border-t border-white/5 flex gap-4">
+                            <button type="button" onClick={() => { setSubModalFor(null); setEditingSub(null); }} className="btn-outline flex-1">Cancel</button>
+                            <button form="sub-form" type="submit" className="btn-brand flex-1">
+                                {editingSub ? "Update Sub-service" : "Create Sub-service"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Service Confirmation */}
             {deletingService && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
                     <div className="glass-panel w-full max-w-md p-8 rounded-xl animate-fade-in-up border border-red-500/20">
-                        <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-6">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
-
                         <h2 className="text-xl font-bold mb-2">Delete Service?</h2>
-                        <p className="text-gray-400 mb-6 text-sm leading-relaxed">
+                        <p className="text-gray-400 mb-6 text-sm">
                             Are you sure you want to delete <span className="text-white font-semibold">"{deletingService.title}"</span>?
-                            This will also delete all <span className="text-white font-semibold">{deletingService.subCategories.length} sub-categories</span> and may affect portfolio items. This action cannot be undone.
+                            This will also delete all <span className="text-white font-semibold">{deletingService.subCategories.length} sub-services</span>. This action cannot be undone.
                         </p>
-
                         <div className="flex gap-4">
-                            <button
-                                onClick={() => setDeletingService(null)}
-                                className="btn-outline flex-1"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex-1"
-                            >
-                                Delete
-                            </button>
+                            <button onClick={() => setDeletingService(null)} className="btn-outline flex-1">Cancel</button>
+                            <button onClick={handleServiceDelete} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex-1">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Sub-service Confirmation */}
+            {deletingSub && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                    <div className="glass-panel w-full max-w-md p-8 rounded-xl animate-fade-in-up border border-red-500/20">
+                        <h2 className="text-xl font-bold mb-2">Delete Sub-service?</h2>
+                        <p className="text-gray-400 mb-6 text-sm">
+                            Are you sure you want to delete <span className="text-white font-semibold">"{deletingSub.title}"</span>?
+                        </p>
+                        <div className="flex gap-4">
+                            <button onClick={() => setDeletingSub(null)} className="btn-outline flex-1">Cancel</button>
+                            <button onClick={handleSubDelete} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex-1">Delete</button>
                         </div>
                     </div>
                 </div>

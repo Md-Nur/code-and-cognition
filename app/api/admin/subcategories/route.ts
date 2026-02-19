@@ -12,10 +12,10 @@ export const POST = withAuth(async (req) => {
             return ApiResponse.error(JSON.stringify(validation.error.format()));
         }
 
-        const { title, serviceId, description, imageUrl } = body;
+        const { title, serviceId, description, imageUrl, basePriceBDT, basePriceUSD, mediumPriceBDT, mediumPriceUSD, proPriceBDT, proPriceUSD } = validation.data;
 
         const subCategory = await prisma.subCategory.create({
-            data: { title, serviceId, description, imageUrl },
+            data: { title, serviceId, description, imageUrl, basePriceBDT, basePriceUSD, mediumPriceBDT, mediumPriceUSD, proPriceBDT, proPriceUSD },
         });
 
         return ApiResponse.success(subCategory, 201);

@@ -12,6 +12,14 @@ export async function GET() {
                     select: {
                         id: true,
                         title: true,
+                        description: true,
+                        imageUrl: true,
+                        basePriceBDT: true,
+                        basePriceUSD: true,
+                        mediumPriceBDT: true,
+                        mediumPriceUSD: true,
+                        proPriceBDT: true,
+                        proPriceUSD: true,
                     }
                 }
             },

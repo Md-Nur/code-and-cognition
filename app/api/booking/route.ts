@@ -5,7 +5,8 @@ import { z } from "zod";
 const bookingSchema = z.object({
     clientName: z.string().min(1),
     clientEmail: z.string().email(),
-    serviceId: z.string().min(1),
+    serviceId: z.string().min(1),               // the parent Service id
+    subCategoryId: z.string().optional(),        // the chosen sub-service id (optional for backward compat)
     budget: z.number().positive(),
     message: z.string().optional(),
 });
@@ -19,15 +20,17 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: validation.error.format() }, { status: 400 });
         }
 
-        const { clientName, clientEmail, serviceId, budget, message } = validation.data;
+        const { clientName, clientEmail, serviceId, subCategoryId, budget, message } = validation.data;
 
         const booking = await prisma.booking.create({
             data: {
                 clientName,
                 clientEmail,
                 serviceId,
-                budgetBDT: budget, // Mapping form budget (BDT) to database budgetBDT
-                message,
+                budgetBDT: budget,
+                message: subCategoryId
+                    ? `[Sub-service: ${subCategoryId}] ${message ?? ""}`.trim()
+                    : message,
                 status: "PENDING",
             },
         });
