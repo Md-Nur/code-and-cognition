@@ -31,9 +31,13 @@ export default function Navbar({ user }: NavbarProps) {
     }, []);
 
     const navLinks = [
+        { name: "Home", href: "/" },
         { name: "Services", href: "/services" },
-        { name: "Process", href: "/#process" },
         { name: "Portfolio", href: "/portfolio" },
+        { name: "Process", href: "/#process" },
+        { name: "Track My Order", href: "/track-order" },
+        { name: "About Us", href: "/about" },
+        { name: "View Cart 🛒", href: "/cart" },
     ];
 
     if (!mounted) return null;
@@ -60,7 +64,7 @@ export default function Navbar({ user }: NavbarProps) {
                     </span>
                 </Link>
 
-                <div className="hidden md:flex items-center gap-8">
+                <div className="hidden md:flex items-center gap-6">
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}
