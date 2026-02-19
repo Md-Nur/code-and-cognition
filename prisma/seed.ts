@@ -66,11 +66,24 @@ async function main() {
             proPriceUSD: 2500,
             status: Status.ACTIVE,
         },
+        {
+            title: 'Photo Editing & Manipulation',
+            description: 'Professional photo retouching, background removal, and complex image manipulation.',
+            basePriceBDT: 1000,
+            basePriceUSD: 10,
+            mediumPriceBDT: 5000,
+            mediumPriceUSD: 50,
+            proPriceBDT: 15000,
+            proPriceUSD: 150,
+            status: Status.ACTIVE,
+        },
     ]
 
     for (const service of services) {
-        await prisma.service.create({
-            data: service,
+        await prisma.service.upsert({
+            where: { title: service.title },
+            update: service,
+            create: service,
         })
     }
 
