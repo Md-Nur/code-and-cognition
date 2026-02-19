@@ -159,6 +159,7 @@ export default function ServicesGrid({ initialServices }: { initialServices: Ser
     const [services, setServices] = useState<ServiceType[]>(initialServices);
     const [searchQuery, setSearchQuery] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const fetchServices = async (query: string) => {
         setIsLoading(true);
@@ -213,11 +214,38 @@ export default function ServicesGrid({ initialServices }: { initialServices: Ser
             </div>
 
             {services.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {services.map((service) => (
-                        <ServiceCard key={service.id} service={service} />
-                    ))}
-                </div>
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {(searchQuery || isExpanded ? services : services.slice(0, 3)).map((service) => (
+                            <ServiceCard key={service.id} service={service} />
+                        ))}
+                    </div>
+
+                    {!searchQuery && services.length > 3 && (
+                        <div className="mt-16 text-center">
+                            <button
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white/5 border border-white/10 hover:border-agency-accent/50 hover:bg-white/10 transition-all font-bold group"
+                            >
+                                {isExpanded ? (
+                                    <>
+                                        Show Less
+                                        <svg className="w-5 h-5 rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </>
+                                ) : (
+                                    <>
+                                        View All Services
+                                        <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                        </svg>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
+                </>
             ) : (
                 <div className="text-center py-20 bg-white/5 rounded-3xl border border-dashed border-white/10">
                     <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
