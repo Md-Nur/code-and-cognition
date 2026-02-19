@@ -48,7 +48,7 @@ export default function SubCategoryCard({ serviceId, subCategory }: SubCategoryC
                     href={`/services/${serviceId}/${subCategory.id}`}
                     className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold bg-white/5 border border-white/10 hover:bg-agency-accent hover:text-white transition-all"
                 >
-                    View Details
+                    Explore
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>

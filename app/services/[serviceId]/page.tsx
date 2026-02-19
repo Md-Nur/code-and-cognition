@@ -55,17 +55,34 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                         </svg>
                         Back to Services
                     </Link>
-                    <div className="max-w-3xl">
-                        <span className="section-tag mb-4">Service Category</span>
-                        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">{service.title}</h1>
-                        <p className="text-gray-400 text-lg leading-relaxed">
-                            {service.description}
-                        </p>
+
+                    <div className="flex flex-col gap-12">
+                        {/* Image above Heading */}
+                        <div className="w-full max-w-4xl aspect-[21/9] rounded-3xl overflow-hidden glass-panel border border-white/10 shadow-2xl">
+                            {service.thumbnailUrl ? (
+                                <img src={service.thumbnailUrl} alt={service.title} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-white/5 text-gray-800 text-6xl font-bold uppercase tracking-tighter">
+                                    {service.title[0]}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="max-w-3xl">
+                            <span className="section-tag mb-4">Service Category</span>
+                            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">{service.title}</h1>
+                            <p className="text-gray-400 text-lg leading-relaxed mb-8">
+                                {service.description}
+                            </p>
+                            <a href="#solutions" className="btn-brand">
+                                Explore {service.title}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section className="py-24">
+            <section id="solutions" className="py-24">
                 <div className="section-container">
                     <div className="flex items-center justify-between mb-12">
                         <div>
