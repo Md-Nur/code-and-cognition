@@ -7,6 +7,8 @@ type DashboardStats = {
     activeProjects: number;
     pendingBookings: number;
     companyFund: { bdt: number; usd: number };
+    expenses: { bdt: number; usd: number };
+    netProfit: { bdt: number; usd: number };
 };
 
 export default function AdminDashboard() {
@@ -31,22 +33,22 @@ export default function AdminDashboard() {
 
     const statCards = [
         {
-            label: "Total Revenue (BDT)",
+            label: "Total Revenue",
             value: `৳${stats?.revenue.bdt.toLocaleString() || 0}`,
             color: "text-green-400"
         },
         {
-            label: "Active Projects",
-            value: stats?.activeProjects.toString() || "0",
-            color: "text-blue-400"
+            label: "Total Expenses",
+            value: `৳${stats?.expenses.bdt.toLocaleString() || 0}`,
+            color: "text-red-400"
         },
         {
-            label: "Pending Bookings",
-            value: stats?.pendingBookings.toString() || "0",
-            color: "text-yellow-400"
+            label: "Net Profit",
+            value: `৳${stats?.netProfit.bdt.toLocaleString() || 0}`,
+            color: "text-cyan-400"
         },
         {
-            label: "Company Fund (BDT)",
+            label: "Company Fund",
             value: `৳${stats?.companyFund.bdt.toLocaleString() || 0}`,
             color: "text-purple-400"
         },

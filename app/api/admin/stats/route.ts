@@ -8,7 +8,8 @@ export const GET = withAuth(async () => {
             revenue,
             activeProjects,
             pendingBookings,
-            companyFunds
+            companyFunds,
+            totalExpenses
         ] = await Promise.all([
             // Total Revenue
             prisma.payment.aggregate({
@@ -32,18 +33,34 @@ export const GET = withAuth(async () => {
                     amountBDT: true,
                     amountUSD: true,
                 }
+            }),
+            // Total Expenses
+            prisma.expense.aggregate({
+                _sum: {
+                    amountBDT: true,
+                    amountUSD: true,
+                }
             })
         ]);
 
+        const totalRevenueBDT = revenue._sum.amountBDT || 0;
+        const totalExpensesBDT = totalExpenses._sum.amountBDT || 0;
+
         return ApiResponse.success({
             revenue: {
-                bdt: revenue._sum.amountBDT || 0,
+                bdt: totalRevenueBDT,
             },
             activeProjects,
             pendingBookings,
             companyFund: {
                 bdt: companyFunds._sum.amountBDT || 0,
             },
+            expenses: {
+                bdt: totalExpensesBDT,
+            },
+            netProfit: {
+                bdt: totalRevenueBDT - totalExpensesBDT,
+            }
         });
     } catch (error) {
         console.error("Stats API Error:", error);

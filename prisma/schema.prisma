@@ -14,11 +14,11 @@ model User {
   role             Role            @default(CONTRACTOR)
   createdAt        DateTime        @default(now())
   ledgerBalance    LedgerBalance?
+  receivedMessages Message[]       @relation("ReceivedMessages")
+  sentMessages     Message[]       @relation("SentMessages")
+  notifications    Notification[]
   finderProjects   Project[]       @relation("Finder")
   memberProjects   ProjectMember[]
-  sentMessages     Message[]       @relation("SentMessages")
-  receivedMessages Message[]       @relation("ReceivedMessages")
-  notifications    Notification[]
 }
 
 model Message {
@@ -28,8 +28,8 @@ model Message {
   receiverId String
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
   receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
 }
 
 model Notification {
@@ -42,16 +42,6 @@ model Notification {
   isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
   user      User             @relation(fields: [userId], references: [id])
-}
-
-enum NotificationType {
-  BOOKING_NEW
-  BOOKING_STATUS_CHANGE
-  PROJECT_NEW
-  PROJECT_STATUS_CHANGE
-  MESSAGE_NEW
-  PAYMENT_RECEIVED
-  SYSTEM
 }
 
 model Service {
@@ -71,20 +61,20 @@ model SubCategory {
   id                String          @id @default(cuid())
   title             String
   description       String?
-  mediumDescription String?
-  proDescription    String?
-  imageUrl          String?
   serviceId         String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   basePriceBDT      Float           @default(0)
   basePriceUSD      Float           @default(0)
+  imageUrl          String?
   mediumPriceBDT    Float           @default(0)
   mediumPriceUSD    Float           @default(0)
   proPriceBDT       Float           @default(0)
   proPriceUSD       Float           @default(0)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  service           Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  mediumDescription String?
+  proDescription    String?
   portfolioItems    PortfolioItem[]
+  service           Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
 model PortfolioItem {
@@ -94,11 +84,11 @@ model PortfolioItem {
   imageUrl      String?
   projectUrl    String?
   serviceId     String
-  subCategoryId String?
   technologies  String[]
   isFeatured    Boolean      @default(false)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  subCategoryId String?
   service       Service      @relation(fields: [serviceId], references: [id])
   subCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
 }
@@ -173,6 +163,51 @@ model LedgerBalance {
   user     User   @relation(fields: [userId], references: [id])
 }
 
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String?
+  company   String?
+  content   String
+  avatarUrl String?
+  rating    Int      @default(5)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  logoUrl   String
+  website   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  title     String
+  amountBDT Float
+  amountUSD Float?
+  category  String?
+  date      DateTime @default(now())
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum NotificationType {
+  BOOKING_NEW
+  BOOKING_STATUS_CHANGE
+  PROJECT_NEW
+  PROJECT_STATUS_CHANGE
+  MESSAGE_NEW
+  PAYMENT_RECEIVED
+  SYSTEM
+}
+
 enum Role {
   FOUNDER
   CONTRACTOR
@@ -205,27 +240,4 @@ enum SplitType {
   COMPANY_FUND
   FINDER_FEE
   EXECUTION
-}
-
-model Testimonial {
-  id        String   @id @default(cuid())
-  name      String
-  role      String?
-  company   String?
-  content   String
-  avatarUrl String?
-  rating    Int      @default(5)
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Client {
-  id        String   @id @default(cuid())
-  name      String
-  logoUrl   String
-  website   String?
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
