@@ -24,11 +24,13 @@ async function main() {
     const servicesData = [
         {
             title: 'Digital Marketing',
+            slug: 'digital-marketing',
             description: 'Data-driven marketing strategies to grow your brand presence and drive measurable results across all digital channels.',
             status: Status.ACTIVE,
             subCategories: [
                 {
                     title: 'Facebook Marketing',
+                    slug: 'facebook-marketing',
                     description: 'Targeted Facebook ad campaigns to grow your audience and generate leads.',
                     basePriceBDT: 8000, basePriceUSD: 80,
                     mediumPriceBDT: 20000, mediumPriceUSD: 200,
@@ -36,6 +38,7 @@ async function main() {
                 },
                 {
                     title: 'Instagram Marketing',
+                    slug: 'instagram-marketing',
                     description: 'Engaging Instagram content and ad strategies to build brand awareness.',
                     basePriceBDT: 8000, basePriceUSD: 80,
                     mediumPriceBDT: 20000, mediumPriceUSD: 200,
@@ -43,6 +46,7 @@ async function main() {
                 },
                 {
                     title: 'YouTube Marketing',
+                    slug: 'youtube-marketing',
                     description: 'Video marketing and channel growth strategies for YouTube.',
                     basePriceBDT: 12000, basePriceUSD: 120,
                     mediumPriceBDT: 30000, mediumPriceUSD: 300,
@@ -52,11 +56,13 @@ async function main() {
         },
         {
             title: 'Advanced SEO',
+            slug: 'advanced-seo',
             description: 'Comprehensive SEO strategies to boost your search rankings and drive organic traffic.',
             status: Status.ACTIVE,
             subCategories: [
                 {
                     title: 'On-Page SEO',
+                    slug: 'on-page-seo',
                     description: 'Optimize your website content and structure for better search rankings.',
                     basePriceBDT: 10000, basePriceUSD: 100,
                     mediumPriceBDT: 25000, mediumPriceUSD: 250,
@@ -64,6 +70,7 @@ async function main() {
                 },
                 {
                     title: 'Off-Page SEO',
+                    slug: 'off-page-seo',
                     description: 'Link building and authority development to strengthen domain ranking.',
                     basePriceBDT: 15000, basePriceUSD: 150,
                     mediumPriceBDT: 35000, mediumPriceUSD: 350,
@@ -71,6 +78,7 @@ async function main() {
                 },
                 {
                     title: 'Technical SEO',
+                    slug: 'technical-seo',
                     description: 'Site speed, crawlability, and structured data optimization.',
                     basePriceBDT: 20000, basePriceUSD: 200,
                     mediumPriceBDT: 50000, mediumPriceUSD: 500,
@@ -80,11 +88,13 @@ async function main() {
         },
         {
             title: 'Web Application Development',
+            slug: 'web-application-development',
             description: 'Full-stack web applications built with Next.js and Node.js.',
             status: Status.ACTIVE,
             subCategories: [
                 {
                     title: 'Landing Page',
+                    slug: 'landing-page',
                     description: 'High-converting landing pages with modern design.',
                     basePriceBDT: 15000, basePriceUSD: 150,
                     mediumPriceBDT: 35000, mediumPriceUSD: 350,
@@ -92,6 +102,7 @@ async function main() {
                 },
                 {
                     title: 'Full Web Application',
+                    slug: 'full-web-application',
                     description: 'Complete web applications with authentication, dashboard, and APIs.',
                     basePriceBDT: 50000, basePriceUSD: 500,
                     mediumPriceBDT: 150000, mediumPriceUSD: 1500,
@@ -99,6 +110,7 @@ async function main() {
                 },
                 {
                     title: 'E-Commerce Platform',
+                    slug: 'e-commerce-platform',
                     description: 'Online stores with payment integration, inventory management, and analytics.',
                     basePriceBDT: 80000, basePriceUSD: 800,
                     mediumPriceBDT: 200000, mediumPriceUSD: 2000,
@@ -108,11 +120,13 @@ async function main() {
         },
         {
             title: 'UI/UX Design',
+            slug: 'ui-ux-design',
             description: 'Modern, user-centric interface design and prototyping.',
             status: Status.ACTIVE,
             subCategories: [
                 {
                     title: 'Wireframing',
+                    slug: 'wireframing',
                     description: 'Low-fidelity wireframes to map out user flows and layouts.',
                     basePriceBDT: 10000, basePriceUSD: 100,
                     mediumPriceBDT: 25000, mediumPriceUSD: 250,
@@ -120,6 +134,7 @@ async function main() {
                 },
                 {
                     title: 'UI Design',
+                    slug: 'ui-design',
                     description: 'High-fidelity UI designs with a complete design system.',
                     basePriceBDT: 30000, basePriceUSD: 300,
                     mediumPriceBDT: 80000, mediumPriceUSD: 800,
@@ -129,11 +144,13 @@ async function main() {
         },
         {
             title: 'Photo Editing & Manipulation',
+            slug: 'photo-editing-and-manipulation',
             description: 'Professional photo retouching, background removal, and complex image manipulation.',
             status: Status.ACTIVE,
             subCategories: [
                 {
                     title: 'Background Removal',
+                    slug: 'background-removal',
                     description: 'Clean, precise background removal for product and portrait photography.',
                     basePriceBDT: 500, basePriceUSD: 5,
                     mediumPriceBDT: 2000, mediumPriceUSD: 20,
@@ -141,6 +158,7 @@ async function main() {
                 },
                 {
                     title: 'Photo Retouching',
+                    slug: 'photo-retouching',
                     description: 'Skin retouching, color grading, and professional photo enhancement.',
                     basePriceBDT: 1000, basePriceUSD: 10,
                     mediumPriceBDT: 5000, mediumPriceUSD: 50,
@@ -148,6 +166,7 @@ async function main() {
                 },
                 {
                     title: 'Photo Manipulation',
+                    slug: 'photo-manipulation',
                     description: 'Complex compositing and creative photo manipulation.',
                     basePriceBDT: 3000, basePriceUSD: 30,
                     mediumPriceBDT: 10000, mediumPriceUSD: 100,
@@ -161,7 +180,11 @@ async function main() {
         const { subCategories, ...serviceFields } = serviceData
         const service = await prisma.service.upsert({
             where: { title: serviceFields.title },
-            update: { description: serviceFields.description, status: serviceFields.status },
+            update: {
+                slug: serviceFields.slug,
+                description: serviceFields.description,
+                status: serviceFields.status
+            },
             create: serviceFields,
         })
 
