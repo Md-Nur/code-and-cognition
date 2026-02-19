@@ -41,21 +41,21 @@ export default function Navbar({ user }: NavbarProps) {
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMenuOpen
-                ? "bg-agency-black/95 backdrop-blur-md border-b border-white/10 py-4"
-                : "bg-transparent py-6"
+                ? "bg-agency-black/95 backdrop-blur-md border-b border-white/10 py-3 sm:py-4"
+                : "bg-transparent py-4 sm:py-6"
                 }`}
         >
             <div className="section-container flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <Image
                         src="/Main-Logo.png"
                         alt="Code & Cognition Logo"
                         width={40}
                         height={40}
-                        className="w-auto h-8"
+                        className="w-auto h-7 sm:h-8"
                         priority
                     />
-                    <span className="text-xl font-display font-bold tracking-tight">
+                    <span className="text-lg sm:text-xl font-display font-bold tracking-tight whitespace-nowrap">
                         Code<span className="text-agency-accent">&</span>Cognition
                     </span>
                 </Link>
@@ -80,7 +80,7 @@ export default function Navbar({ user }: NavbarProps) {
                     )}
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                     <Link href="/#contact" className="hidden md:inline-flex btn-brand text-sm">
                         Start a Project
                     </Link>
