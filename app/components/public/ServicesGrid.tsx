@@ -113,7 +113,7 @@ function ServiceCard({ service }: { service: ServiceType }) {
             {/* Previous Work Showcase */}
             {service.portfolioItems && service.portfolioItems.length > 0 && (
                 <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/5">
-                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-agency-accent mb-4 px-1">Previous Work</h4>
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-agency-accent mb-4 px-1">Portfolio Showcase</h4>
                     <div className="grid grid-cols-3 gap-2">
                         {service.portfolioItems.map((item) => (
                             <div key={item.id} className="aspect-square rounded-lg bg-white/10 overflow-hidden relative group/item">

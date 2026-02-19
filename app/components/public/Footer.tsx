@@ -101,21 +101,18 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="font-bold mb-6">Services</h4>
+                        <h4 className="font-bold mb-6">Explore</h4>
                         <ul className="space-y-4">
-                            <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Web Development</Link></li>
-                            <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">UI/UX Design</Link></li>
-                            <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Mobile Apps</Link></li>
-                            <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Photo Editing</Link></li>
+                            <li><Link href="/portfolio" className="text-gray-400 hover:text-white transition-colors">Portfolio</Link></li>
+                            <li><Link href="/#services" className="text-gray-400 hover:text-white transition-colors">All Services</Link></li>
+                            <li><Link href="/#process" className="text-gray-400 hover:text-white transition-colors">Our Process</Link></li>
+                            <li><Link href="/#contact" className="text-gray-400 hover:text-white transition-colors">Start a Project</Link></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className="font-bold mb-6">Company</h4>
+                        <h4 className="font-bold mb-6">Account</h4>
                         <ul className="space-y-4">
-                            <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
-                            <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Our Process</Link></li>
-                            <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Careers</Link></li>
                             <li><Link href="/login" className="text-gray-400 hover:text-white transition-colors">Admin Login</Link></li>
                         </ul>
                     </div>

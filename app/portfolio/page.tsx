@@ -5,7 +5,7 @@ import ProjectList from "../components/public/ProjectList";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Projects | Code & Cognition",
+    title: "Portfolio | Code & Cognition",
     description: "Explore our portfolio of digital products built for ambitious brands worldwide.",
 };
 

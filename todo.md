@@ -1,5 +1,3 @@
-You can add a chat with whatsapp or other social media option so that client can easily chat with us
-
 When I tries to add a portfolio, there ask for image url, but there is no option to upload image and in the select services there is no option to select sub-services
 
 if any user is admin, then show an admin button instead of login button

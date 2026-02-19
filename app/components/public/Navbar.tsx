@@ -23,8 +23,7 @@ export default function Navbar() {
     const navLinks = [
         { name: "Services", href: "/#services" },
         { name: "Process", href: "/#process" },
-        { name: "Work", href: "/#work" },
-        { name: "Projects", href: "/projects" },
+        { name: "Portfolio", href: "/portfolio" },
     ];
 
     if (!mounted) return null;

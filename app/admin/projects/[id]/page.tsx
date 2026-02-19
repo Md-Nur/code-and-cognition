@@ -71,6 +71,21 @@ export default function AdminProjectDetailsPage() {
         } catch (e) { console.error(e); }
     }
 
+    async function handleStatusChange(newStatus: string) {
+        if (!confirm(`Change project status to ${newStatus}?`)) return;
+        try {
+            const res = await fetch(`/api/admin/projects/${project?.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus }),
+            });
+            if (res.ok) {
+                const updated = await fetch(`/api/admin/projects/${project?.id}`).then(r => r.json());
+                setProject(updated);
+            }
+        } catch (e) { console.error(e); }
+    }
+
     if (loading) return <div className="p-8 text-center text-gray-500">Loading project details...</div>;
     if (!project) return <div className="p-8 text-center text-red-500">Project not found.</div>;
 
@@ -90,7 +105,17 @@ export default function AdminProjectDetailsPage() {
                     </div>
                     <p className="text-gray-400 text-sm">Created on {new Date(project.createdAt).toLocaleDateString()}</p>
                 </div>
-                <button className="btn-outline">Edit Project</button>
+                <div className="flex gap-2">
+                    {project.status === "ACTIVE" && (
+                        <button
+                            onClick={() => handleStatusChange("COMPLETED")}
+                            className="btn-brand"
+                        >
+                            Mark as Completed
+                        </button>
+                    )}
+                    <button className="btn-outline">Edit Project</button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

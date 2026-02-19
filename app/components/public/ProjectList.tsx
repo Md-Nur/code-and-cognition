@@ -35,8 +35,8 @@ export default function ProjectList({
     return (
         <div className="section-container mb-20">
             <div className="max-w-3xl mb-12">
-                <span className="section-tag mb-4">Our Work</span>
-                <h1 className="text-5xl font-bold tracking-tight mb-6">Selected Projects</h1>
+                <span className="section-tag mb-4">Portfolio</span>
+                <h1 className="text-5xl font-bold tracking-tight mb-6">Selected Works</h1>
                 <p className="text-xl text-gray-400">
                     A showcase of digital products we've built for ambitious brands across the globe.
                 </p>
@@ -51,7 +51,7 @@ export default function ProjectList({
                         : "border-white/10 text-gray-400 hover:border-white/30"
                         }`}
                 >
-                    All Projects
+                    All Works
                 </button>
                 {services.map(service => (
                     <button
