@@ -95,4 +95,5 @@ This is a standard feature in enterprise project management (like Jira or Asana)
 
 Since you have `amountBDT` and `amountUSD` as optional fields in `LedgerEntry`, make sure your logic checks the `currency` type from the `Payment` first.
 
-> **Important Logic Note:** When calculating the splits, always perform the math on the currency the client actually paid in. Do not try to convert it in the ledger, or you will lose money on exchange rate fluctuations. Keep BDT and USD balances completely separate for the founders and members.
+
+commented the prisma schema file so that it can be understand what is do in the frontedn side by reading the file

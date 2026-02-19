@@ -16,10 +16,22 @@ interface NavbarProps {
 }
 
 export default function Navbar({ user }: NavbarProps) {
+    const [unreadMessages, setUnreadMessages] = useState(0);
+    const [mounted, setMounted] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [mounted, setMounted] = useState(false);
-    const pathname = usePathname();
+
+    const fetchUnreadCount = async () => {
+        try {
+            const res = await fetch("/api/messages/unread-count");
+            if (res.ok) {
+                const data = await res.json();
+                setUnreadMessages(data.count);
+            }
+        } catch (error) {
+            console.error("Failed to fetch unread count:", error);
+        }
+    };
 
     useEffect(() => {
         setMounted(true);
@@ -27,8 +39,18 @@ export default function Navbar({ user }: NavbarProps) {
             setIsScrolled(window.scrollY > 10);
         };
         window.addEventListener("scroll", handleScroll);
+
+        if (user) {
+            fetchUnreadCount();
+            const interval = setInterval(fetchUnreadCount, 30000);
+            return () => {
+                window.removeEventListener("scroll", handleScroll);
+                clearInterval(interval);
+            };
+        }
+
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [user]);
 
     const navLinks = [
         { name: "Services", href: "/services" },
@@ -73,9 +95,26 @@ export default function Navbar({ user }: NavbarProps) {
                     {user && (
                         <Link
                             href="/messages"
-                            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                            className="relative p-2 text-gray-400 hover:text-white transition-all group"
                         >
-                            <span title="Messages">💬</span>
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="group-hover:scale-110 transition-transform"
+                            >
+                                <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
+                            </svg>
+                            {unreadMessages > 0 && (
+                                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white ring-2 ring-agency-black animate-pulse">
+                                    {unreadMessages}
+                                </span>
+                            )}
                         </Link>
                     )}
                 </div>
@@ -137,9 +176,26 @@ export default function Navbar({ user }: NavbarProps) {
                             <Link
                                 href="/messages"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="text-3xl font-bold tracking-tight hover:text-agency-accent transition-colors"
+                                className="text-3xl font-bold tracking-tight hover:text-agency-accent transition-all flex items-center gap-3"
                             >
-                                <span title="Messages" className="text-4xl">💬</span>
+                                <svg
+                                    width="28"
+                                    height="28"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
+                                </svg>
+                                <span>Messages</span>
+                                {unreadMessages > 0 && (
+                                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-agency-accent text-xs font-bold text-white">
+                                        {unreadMessages}
+                                    </span>
+                                )}
                             </Link>
                         )}
                     </div>
