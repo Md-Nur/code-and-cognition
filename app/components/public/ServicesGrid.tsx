@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { debounce } from "lodash";
+
 
 type SubCategory = {
     id: string;
@@ -144,15 +146,85 @@ function ServiceCard({ service }: { service: ServiceType }) {
 }
 
 export default function ServicesGrid({ initialServices }: { initialServices: ServiceType[] }) {
-    const [services] = useState<ServiceType[]>(initialServices);
+    const [services, setServices] = useState<ServiceType[]>(initialServices);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const fetchServices = async (query: string) => {
+        setIsLoading(true);
+        try {
+            const res = await fetch(`/api/services?q=${encodeURIComponent(query)}`);
+            if (res.ok) {
+                const data = await res.json();
+                setServices(data);
+            }
+        } catch (error) {
+            console.error("Error fetching services:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Debounced search logic
+    const debouncedFetch = useCallback(
+        debounce((query: string) => fetchServices(query), 500),
+        []
+    );
+
+    useEffect(() => {
+        if (searchQuery) {
+            debouncedFetch(searchQuery);
+        } else {
+            setServices(initialServices);
+        }
+    }, [searchQuery, initialServices, debouncedFetch]);
 
     return (
         <section id="services" className="section-container pt-12 pb-24">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {services.map((service) => (
-                    <ServiceCard key={service.id} service={service} />
-                ))}
+            {/* Search Bar */}
+            <div className="max-w-xl mx-auto mb-16 relative group">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                    <svg className={`w-5 h-5 transition-colors ${isLoading ? "text-agency-accent animate-pulse" : "text-gray-500 group-focus-within:text-agency-accent"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input
+                    type="text"
+                    placeholder="Search for services or sub-services (e.g. SEO, Social Media...)"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-agency-accent/50 focus:bg-white/10 transition-all placeholder:text-gray-600 font-medium"
+                />
+                {isLoading && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        <div className="w-5 h-5 border-2 border-agency-accent/30 border-t-agency-accent rounded-full animate-spin"></div>
+                    </div>
+                )}
             </div>
+
+            {services.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {services.map((service) => (
+                        <ServiceCard key={service.id} service={service} />
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-20 bg-white/5 rounded-3xl border border-dashed border-white/10">
+                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">No results found</h3>
+                    <p className="text-gray-500">We couldn't find any services matching "{searchQuery}"</p>
+                    <button
+                        onClick={() => setSearchQuery("")}
+                        className="mt-6 text-agency-accent font-bold hover:underline"
+                    >
+                        Clear search
+                    </button>
+                </div>
+            )}
         </section>
     );
 }
