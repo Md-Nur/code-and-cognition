@@ -23,6 +23,14 @@ export default async function Home() {
           id: true,
           title: true,
         }
+      },
+      portfolioItems: {
+        select: {
+          id: true,
+          title: true,
+          imageUrl: true,
+        },
+        take: 3,
       }
     },
     orderBy: { createdAt: "asc" },

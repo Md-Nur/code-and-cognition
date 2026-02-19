@@ -52,14 +52,14 @@ export default function AdminUsersPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold">User Management</h1>
-                <button onClick={() => setShowModal(true)} className="btn-brand">
+                <button onClick={() => setShowModal(true)} className="btn-brand w-full sm:w-auto">
                     + Invite User
                 </button>
             </div>
 
-            <div className="glass-panel overflow-hidden rounded-xl">
+            <div className="glass-panel overflow-hidden rounded-xl table-container">
                 <table className="data-table">
                     <thead>
                         <tr>

@@ -51,4 +51,5 @@ export const serviceSchema = z.object({
 export const subcategorySchema = z.object({
     title: z.string().min(1),
     serviceId: z.string().min(1),
+    imageUrl: z.string().optional().nullable(),
 });

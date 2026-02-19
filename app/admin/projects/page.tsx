@@ -31,14 +31,14 @@ export default function AdminProjectsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold">Projects Management</h1>
-                <Link href="/admin/projects/new" className="btn-brand">
+                <Link href="/admin/projects/new" className="btn-brand w-full sm:w-auto text-center">
                     + New Project
                 </Link>
             </div>
 
-            <div className="glass-panel overflow-hidden rounded-xl">
+            <div className="glass-panel overflow-hidden rounded-xl table-container">
                 <table className="data-table">
                     <thead>
                         <tr>
@@ -66,8 +66,8 @@ export default function AdminProjectsPage() {
                                 <td className="p-4">{project.finder?.name || "Unknown"}</td>
                                 <td className="p-4">
                                     <span className={`text-xs px-2 py-1 rounded border ${project.status === "ACTIVE" ? "border-blue-500/30 text-blue-400 bg-blue-500/10" :
-                                            project.status === "COMPLETED" ? "border-green-500/30 text-green-400 bg-green-500/10" :
-                                                "border-gray-500/30 text-gray-400 bg-gray-500/10"
+                                        project.status === "COMPLETED" ? "border-green-500/30 text-green-400 bg-green-500/10" :
+                                            "border-gray-500/30 text-gray-400 bg-gray-500/10"
                                         }`}>
                                         {project.status}
                                     </span>

@@ -10,6 +10,7 @@ export default function AdminServicesPage() {
     const [loading, setLoading] = useState(true);
     const [addingSubTo, setAddingSubTo] = useState<string | null>(null);
     const [newSubTitle, setNewSubTitle] = useState("");
+    const [newSubImageUrl, setNewSubImageUrl] = useState("");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<ServiceWithSubs | null>(null);
@@ -141,10 +142,11 @@ export default function AdminServicesPage() {
             const res = await fetch("/api/admin/subcategories", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: newSubTitle, serviceId }),
+                body: JSON.stringify({ title: newSubTitle, serviceId, imageUrl: newSubImageUrl }),
             });
             if (res.ok) {
                 setNewSubTitle("");
+                setNewSubImageUrl("");
                 setAddingSubTo(null);
                 fetchServices();
             }
@@ -165,20 +167,20 @@ export default function AdminServicesPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold font-display">Services Management</h1>
                 <button
                     onClick={() => {
                         setEditingService(null);
                         setIsModalOpen(true);
                     }}
-                    className="btn-brand"
+                    className="btn-brand w-full sm:w-auto"
                 >
                     + Add New Service
                 </button>
             </div>
 
-            <div className="glass-panel overflow-hidden rounded-xl border border-white/5">
+            <div className="glass-panel overflow-hidden rounded-xl border border-white/5 table-container">
                 <table className="data-table">
                     <thead>
                         <tr>
@@ -198,26 +200,37 @@ export default function AdminServicesPage() {
                                     <div className="flex flex-wrap gap-2 items-center">
                                         {service.subCategories.map(sub => (
                                             <span key={sub.id} className="text-[10px] uppercase font-bold py-1 px-2 rounded bg-white/5 border border-white/10 flex items-center gap-2 group/sub">
+                                                {sub.imageUrl && (
+                                                    <img src={sub.imageUrl} alt="" className="w-4 h-4 rounded object-cover" />
+                                                )}
                                                 {sub.title}
                                                 <button
                                                     onClick={() => deleteSubCategory(sub.id)}
-                                                    className="text-red-500 opacity-0 group-hover/sub:opacity-100 hover:text-red-400 transition-opacity"
+                                                    className="text-red-500 lg:opacity-0 lg:group-hover/sub:opacity-100 hover:text-red-400 transition-opacity"
                                                 >
                                                     ×
                                                 </button>
                                             </span>
                                         ))}
                                         {addingSubTo === service.id ? (
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-col gap-2 p-2 border border-white/10 rounded bg-white/5 mt-2 w-full max-w-[200px]">
                                                 <input
                                                     autoFocus
-                                                    className="text-[10px] bg-agency-black border border-agency-accent/50 rounded px-2 py-1 outline-none w-32"
+                                                    placeholder="Title"
+                                                    className="text-[10px] bg-agency-black border border-white/10 rounded px-2 py-1 outline-none"
                                                     value={newSubTitle}
                                                     onChange={(e) => setNewSubTitle(e.target.value)}
-                                                    onKeyDown={(e) => e.key === "Enter" && addSubCategory(service.id)}
                                                 />
-                                                <button onClick={() => addSubCategory(service.id)} className="text-green-500 text-xs">✓</button>
-                                                <button onClick={() => setAddingSubTo(null)} className="text-gray-500 text-xs">×</button>
+                                                <input
+                                                    placeholder="Image URL"
+                                                    className="text-[10px] bg-agency-black border border-white/10 rounded px-2 py-1 outline-none"
+                                                    value={newSubImageUrl}
+                                                    onChange={(e) => setNewSubImageUrl(e.target.value)}
+                                                />
+                                                <div className="flex justify-end gap-2">
+                                                    <button onClick={() => addSubCategory(service.id)} className="text-green-500 text-[10px] font-bold">SAVE</button>
+                                                    <button onClick={() => setAddingSubTo(null)} className="text-gray-500 text-[10px] font-bold">CANCEL</button>
+                                                </div>
                                             </div>
                                         ) : (
                                             <button
@@ -266,7 +279,7 @@ export default function AdminServicesPage() {
                                     </button>
                                 </td>
                                 <td className="text-right p-4">
-                                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex justify-end gap-3 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                         <button
                                             onClick={() => {
                                                 setEditingService(service);

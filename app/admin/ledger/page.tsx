@@ -69,7 +69,7 @@ export default function AdminLedgerPage() {
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         🏛️ Company Fund History
                     </h2>
-                    <div className="glass-panel overflow-hidden rounded-xl">
+                    <div className="glass-panel overflow-hidden rounded-xl table-container">
                         <table className="data-table">
                             <thead>
                                 <tr>
@@ -100,7 +100,7 @@ export default function AdminLedgerPage() {
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         👥 Contractor Balances
                     </h2>
-                    <div className="glass-panel overflow-hidden rounded-xl">
+                    <div className="glass-panel overflow-hidden rounded-xl table-container">
                         <table className="data-table">
                             <thead>
                                 <tr>
