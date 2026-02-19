@@ -32,34 +32,37 @@ model Service {
 }
 
 model SubCategory {
-  id             String   @id @default(cuid())
+  id             String          @id @default(cuid())
   title          String
   description    String?
   imageUrl       String?
   serviceId      String
-  basePriceBDT   Float    @default(0)
-  basePriceUSD   Float    @default(0)
-  mediumPriceBDT Float    @default(0)
-  mediumPriceUSD Float    @default(0)
-  proPriceBDT    Float    @default(0)
-  proPriceUSD    Float    @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  service        Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  basePriceBDT   Float           @default(0)
+  basePriceUSD   Float           @default(0)
+  mediumPriceBDT Float           @default(0)
+  mediumPriceUSD Float           @default(0)
+  proPriceBDT    Float           @default(0)
+  proPriceUSD    Float           @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  service        Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  portfolioItems PortfolioItem[]
 }
 
 model PortfolioItem {
-  id           String   @id @default(cuid())
-  title        String
-  description  String
-  imageUrl     String?
-  projectUrl   String?
-  serviceId    String
-  technologies String[]
-  isFeatured   Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  service      Service  @relation(fields: [serviceId], references: [id])
+  id            String       @id @default(cuid())
+  title         String
+  description   String
+  imageUrl      String?
+  projectUrl    String?
+  serviceId     String
+  subCategoryId String?
+  technologies  String[]
+  isFeatured    Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  service       Service      @relation(fields: [serviceId], references: [id])
+  subCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
 }
 
 model Booking {

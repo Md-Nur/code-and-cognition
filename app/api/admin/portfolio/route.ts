@@ -4,7 +4,10 @@ import { Role } from "@prisma/client";
 
 export const GET = withAuth(async () => {
     const items = await prisma.portfolioItem.findMany({
-        include: { service: { select: { title: true } } },
+        include: {
+            service: { select: { title: true } },
+            subCategory: { select: { title: true } }
+        },
         orderBy: { createdAt: "desc" },
     });
     return ApiResponse.success(items);
@@ -14,7 +17,10 @@ export const POST = withAuth(async (req) => {
     try {
         const body = await req.json();
         const item = await prisma.portfolioItem.create({
-            data: body,
+            data: {
+                ...body,
+                technologies: Array.isArray(body.technologies) ? body.technologies : []
+            },
         });
         return ApiResponse.success(item, 201);
     } catch (error) {
