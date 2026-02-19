@@ -83,7 +83,7 @@ export default function ProjectList({
                                     {project.title.charAt(0)}
                                 </div>
                             )}
-                            <div className="absolute inset-0 bg-agency-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div className="absolute inset-0 bg-agency-black/60 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 {project.projectUrl && (
                                     <a
                                         href={project.projectUrl}

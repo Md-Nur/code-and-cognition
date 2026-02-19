@@ -274,7 +274,7 @@ export default function AdminServicesPage() {
                                                         <div className="text-[10px] text-gray-500">${sub.proPriceUSD}</div>
                                                     </td>
                                                     <td className="py-3 text-right">
-                                                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <div className="flex justify-end gap-3 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                                             <button
                                                                 onClick={() => { setEditingSub(sub); setSubModalFor(service.id); }}
                                                                 className="text-xs font-bold text-gray-400 hover:text-white uppercase"
