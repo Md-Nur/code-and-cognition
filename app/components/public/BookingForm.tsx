@@ -93,7 +93,7 @@ export default function BookingForm() {
                     <h2 className="text-4xl font-bold tracking-tight">Let's Build Something Amazing</h2>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="glass-panel p-8 md:p-12 rounded-2xl relative overflow-hidden">
+                <form onSubmit={handleSubmit(onSubmit)} className="glass-panel p-6 md:p-12 rounded-2xl relative overflow-hidden">
                     {/* Progress Bar */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-white/5">
                         <div className="h-full bg-agency-accent transition-all duration-500" style={{ width: `${(step / 3) * 100}%` }} />

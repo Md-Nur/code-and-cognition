@@ -50,7 +50,7 @@ export default async function ServicesHub() {
             <section className="pt-32 pb-12 bg-gradient-to-b from-agency-accent/10 to-transparent">
                 <div className="section-container text-center">
                     <span className="section-tag mb-4">Our Expertise</span>
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">Our <span className="text-agency-accent">Services</span> Hub</h1>
+                    <h1 className="text-4xl md:text-7xl font-bold tracking-tight mb-6">Our <span className="text-agency-accent">Services</span> Hub</h1>
                     <p className="text-gray-400 max-w-2xl mx-auto text-lg">
                         We provide end-to-end digital solutions designed to help your business thrive in the modern landscape.
                     </p>

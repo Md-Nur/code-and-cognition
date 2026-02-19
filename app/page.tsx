@@ -55,9 +55,9 @@ export default async function Home() {
       {/* Process Section */}
       <section id="process" className="section-container py-20 border-t border-white/5">
         <div className="text-center mb-16">
-          <span className="section-tag mb-4">How We Work Together</span>
-          <h2 className="text-4xl font-bold tracking-tight">The Partnership Process</h2>
-          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">We don't just build features; we build solutions that drive measurable growth and long-term value for your business.</p>
+          <span className="section-tag mb-4">Our Methodology</span>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Our Working Process</h2>
+          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">We follow a proven approach to ensure your project's success, from initial idea to final launch and beyond.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

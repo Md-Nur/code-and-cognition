@@ -1,5 +1,3 @@
-And make everything from the homepage to the end responsive, the service page is not responsive.
-
 in all the image url input like Edit Sub-service modal make upload image option using imgbb
 
 Let's say Digital Marketing & Advanced SEO will be a service category, then this name will be written in the heading, Digital Marketing & Advanced SEO description will be added, and above all, I will add a relevant picture related to this. And under this division, it will be written in the button Explore, if you click here, all the services included in Digital Marketing & Advanced SEO, such as Facebook marketing, Instagram marketing, Twitter marketing, Pinterest Marketing will be added.

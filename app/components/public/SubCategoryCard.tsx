@@ -14,7 +14,7 @@ interface SubCategoryCardProps {
 
 export default function SubCategoryCard({ serviceId, subCategory }: SubCategoryCardProps) {
     return (
-        <div className="glass-panel p-6 rounded-2xl flex flex-col h-full group hover:border-agency-accent/50 transition-all border border-white/5">
+        <div className="glass-panel p-5 sm:p-6 rounded-2xl flex flex-col h-full group hover:border-agency-accent/50 transition-all border border-white/5">
             {/* Thumbnail */}
             <div className="mb-6 overflow-hidden rounded-xl bg-white/5 aspect-video relative">
                 {subCategory.imageUrl ? (

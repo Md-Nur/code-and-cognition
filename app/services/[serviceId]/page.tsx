@@ -57,7 +57,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                     </Link>
                     <div className="max-w-3xl">
                         <span className="section-tag mb-4">Service Category</span>
-                        <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">{service.title}</h1>
+                        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">{service.title}</h1>
                         <p className="text-gray-400 text-lg leading-relaxed">
                             {service.description}
                         </p>

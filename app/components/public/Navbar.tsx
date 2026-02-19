@@ -117,7 +117,7 @@ export default function Navbar({ user }: NavbarProps) {
                                 key={link.name}
                                 href={link.href}
                                 onClick={() => setIsMenuOpen(false)}
-                                className="text-4xl font-bold tracking-tight hover:text-agency-accent transition-colors"
+                                className="text-3xl font-bold tracking-tight hover:text-agency-accent transition-colors"
                             >
                                 {link.name}
                             </Link>

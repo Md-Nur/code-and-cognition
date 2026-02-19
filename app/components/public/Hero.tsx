@@ -19,16 +19,16 @@ export default function Hero() {
             </div>
 
             <div className="section-container relative z-10 w-full">
-                <div className="max-w-4xl pt-20 mx-auto text-center"> {/* Added mx-auto text-center to center content */}
-                    <span className="inline-block px-4 py-2 rounded-full bg-agency-accent/10 text-agency-accent text-sm font-semibold mb-6 animate-fade-in">
-                        Partnering for Digital Excellence
+                <div className="max-w-4xl pt-10 md:pt-20 mx-auto text-center"> {/* Reduced pt on mobile */}
+                    <span className="inline-block px-4 py-2 rounded-full bg-agency-accent/10 text-agency-accent text-xs sm:text-sm font-semibold mb-6 animate-fade-in">
+                        Your Digital Growth Agency
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
-                        Transforming Ideas into <br />
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
+                        Transforming Ideas into <br className="hidden sm:block" />
                         <span className="text-agency-accent">Impactful Digital Products</span>
                     </h1>
-                    <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed"> {/* Added mx-auto to center paragraph */}
-                        We partner with ambitious brands to design and build high-performance web applications,
+                    <p className="text-base md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                        We help ambitious brands to design and build high-performance web applications,
                         seamless UI/UX experiences, and scalable solutions that drive real business results.
                     </p>
 

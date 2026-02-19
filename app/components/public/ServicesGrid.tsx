@@ -40,7 +40,7 @@ function ServiceCard({ service }: { service: ServiceType }) {
     const [activeTier, setActiveTier] = useState<"basic" | "plus" | "pro">("basic");
 
     return (
-        <div className="glass-panel p-8 rounded-2xl flex flex-col h-full group hover:border-agency-accent/50 transition-all">
+        <div className="glass-panel p-6 sm:p-8 rounded-2xl flex flex-col h-full group hover:border-agency-accent/50 transition-all">
             {/* Thumbnail */}
             <div className="mb-6 overflow-hidden rounded-xl bg-white/5 aspect-video relative">
                 {service.thumbnailUrl ? (
@@ -59,15 +59,15 @@ function ServiceCard({ service }: { service: ServiceType }) {
             <h3 className="text-2xl font-bold mb-2">{service.title}</h3>
             <p className="text-gray-400 mb-6 text-sm line-clamp-2">{service.description}</p>
 
-            {/* Sub-service tabs */}
+            {/* Sub-service tabs (Scrollable on mobile) */}
             {service.subCategories.length > 0 && (
                 <>
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="flex flex-nowrap sm:flex-wrap gap-2 mb-4 overflow-x-auto pb-2 sm:pb-0 custom-scrollbar">
                         {service.subCategories.map((sub) => (
                             <button
                                 key={sub.id}
                                 onClick={() => setActiveSub(sub)}
-                                className={`text-[11px] px-3 py-1.5 rounded-full border font-semibold uppercase tracking-wider transition-all ${activeSub?.id === sub.id
+                                className={`text-[10px] sm:text-[11px] px-3 py-1.5 rounded-full border font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${activeSub?.id === sub.id
                                     ? "border-agency-accent bg-agency-accent/10 text-agency-accent"
                                     : "border-white/10 bg-white/5 text-gray-400 hover:border-white/20"
                                     }`}
@@ -88,7 +88,7 @@ function ServiceCard({ service }: { service: ServiceType }) {
                                     <button
                                         key={tier.key}
                                         onClick={() => setActiveTier(tier.key)}
-                                        className={`flex-1 text-[11px] font-bold uppercase py-1.5 rounded-md transition-all ${activeTier === tier.key
+                                        className={`flex-1 text-[10px] sm:text-[11px] font-bold uppercase py-1.5 rounded-md transition-all ${activeTier === tier.key
                                             ? "bg-white/10 text-white"
                                             : "text-gray-500 hover:text-gray-300"
                                             }`}
@@ -117,7 +117,7 @@ function ServiceCard({ service }: { service: ServiceType }) {
             {service.portfolioItems && service.portfolioItems.length > 0 && (
                 <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/5">
                     <h4 className="text-[10px] uppercase font-bold tracking-widest text-agency-accent mb-4 px-1">Portfolio Showcase</h4>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-3 xs:grid-cols-3 gap-2">
                         {service.portfolioItems.map((item) => (
                             <div key={item.id} className="aspect-square rounded-lg bg-white/10 overflow-hidden relative group/item">
                                 {item.imageUrl ? (
