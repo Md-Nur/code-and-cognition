@@ -94,6 +94,6 @@ This is a standard feature in enterprise project management (like Jira or Asana)
 ### 4. Handling Dual Currency in Ledgers
 
 Since you have `amountBDT` and `amountUSD` as optional fields in `LedgerEntry`, make sure your logic checks the `currency` type from the `Payment` first.
-
+----
 
 commented the prisma schema file so that it can be understand what is do in the frontedn side by reading the file
