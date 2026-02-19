@@ -16,10 +16,16 @@ export default async function ServicesHub() {
     const session = await auth();
     const services = await prisma.service.findMany({
         where: { status: "ACTIVE" },
-        include: {
+        select: {
+            id: true,
+            slug: true,
+            title: true,
+            description: true,
+            thumbnailUrl: true,
             subCategories: {
                 select: {
                     id: true,
+                    slug: true,
                     title: true,
                     description: true,
                     imageUrl: true,

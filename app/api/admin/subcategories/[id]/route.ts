@@ -35,6 +35,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             where: { id },
             data: {
                 title: body.title,
+                slug: body.slug,
                 description: body.description,
                 imageUrl: body.imageUrl,
                 basePriceBDT: body.basePriceBDT ?? 0,

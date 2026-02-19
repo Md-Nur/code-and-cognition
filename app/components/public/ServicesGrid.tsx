@@ -7,6 +7,7 @@ import Link from "next/link";
 
 type SubCategory = {
     id: string;
+    slug: string;
     title: string;
     description?: string | null;
     imageUrl?: string | null;
@@ -20,6 +21,7 @@ type SubCategory = {
 
 type ServiceType = {
     id: string;
+    slug: string;
     title: string;
     description: string;
     thumbnailUrl?: string | null;
@@ -133,7 +135,7 @@ function ServiceCard({ service }: { service: ServiceType }) {
 
             <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-3">
                 <Link
-                    href={`/services/${service.id}`}
+                    href={`/services/${service.slug}`}
                     className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold border border-white/10 hover:border-agency-accent/50 hover:bg-white/5 transition-all"
                 >
                     Explore Services

@@ -75,10 +75,16 @@ export async function GET(request: Request) {
 
         const services = await prisma.service.findMany({
             where,
-            include: {
+            select: {
+                id: true,
+                slug: true,
+                title: true,
+                description: true,
+                thumbnailUrl: true,
                 subCategories: {
                     select: {
                         id: true,
+                        slug: true,
                         title: true,
                         description: true,
                         imageUrl: true,

@@ -9,13 +9,13 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 interface PageProps {
-    params: Promise<{ serviceId: string; subCategoryId: string }>;
+    params: Promise<{ serviceSlug: string; subCategorySlug: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { subCategoryId } = await params;
+    const { subCategorySlug } = await params;
     const sub = await prisma.subCategory.findUnique({
-        where: { id: subCategoryId },
+        where: { slug: subCategorySlug },
     });
 
     if (!sub) return { title: "Service Not Found" };
@@ -27,11 +27,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function SubCategoryDetailPage({ params }: PageProps) {
-    const { serviceId, subCategoryId } = await params;
+    const { serviceSlug, subCategorySlug } = await params;
     const session = await auth();
 
     const subCategory = await prisma.subCategory.findUnique({
-        where: { id: subCategoryId },
+        where: { slug: subCategorySlug },
         include: {
             service: true,
             portfolioItems: {
@@ -41,7 +41,7 @@ export default async function SubCategoryDetailPage({ params }: PageProps) {
         },
     });
 
-    if (!subCategory || subCategory.serviceId !== serviceId) notFound();
+    if (!subCategory || subCategory.service.slug !== serviceSlug) notFound();
 
     const TIERS = [
         {
@@ -87,7 +87,7 @@ export default async function SubCategoryDetailPage({ params }: PageProps) {
                     <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8 overflow-x-auto whitespace-nowrap pb-2 scrollbar-none">
                         <Link href="/services" className="hover:text-agency-accent transition-colors">Services</Link>
                         <span>/</span>
-                        <Link href={`/services/${serviceId}`} className="hover:text-agency-accent transition-colors">{subCategory.service.title}</Link>
+                        <Link href={`/services/${serviceSlug}`} className="hover:text-agency-accent transition-colors">{subCategory.service.title}</Link>
                         <span>/</span>
                         <span className="text-white font-medium">{subCategory.title}</span>
                     </nav>

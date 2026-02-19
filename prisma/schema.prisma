@@ -47,6 +47,7 @@ model Notification {
 model Service {
   id             String          @id @default(cuid())
   title          String          @unique
+  slug           String          @unique
   description    String
   status         Status          @default(ACTIVE)
   thumbnailUrl   String?
@@ -60,6 +61,7 @@ model Service {
 model SubCategory {
   id                String          @id @default(cuid())
   title             String
+  slug              String          @unique
   description       String?
   serviceId         String
   createdAt         DateTime        @default(now())

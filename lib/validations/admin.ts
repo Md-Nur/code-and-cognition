@@ -38,6 +38,7 @@ export const projectSchema = z.object({
 
 export const serviceSchema = z.object({
     title: z.string().min(1),
+    slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
     description: z.string().min(1),
     thumbnailUrl: z.string().optional().nullable(),
     status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
@@ -45,6 +46,7 @@ export const serviceSchema = z.object({
 
 export const subcategorySchema = z.object({
     title: z.string().min(1),
+    slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
     serviceId: z.string().min(1),
     description: z.string().optional().nullable(),
     imageUrl: z.string().optional().nullable(),

@@ -9,6 +9,7 @@ type ServiceWithSubs = Service & { subCategories: SubCategoryWithPricing[] };
 
 const emptySubForm = {
     title: "",
+    slug: "",
     description: "",
     imageUrl: "",
     basePriceBDT: "",
@@ -19,6 +20,13 @@ const emptySubForm = {
     proPriceUSD: "",
 };
 
+function slugify(text: string) {
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+}
+
 export default function AdminServicesPage() {
     const [services, setServices] = useState<ServiceWithSubs[]>([]);
     const [loading, setLoading] = useState(true);
@@ -27,7 +35,7 @@ export default function AdminServicesPage() {
     const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<ServiceWithSubs | null>(null);
     const [deletingService, setDeletingService] = useState<ServiceWithSubs | null>(null);
-    const [serviceForm, setServiceForm] = useState({ title: "", description: "", thumbnailUrl: "" });
+    const [serviceForm, setServiceForm] = useState({ title: "", slug: "", description: "", thumbnailUrl: "" });
 
     // Sub-category CRUD
     const [subModalFor, setSubModalFor] = useState<string | null>(null); // serviceId
@@ -41,9 +49,14 @@ export default function AdminServicesPage() {
 
     useEffect(() => {
         if (editingService) {
-            setServiceForm({ title: editingService.title, description: editingService.description, thumbnailUrl: editingService.thumbnailUrl ?? "" });
+            setServiceForm({
+                title: editingService.title,
+                slug: editingService.slug,
+                description: editingService.description,
+                thumbnailUrl: editingService.thumbnailUrl ?? ""
+            });
         } else {
-            setServiceForm({ title: "", description: "", thumbnailUrl: "" });
+            setServiceForm({ title: "", slug: "", description: "", thumbnailUrl: "" });
         }
     }, [editingService, isServiceModalOpen]);
 
@@ -51,6 +64,7 @@ export default function AdminServicesPage() {
         if (editingSub) {
             setSubForm({
                 title: editingSub.title,
+                slug: editingSub.slug,
                 description: editingSub.description ?? "",
                 imageUrl: editingSub.imageUrl ?? "",
                 basePriceBDT: editingSub.basePriceBDT.toString(),
@@ -306,10 +320,26 @@ export default function AdminServicesPage() {
                             <h2 className="text-2xl font-bold">{editingService ? "Edit Service" : "Add New Service"}</h2>
                         </div>
                         <form id="service-form" onSubmit={handleServiceSubmit} className="p-8 pt-4 space-y-4">
-                            <div>
-                                <label className="input-label">Service Title</label>
-                                <input type="text" required className="input-field" placeholder="e.g. Digital Marketing"
-                                    value={serviceForm.title} onChange={(e) => setServiceForm({ ...serviceForm, title: e.target.value })} />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="input-label">Service Title</label>
+                                    <input type="text" required className="input-field" placeholder="e.g. Digital Marketing"
+                                        value={serviceForm.title}
+                                        onChange={(e) => {
+                                            const newTitle = e.target.value;
+                                            setServiceForm(prev => ({
+                                                ...prev,
+                                                title: newTitle,
+                                                slug: editingService ? prev.slug : slugify(newTitle)
+                                            }));
+                                        }} />
+                                </div>
+                                <div>
+                                    <label className="input-label">Slug</label>
+                                    <input type="text" required className="input-field" placeholder="e.g. digital-marketing"
+                                        value={serviceForm.slug}
+                                        onChange={(e) => setServiceForm({ ...serviceForm, slug: slugify(e.target.value) })} />
+                                </div>
                             </div>
                             <div>
                                 <label className="input-label">Description</label>
@@ -346,10 +376,26 @@ export default function AdminServicesPage() {
                         </div>
                         <div className="p-8 pt-4 overflow-y-auto flex-1 custom-scrollbar">
                             <form id="sub-form" onSubmit={handleSubSubmit} className="space-y-4">
-                                <div>
-                                    <label className="input-label">Sub-service Title</label>
-                                    <input type="text" required className="input-field" placeholder="e.g. Facebook Marketing"
-                                        value={subForm.title} onChange={(e) => setSubForm({ ...subForm, title: e.target.value })} />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="input-label">Sub-service Title</label>
+                                        <input type="text" required className="input-field" placeholder="e.g. Facebook Marketing"
+                                            value={subForm.title}
+                                            onChange={(e) => {
+                                                const newTitle = e.target.value;
+                                                setSubForm(prev => ({
+                                                    ...prev,
+                                                    title: newTitle,
+                                                    slug: editingSub ? prev.slug : slugify(newTitle)
+                                                }));
+                                            }} />
+                                    </div>
+                                    <div>
+                                        <label className="input-label">Slug</label>
+                                        <input type="text" required className="input-field" placeholder="e.g. facebook-marketing"
+                                            value={subForm.slug}
+                                            onChange={(e) => setSubForm({ ...subForm, slug: slugify(e.target.value) })} />
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="input-label">Description (optional)</label>

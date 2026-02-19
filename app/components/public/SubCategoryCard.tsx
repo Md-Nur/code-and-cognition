@@ -1,9 +1,10 @@
 import Link from "next/link";
 
 interface SubCategoryCardProps {
-    serviceId: string;
+    serviceSlug: string;
     subCategory: {
         id: string;
+        slug: string;
         title: string;
         description: string | null;
         imageUrl: string | null;
@@ -12,7 +13,7 @@ interface SubCategoryCardProps {
     };
 }
 
-export default function SubCategoryCard({ serviceId, subCategory }: SubCategoryCardProps) {
+export default function SubCategoryCard({ serviceSlug, subCategory }: SubCategoryCardProps) {
     return (
         <div className="glass-panel p-5 sm:p-6 rounded-2xl flex flex-col h-full group hover:border-agency-accent/50 transition-all border border-white/5">
             {/* Thumbnail */}
@@ -45,7 +46,7 @@ export default function SubCategoryCard({ serviceId, subCategory }: SubCategoryC
                 </div>
 
                 <Link
-                    href={`/services/${serviceId}/${subCategory.id}`}
+                    href={`/services/${serviceSlug}/${subCategory.slug}`}
                     className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold bg-white/5 border border-white/10 hover:bg-agency-accent hover:text-white transition-all"
                 >
                     Explore

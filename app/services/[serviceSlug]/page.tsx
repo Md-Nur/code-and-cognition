@@ -8,13 +8,13 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 interface PageProps {
-    params: Promise<{ serviceId: string }>;
+    params: Promise<{ serviceSlug: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { serviceId } = await params;
+    const { serviceSlug } = await params;
     const service = await prisma.service.findUnique({
-        where: { id: serviceId },
+        where: { slug: serviceSlug },
     });
 
     if (!service) return { title: "Service Not Found" };
@@ -26,11 +26,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ServiceDetailPage({ params }: PageProps) {
-    const { serviceId } = await params;
+    const { serviceSlug } = await params;
     const session = await auth();
 
     const service = await prisma.service.findUnique({
-        where: { id: serviceId },
+        where: { slug: serviceSlug },
         include: {
             subCategories: {
                 orderBy: { title: "asc" },
@@ -96,7 +96,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                             {service.subCategories.map((sub) => (
                                 <SubCategoryCard
                                     key={sub.id}
-                                    serviceId={service.id}
+                                    serviceSlug={service.slug}
                                     subCategory={sub as any}
                                 />
                             ))}
