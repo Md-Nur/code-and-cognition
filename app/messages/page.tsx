@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import MessageClient from "./MessageClient";
+import MessageClient from "@/app/messages/MessageClient";
 
 export default async function MessagesPage() {
     const session = await auth();

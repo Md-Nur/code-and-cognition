@@ -110,34 +110,45 @@ export default function NotificationBell() {
                             notifications.map((notification) => (
                                 <div
                                     key={notification.id}
-                                    className={`p-4 transition-colors hover:bg-white/5 ${!notification.isRead ? "bg-white/[0.02]" : ""
+                                    className={`p-4 transition-colors hover:bg-white/5 cursor-pointer border-l-2 ${!notification.isRead ? "bg-white/[0.02] border-agency-accent" : "border-transparent opacity-70"
                                         }`}
                                     onClick={() => markAsRead(notification.id)}
                                 >
-                                    <div className="flex justify-between items-start mb-1">
-                                        <p className="text-sm font-medium text-gray-200">
-                                            {notification.title}
-                                        </p>
-                                        <span className="text-[10px] text-gray-500">
-                                            {new Date(notification.createdAt).toLocaleDateString()}
+                                    <div className="flex justify-between items-start mb-1 gap-2">
+                                        <div className="flex-1">
+                                            <p className="text-sm font-semibold text-gray-200">
+                                                {notification.title}
+                                            </p>
+                                            <p className="text-xs text-gray-400 line-clamp-2 mt-0.5">
+                                                {notification.message}
+                                            </p>
+                                        </div>
+                                        <span className="text-[10px] text-gray-500 whitespace-nowrap pt-1">
+                                            {new Date(notification.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-gray-400 line-clamp-2">
-                                        {notification.message}
-                                    </p>
-                                    {notification.link && (
-                                        <Link
-                                            href={notification.link}
-                                            className="mt-2 inline-block text-[10px] text-agency-accent hover:underline font-bold uppercase tracking-widest"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setIsOpen(false);
-                                                markAsRead(notification.id);
-                                            }}
-                                        >
-                                            View Details
-                                        </Link>
-                                    )}
+                                    <div className="flex items-center justify-between mt-2">
+                                        <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest ${notification.type === 'MESSAGE_NEW' ? 'bg-blue-500/20 text-blue-400' :
+                                                notification.type === 'BOOKING_NEW' ? 'bg-green-500/20 text-green-400' :
+                                                    notification.type === 'PROJECT_STATUS_CHANGE' ? 'bg-purple-500/20 text-purple-400' :
+                                                        'bg-gray-500/20 text-gray-400'
+                                            }`}>
+                                            {notification.type.replace('_', ' ')}
+                                        </span>
+                                        {notification.link && (
+                                            <Link
+                                                href={notification.link}
+                                                className="text-[10px] text-agency-accent hover:underline font-bold uppercase tracking-widest"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setIsOpen(false);
+                                                    markAsRead(notification.id);
+                                                }}
+                                            >
+                                                View
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
                             ))
                         )}

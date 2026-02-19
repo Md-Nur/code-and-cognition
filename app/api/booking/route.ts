@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { createNotification } from "@/lib/notifications";
 
 const bookingSchema = z.object({
     clientName: z.string().min(1),
@@ -41,14 +42,12 @@ export async function POST(req: Request) {
         });
 
         for (const founder of founders) {
-            await prisma.notification.create({
-                data: {
-                    userId: founder.id,
-                    title: "New Booking Request",
-                    message: `${clientName} has requested a new booking.`,
-                    type: "BOOKING_NEW",
-                    link: `/admin/bookings`, // Link to admin bookings page
-                },
+            await createNotification({
+                userId: founder.id,
+                title: "New Booking Request",
+                message: `${clientName} has requested a new booking.`,
+                type: "BOOKING_NEW",
+                link: `/admin/bookings`,
             });
         }
 

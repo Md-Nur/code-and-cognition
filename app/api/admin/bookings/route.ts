@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
+import { createNotification } from "@/lib/notifications";
 import { bookingUpdateSchema, bookingCreateSchema } from "@/lib/validations/admin";
 
 export const GET = withAuth(async () => {
@@ -43,6 +44,22 @@ export const PATCH = withAuth(async (req) => {
             where: { id },
             data: { status },
         });
+
+        // Notify client if they have a user account
+        const clientUser = await prisma.user.findUnique({
+            where: { email: booking.clientEmail }
+        });
+
+        if (clientUser) {
+            await createNotification({
+                userId: clientUser.id,
+                title: "Booking Status Updated",
+                message: `Your booking status for "${booking.id}" has been updated to ${status}.`,
+                type: "BOOKING_STATUS_CHANGE",
+                link: `/services`, // Or a specific booking view if it exists
+            });
+        }
+
         return ApiResponse.success(booking);
     } catch (error) {
         return ApiResponse.error("Internal Server Error", 500);

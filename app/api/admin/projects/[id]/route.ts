@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
+import { createNotification } from "@/lib/notifications";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const session = await auth();
@@ -74,12 +75,39 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
                     data: {
                         title: project.title,
                         description: project.booking?.message || "Successfully completed project.",
-                        serviceId: project.booking?.serviceId || "unassigned", // Need to handle if booking doesn't exist
+                        serviceId: project.booking?.serviceId || "unassigned",
                         technologies: [],
                         isFeatured: false,
-                        // projectUrl and imageUrl would be added manually later in portfolio management
                     }
                 });
+
+                // Notify members and founders about completion
+                const members = await prisma.projectMember.findMany({
+                    where: { projectId: id },
+                    include: { user: true }
+                });
+
+                const founders = await prisma.user.findMany({
+                    where: { role: "FOUNDER" }
+                });
+
+                const notifyUsers = [
+                    ...members.map(m => m.user),
+                    ...founders
+                ];
+
+                // Deduplicate by ID
+                const uniqueUsers = Array.from(new Map(notifyUsers.map(u => [u.id, u])).values());
+
+                for (const user of uniqueUsers) {
+                    await createNotification({
+                        userId: user.id,
+                        title: "Project Completed",
+                        message: `Project "${project.title}" has been marked as completed.`,
+                        type: "PROJECT_STATUS_CHANGE",
+                        link: `/admin/projects/${id}`,
+                    });
+                }
             }
         }
 
