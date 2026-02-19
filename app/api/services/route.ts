@@ -11,20 +11,66 @@ export async function GET(request: Request) {
         const where: any = { status: "ACTIVE" };
 
         if (query) {
+            const aliasMap: { [key: string]: string } = {
+                "web dev": "Web Application Development",
+                "web development": "Web Application Development",
+                "seo": "Search Engine Optimization",
+                "smm": "Social Media Marketing",
+                "fb": "Facebook",
+                "insta": "Instagram",
+                "ui/ux": "User Interface & User Experience",
+                "graphics": "Graphic Design",
+            };
+
+            const lowercaseQuery = query.toLowerCase();
+            const expandedTerms = [query];
+
+            // Check for direct alias matches
+            for (const [alias, fullTerm] of Object.entries(aliasMap)) {
+                if (lowercaseQuery.includes(alias)) {
+                    expandedTerms.push(fullTerm);
+                }
+            }
+
+            // Split into significant words (2+ chars)
+            const words = query.split(/\s+/).filter(w => w.length >= 2);
+
             where.OR = [
-                { title: { contains: query, mode: "insensitive" } },
-                { description: { contains: query, mode: "insensitive" } },
+                ...expandedTerms.map(term => ({ title: { contains: term, mode: "insensitive" } })),
+                ...expandedTerms.map(term => ({ description: { contains: term, mode: "insensitive" } })),
                 {
                     subCategories: {
                         some: {
                             OR: [
-                                { title: { contains: query, mode: "insensitive" } },
-                                { description: { contains: query, mode: "insensitive" } },
+                                ...expandedTerms.map(term => ({ title: { contains: term, mode: "insensitive" } })),
+                                ...expandedTerms.map(term => ({ description: { contains: term, mode: "insensitive" } })),
                             ],
                         },
                     },
                 },
             ];
+
+            // If multiple words, add an AND condition requiring ALL words to be present somewhere
+            if (words.length > 1) {
+                where.OR.push({
+                    AND: words.map(word => ({
+                        OR: [
+                            { title: { contains: word, mode: "insensitive" } },
+                            { description: { contains: word, mode: "insensitive" } },
+                            {
+                                subCategories: {
+                                    some: {
+                                        OR: [
+                                            { title: { contains: word, mode: "insensitive" } },
+                                            { description: { contains: word, mode: "insensitive" } },
+                                        ],
+                                    },
+                                },
+                            },
+                        ]
+                    }))
+                });
+            }
         }
 
         const services = await prisma.service.findMany({
