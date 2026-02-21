@@ -1,5 +1,3 @@
-Big agencies like Accenture, TCS, or even high-end boutique agencies use Client Portals to bridge the gap between "working on a project" and "making the client feel secure. I also make my website like them (Professional Client Experience (CX))
-
 ### 1. Implementing the 20/10/70 Logic
 
 In your schema, the `Payment` model is the trigger. When a payment is recorded, you need a function in your backend to create the `LedgerEntry` records.
@@ -86,3 +84,5 @@ Since you have `amountBDT` and `amountUSD` as optional fields in `LedgerEntry`, 
 ----
 
 commented the prisma schema file so that it can be understand what is do in the frontedn side by reading the file
+
+Add or Edit Description of subservice should have an editor like the service description which shown in the subservice page
