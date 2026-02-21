@@ -1,59 +1,7 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-type DashboardStats = {
-  revenue: { bdt: number; usd: number };
-  activeProjects: number;
-  pendingBookings: number;
-  companyFund: { bdt: number; usd: number };
-  expenses: { bdt: number; usd: number };
-  netProfit: { bdt: number; usd: number };
-};
+import { Suspense } from "react";
+import { ExecutiveOverview } from "@/app/components/admin/ExecutiveOverview";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        const res = await fetch("/api/admin/stats");
-        if (res.ok) {
-          setStats(await res.json());
-        }
-      } catch (error) {
-        console.error("Failed to fetch dashboard stats", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchStats();
-  }, []);
-
-  const statCards = [
-    {
-      label: "Total Revenue",
-      value: `৳${stats?.revenue.bdt.toLocaleString() || 0}`,
-      color: "text-green-400",
-    },
-    {
-      label: "Total Expenses",
-      value: `৳${stats?.expenses.bdt.toLocaleString() || 0}`,
-      color: "text-red-400",
-    },
-    {
-      label: "Net Profit",
-      value: `৳${stats?.netProfit.bdt.toLocaleString() || 0}`,
-      color: "text-cyan-400",
-    },
-    {
-      label: "Company Fund",
-      value: `৳${stats?.companyFund.bdt.toLocaleString() || 0}`,
-      color: "text-purple-400",
-    },
-  ];
-
   return (
     <div className="space-y-8 animate-fade-in-up">
       <div className="flex items-center justify-between">
@@ -73,35 +21,9 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {loading
-          ? Array(4)
-              .fill(0)
-              .map((_, i) => (
-                <div
-                  key={i}
-                  className="glass-panel p-6 rounded-xl animate-pulse"
-                >
-                  <div className="h-4 w-24 bg-white/5 rounded mb-4" />
-                  <div className="h-8 w-32 bg-white/10 rounded" />
-                </div>
-              ))
-          : statCards.map((stat, i) => (
-              <div
-                key={i}
-                className="glass-panel p-6 rounded-xl hover:border-white/20 transition-colors"
-              >
-                <h3 className="text-sm font-medium text-gray-500 mb-2">
-                  {stat.label}
-                </h3>
-                <div className="flex items-end justify-between">
-                  <div className={`text-3xl font-bold ${stat.color}`}>
-                    {stat.value}
-                  </div>
-                </div>
-              </div>
-            ))}
-      </div>
+      <Suspense fallback={<DashboardSkeleton />}>
+        <ExecutiveOverview />
+      </Suspense>
 
       {/* Charts Placeholder */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -114,6 +36,27 @@ export default function AdminDashboard() {
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+      {Array(6)
+        .fill(0)
+        .map((_, i) => (
+          <div
+            key={i}
+            className="glass-panel p-6 rounded-xl animate-pulse flex flex-col justify-between h-[120px]"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <div className="h-4 w-24 bg-white/5 rounded" />
+              <div className="h-8 w-8 bg-white/5 rounded-lg" />
+            </div>
+            <div className="h-8 w-32 bg-white/10 rounded" />
+          </div>
+        ))}
     </div>
   );
 }
