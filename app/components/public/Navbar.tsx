@@ -62,7 +62,7 @@ export default function Navbar({ user }: NavbarProps) {
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMenuOpen
+            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isScrolled || isMenuOpen
                 ? "bg-agency-black/95 backdrop-blur-md border-b border-white/10 py-3 sm:py-4"
                 : "bg-transparent py-4 sm:py-6"
                 }`}
@@ -157,7 +157,7 @@ export default function Navbar({ user }: NavbarProps) {
 
             {/* Mobile Menu Overlay */}
             <div
-                className={`fixed inset-0 bg-agency-black z-40 transition-transform duration-500 md:hidden ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+                className={`fixed inset-0 bg-agency-black z-[90] transition-transform duration-500 md:hidden ${isMenuOpen ? "translate-x-0" : "translate-x-full"
                     }`}
             >
                 <div className="flex flex-col h-full pt-28 pb-12 px-6 gap-8 overflow-y-auto">

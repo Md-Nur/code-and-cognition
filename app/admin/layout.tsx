@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -29,8 +30,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="min-h-screen bg-agency-black flex">
             {/* Mobile Header */}
             <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-agency-gray/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 z-50">
-                <Link href="/admin" className="text-xl font-display font-bold tracking-tight">
-                    Code<span className="text-agency-accent">&</span>Cognition
+                <Link href="/admin" className="flex items-center gap-2 shrink-0">
+                    <Image
+                        src="/Main-Logo.png"
+                        alt="Code & Cognition Logo"
+                        width={32}
+                        height={32}
+                        className="w-auto h-7"
+                        priority
+                    />
+                    <span className="text-xl font-display font-bold tracking-tight whitespace-nowrap">
+                        Code<span className="text-agency-accent">&</span>Cognition
+                    </span>
                 </Link>
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -53,11 +64,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <aside className={`fixed top-0 left-0 w-64 h-full bg-agency-gray/50 border-r border-white/5 p-6 flex flex-col z-[60] lg:z-40 transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                 }`}>
                 <div className="hidden lg:block">
-                    <Link href="/admin" className="text-xl font-display font-bold tracking-tight mb-10 block">
-                        Code<span className="text-agency-accent">&</span>Cognition
+                    <Link href="/admin" className="flex items-center gap-2 mb-10 shrink-0">
+                        <Image
+                            src="/Main-Logo.png"
+                            alt="Code & Cognition Logo"
+                            width={32}
+                            height={32}
+                            className="w-auto h-7"
+                            priority
+                        />
+                        <span className="text-xl font-display font-bold tracking-tight whitespace-nowrap">
+                            Code<span className="text-agency-accent">&</span>Cognition
+                        </span>
                     </Link>
                 </div>
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Management</span>
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4 mt-2">Management</span>
 
                 <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
                     {navItems.map((item) => {

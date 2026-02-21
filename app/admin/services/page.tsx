@@ -172,7 +172,7 @@ export default function AdminServicesPage() {
     const pricingField = (label: string, bdtKey: keyof typeof subForm, usdKey: keyof typeof subForm) => (
         <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-3">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</h4>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                     <label className="input-label">Price (BDT)</label>
                     <input type="number" min="0" className="input-field" placeholder="৳" value={subForm[bdtKey]}
@@ -210,7 +210,7 @@ export default function AdminServicesPage() {
                                 <div className="font-bold text-lg">{service.title}</div>
                                 <div className="text-sm text-gray-400 mt-1">{service.description}</div>
                             </div>
-                            <div className="flex items-center gap-3 shrink-0">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
                                 <button
                                     onClick={() => toggleStatus(service)}
                                     className={`text-xs px-2 py-1 rounded border transition-colors ${service.status === "ACTIVE"
@@ -256,11 +256,11 @@ export default function AdminServicesPage() {
                                     <table className="w-full text-sm">
                                         <thead>
                                             <tr className="border-b border-white/5">
-                                                <th className="text-left py-2 pr-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Sub-service</th>
-                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Basic</th>
-                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Plus</th>
-                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Pro</th>
-                                                <th className="text-right py-2 text-[10px] uppercase text-gray-500 font-bold tracking-wide">Actions</th>
+                                                <th className="text-left py-2 pr-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide whitespace-nowrap">Sub-service</th>
+                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide whitespace-nowrap">Basic</th>
+                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide whitespace-nowrap">Plus</th>
+                                                <th className="text-right py-2 px-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide whitespace-nowrap">Pro</th>
+                                                <th className="text-right py-2 text-[10px] uppercase text-gray-500 font-bold tracking-wide whitespace-nowrap">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -277,15 +277,15 @@ export default function AdminServicesPage() {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="py-3 px-4 text-right">
+                                                    <td className="py-3 px-4 text-right whitespace-nowrap">
                                                         <div className="font-medium">৳{sub.basePriceBDT.toLocaleString()}</div>
                                                         <div className="text-[10px] text-gray-500">${sub.basePriceUSD}</div>
                                                     </td>
-                                                    <td className="py-3 px-4 text-right">
+                                                    <td className="py-3 px-4 text-right whitespace-nowrap">
                                                         <div className="font-medium">৳{sub.mediumPriceBDT.toLocaleString()}</div>
                                                         <div className="text-[10px] text-gray-500">${sub.mediumPriceUSD}</div>
                                                     </td>
-                                                    <td className="py-3 px-4 text-right">
+                                                    <td className="py-3 px-4 text-right whitespace-nowrap">
                                                         <div className="font-medium">৳{sub.proPriceBDT.toLocaleString()}</div>
                                                         <div className="text-[10px] text-gray-500">${sub.proPriceUSD}</div>
                                                     </td>
@@ -316,11 +316,11 @@ export default function AdminServicesPage() {
             {isServiceModalOpen && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up">
-                        <div className="p-8 pb-4 border-b border-white/5">
-                            <h2 className="text-2xl font-bold">{editingService ? "Edit Service" : "Add New Service"}</h2>
+                        <div className="p-4 sm:p-8 pb-4 border-b border-white/5">
+                            <h2 className="text-xl sm:text-2xl font-bold">{editingService ? "Edit Service" : "Add New Service"}</h2>
                         </div>
-                        <form id="service-form" onSubmit={handleServiceSubmit} className="p-8 pt-4 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                        <form id="service-form" onSubmit={handleServiceSubmit} className="p-4 sm:p-8 pt-4 space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="input-label">Service Title</label>
                                     <input type="text" required className="input-field" placeholder="e.g. Digital Marketing"
@@ -356,10 +356,10 @@ export default function AdminServicesPage() {
                                 💡 Pricing tiers (Basic / Plus / Pro) are set individually on each sub-service below.
                             </p>
                         </form>
-                        <div className="p-8 pt-0 flex gap-4">
+                        <div className="p-4 sm:p-8 pt-0 flex gap-4">
                             <button type="button" onClick={() => { setIsServiceModalOpen(false); setEditingService(null); }} className="btn-outline flex-1">Cancel</button>
                             <button form="service-form" type="submit" className="btn-brand flex-1">
-                                {editingService ? "Update Service" : "Create Service"}
+                                {editingService ? "Update" : "Create"}
                             </button>
                         </div>
                     </div>
@@ -370,13 +370,13 @@ export default function AdminServicesPage() {
             {subModalFor && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up flex flex-col max-h-[90vh]">
-                        <div className="p-8 pb-4 border-b border-white/5">
-                            <h2 className="text-2xl font-bold">{editingSub ? "Edit Sub-service" : "Add Sub-service"}</h2>
-                            <p className="text-sm text-gray-400 mt-1">Define Basic, Plus, and Pro pricing for this sub-service.</p>
+                        <div className="p-4 sm:p-8 pb-4 border-b border-white/5">
+                            <h2 className="text-xl sm:text-2xl font-bold">{editingSub ? "Edit Sub-service" : "Add Sub-service"}</h2>
+                            <p className="text-xs sm:text-sm text-gray-400 mt-1">Define Basic, Plus, and Pro pricing for this sub-service.</p>
                         </div>
-                        <div className="p-8 pt-4 overflow-y-auto flex-1 custom-scrollbar">
+                        <div className="p-4 sm:p-8 pt-4 overflow-y-auto flex-1 custom-scrollbar">
                             <form id="sub-form" onSubmit={handleSubSubmit} className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label className="input-label">Sub-service Title</label>
                                         <input type="text" required className="input-field" placeholder="e.g. Facebook Marketing"
@@ -413,10 +413,10 @@ export default function AdminServicesPage() {
                                 {pricingField("Pro Package", "proPriceBDT", "proPriceUSD")}
                             </form>
                         </div>
-                        <div className="p-8 pt-4 border-t border-white/5 flex gap-4">
+                        <div className="p-4 sm:p-8 pt-4 border-t border-white/5 flex gap-4">
                             <button type="button" onClick={() => { setSubModalFor(null); setEditingSub(null); }} className="btn-outline flex-1">Cancel</button>
                             <button form="sub-form" type="submit" className="btn-brand flex-1">
-                                {editingSub ? "Update Sub-service" : "Create Sub-service"}
+                                {editingSub ? "Update" : "Create"}
                             </button>
                         </div>
                     </div>
@@ -432,7 +432,7 @@ export default function AdminServicesPage() {
                             Are you sure you want to delete <span className="text-white font-semibold">"{deletingService.title}"</span>?
                             This will also delete all <span className="text-white font-semibold">{deletingService.subCategories.length} sub-services</span>. This action cannot be undone.
                         </p>
-                        <div className="flex gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4">
                             <button onClick={() => setDeletingService(null)} className="btn-outline flex-1">Cancel</button>
                             <button onClick={handleServiceDelete} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex-1">Delete</button>
                         </div>
@@ -448,7 +448,7 @@ export default function AdminServicesPage() {
                         <p className="text-gray-400 mb-6 text-sm">
                             Are you sure you want to delete <span className="text-white font-semibold">"{deletingSub.title}"</span>?
                         </p>
-                        <div className="flex gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4">
                             <button onClick={() => setDeletingSub(null)} className="btn-outline flex-1">Cancel</button>
                             <button onClick={handleSubDelete} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex-1">Delete</button>
                         </div>
