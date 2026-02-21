@@ -19,7 +19,7 @@ export default function HeroSection() {
                         AI-Driven Digital Excellence
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.05] mb-8 animate-slide-up">
+                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-8 animate-slide-up">
                         Structured Digital Execution for <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/40">Growth-Focused</span> Companies
                     </h1>
 

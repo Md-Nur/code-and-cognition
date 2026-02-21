@@ -132,129 +132,234 @@ export default function Navbar({ user }: NavbarProps) {
   ];
 
   return (
-    <nav
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-out ${isScrolled || isMenuOpen
-          ? "bg-agency-black/85 backdrop-blur-xl shadow-sm border-b border-white/5 py-3"
-          : "bg-transparent py-5 lg:py-6"
-        }`}
-      aria-label="Primary"
-    >
-      <div className="max-w-7xl mx-auto px-5 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo - Left */}
-          <div className="flex-1 flex items-center justify-start">
-            <Link href="/" className="flex items-center gap-2 lg:gap-3 shrink-0 group">
-              <Image
-                src="/Main-Logo.png"
-                alt="Code & Cognition Logo"
-                width={40}
-                height={40}
-                className="w-auto h-7 sm:h-8 transition-transform duration-500 group-hover:scale-105"
-                priority
-              />
-              <span className="text-[15px] sm:text-lg font-display font-medium tracking-tight whitespace-nowrap text-white">
-                Code <span className="text-agency-accent font-semibold">&</span> Cognition
-              </span>
-            </Link>
-          </div>
-
-          {/* Main Navigation - Center */}
-          <div className="hidden lg:flex flex-1 items-center justify-center gap-9">
-            <ServicesDropdown
-              isOpen={isServicesOpen}
-              setIsOpen={setIsServicesOpen}
-              groups={servicesGroups}
-            />
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                href={link.href}
-                isActive={pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/')}
-              >
-                {link.name}
-              </NavLink>
-            ))}
-          </div>
-
-          {/* CTA & Profile - Right */}
-          <div className="flex-1 flex items-center justify-end gap-x-3 lg:gap-x-5">
-            {user && (
-              <Link
-                href="/messages"
-                className="relative hidden md:inline-flex p-2 text-white/80 hover:text-white transition-colors group"
-                aria-label="Messages"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5"
-                >
-                  <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-                </svg>
-                {unreadMessages > 0 && (
-                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white ring-2 ring-agency-black shadow-sm">
-                    {unreadMessages}
+    <div className="drawer drawer-end">
+      <input
+        id="mobile-drawer"
+        type="checkbox"
+        className="drawer-toggle"
+        checked={isMenuOpen}
+        onChange={(e) => setIsMenuOpen(e.target.checked)}
+      />
+      <div className="drawer-content flex flex-col">
+        <nav
+          className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-out ${isScrolled || isMenuOpen
+            ? "bg-agency-black/85 backdrop-blur-xl shadow-sm border-b border-white/5 py-3"
+            : "bg-transparent py-5 lg:py-6"
+            }`}
+          aria-label="Primary"
+        >
+          <div className="max-w-7xl mx-auto px-5 lg:px-8">
+            <div className="flex items-center justify-between">
+              {/* Logo - Left */}
+              <div className="flex-1 flex items-center justify-start">
+                <Link href="/" className="flex items-center gap-2 lg:gap-3 shrink-0 group">
+                  <Image
+                    src="/Main-Logo.png"
+                    alt="Code & Cognition Logo"
+                    width={40}
+                    height={40}
+                    className="w-auto h-7 sm:h-8 transition-transform duration-500 group-hover:scale-105"
+                    priority
+                  />
+                  <span className="text-[15px] sm:text-lg font-display font-medium tracking-tight whitespace-nowrap text-white">
+                    Code <span className="text-agency-accent font-semibold">&</span> Cognition
                   </span>
-                )}
-              </Link>
-            )}
-
-            {user && <NotificationBell />}
-
-            {user ? (
-              <Link
-                href="/admin/profile"
-                className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
-              >
-                Profile
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
-              >
-                Login
-              </Link>
-            )}
-
-            <Link
-              href="/#contact"
-              className="hidden md:inline-flex items-center justify-center rounded-lg bg-white text-agency-black px-5 py-2 lg:py-2.5 text-sm font-medium shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_6px_20px_rgba(255,255,255,0.15)] hover:-translate-y-0.5"
-            >
-              Book Consultation
-            </Link>
-
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 text-white/80 hover:text-white transition-colors lg:hidden z-[100] relative focus:outline-none"
-              aria-label="Toggle menu"
-              aria-expanded={isMenuOpen}
-            >
-              <div className="relative w-6 h-[16px] flex flex-col justify-between overflow-hidden">
-                <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 origin-center ${isMenuOpen ? 'rotate-45 translate-y-[7.25px]' : ''}`} />
-                <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 ${isMenuOpen ? 'opacity-0 translate-x-4' : 'opacity-100'}`} />
-                <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 origin-center ${isMenuOpen ? '-rotate-45 -translate-y-[7.25px]' : ''}`} />
+                </Link>
               </div>
-            </button>
+
+              {/* Main Navigation - Center */}
+              <div className="hidden lg:flex flex-1 items-center justify-center gap-9">
+                <ServicesDropdown
+                  isOpen={isServicesOpen}
+                  setIsOpen={setIsServicesOpen}
+                  groups={servicesGroups}
+                />
+                {navLinks.map((link) => (
+                  <NavLink
+                    key={link.name}
+                    href={link.href}
+                    isActive={pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/')}
+                  >
+                    {link.name}
+                  </NavLink>
+                ))}
+              </div>
+
+              {/* CTA & Profile - Right */}
+              <div className="flex-1 flex items-center justify-end gap-x-3 lg:gap-x-5">
+                {user && (
+                  <Link
+                    href="/messages"
+                    className="relative hidden md:inline-flex p-2 text-white/80 hover:text-white transition-colors group"
+                    aria-label="Messages"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="transition-transform duration-300 group-hover:-translate-y-0.5"
+                    >
+                      <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
+                    </svg>
+                    {unreadMessages > 0 && (
+                      <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white ring-2 ring-agency-black shadow-sm">
+                        {unreadMessages}
+                      </span>
+                    )}
+                  </Link>
+                )}
+
+                {user && <NotificationBell />}
+
+                {user ? (
+                  <Link
+                    href="/admin/profile"
+                    className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
+                  >
+                    Profile
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
+                  >
+                    Login
+                  </Link>
+                )}
+
+                <Link
+                  href="/#contact"
+                  className="hidden md:inline-flex items-center justify-center rounded-lg bg-white text-agency-black px-5 py-2 lg:py-2.5 text-sm font-medium shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_6px_20px_rgba(255,255,255,0.15)] hover:-translate-y-0.5"
+                >
+                  Book Consultation
+                </Link>
+
+                <label
+                  htmlFor="mobile-drawer"
+                  className="inline-flex items-center justify-center p-2 text-white/80 hover:text-white transition-colors lg:hidden z-[100] relative focus:outline-none cursor-pointer"
+                  aria-label="Toggle menu"
+                >
+                  <div className="relative w-6 h-[16px] flex flex-col justify-between overflow-hidden">
+                    <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 origin-center ${isMenuOpen ? 'rotate-45 translate-y-[7.25px]' : ''}`} />
+                    <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 ${isMenuOpen ? 'opacity-0 translate-x-4' : 'opacity-100'}`} />
+                    <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 origin-center ${isMenuOpen ? '-rotate-45 -translate-y-[7.25px]' : ''}`} />
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <div className="drawer-side z-[60]">
+        <label htmlFor="mobile-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+        <div className="min-h-full w-full max-w-sm bg-agency-black border-l border-white/5 shadow-2xl flex flex-col">
+          <div className="flex-1 overflow-y-auto custom-scrollbar px-8 pt-24 pb-12 flex flex-col gap-y-12">
+            <div className="flex flex-col gap-y-10">
+              <div className="flex flex-col gap-y-6">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/30">
+                  Menu
+                </span>
+                <div className="flex flex-col gap-y-5">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-3xl font-display font-medium tracking-tight text-white/80 hover:text-white transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="h-px w-full bg-white/5" />
+
+              <div className="flex flex-col gap-y-8">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/30">
+                  Services
+                </span>
+                {servicesGroups.map((group) => (
+                  <div key={group.title} className="flex flex-col gap-y-5">
+                    <p className="text-[13px] font-medium text-white/50">
+                      {group.title}
+                    </p>
+                    <div className="flex flex-col gap-y-4 pl-4 border-l border-white/10">
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="flex flex-col gap-y-1 group"
+                        >
+                          <span className="text-[15px] font-medium text-white/80 group-hover:text-white transition-colors">
+                            {item.name}
+                          </span>
+                          <span className="text-[13px] text-white/40 group-hover:text-white/60 transition-colors">
+                            {item.description}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-auto pt-10 flex flex-col gap-y-4">
+              {user && (
+                <Link
+                  href="/messages"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm font-medium text-white/90 transition-colors hover:bg-white/[0.04]"
+                >
+                  Messages
+                  {unreadMessages > 0 && (
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white shadow-sm">
+                      {unreadMessages}
+                    </span>
+                  )}
+                </Link>
+              )}
+
+              <div className="grid grid-cols-2 gap-x-4">
+                {user ? (
+                  <Link
+                    href="/admin/profile"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
+                  >
+                    Profile
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
+                  >
+                    Login
+                  </Link>
+                )}
+
+                <Link
+                  href="/#contact"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center rounded-xl bg-white text-agency-black px-4 py-3.5 text-sm font-semibold shadow-sm transition-transform active:scale-95"
+                >
+                  Book Consultation
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <MobileNav
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        navLinks={navLinks}
-        servicesGroups={servicesGroups}
-        user={user}
-        unreadMessages={unreadMessages}
-      />
-    </nav>
+    </div>
   );
 }
 
@@ -402,8 +507,8 @@ export function ServicesDropdown({
       <div
         id={panelId}
         className={`absolute left-1/2 top-full mt-[28px] w-[850px] -translate-x-1/2 rounded-2xl border border-white/5 bg-agency-black/95 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top pointer-events-none before:absolute before:-top-6 before:left-0 before:h-6 before:w-full ${isOpen
-            ? "opacity-100 scale-100 pointer-events-auto translate-y-0"
-            : "opacity-0 scale-95 -translate-y-2"
+          ? "opacity-100 scale-100 pointer-events-auto translate-y-0"
+          : "opacity-0 scale-95 -translate-y-2"
           }`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -437,145 +542,6 @@ export function ServicesDropdown({
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-interface MobileNavProps {
-  isOpen: boolean;
-  onClose: () => void;
-  navLinks: { name: string; href: string }[];
-  servicesGroups: {
-    title: string;
-    items: { name: string; description: string; href: string }[];
-  }[];
-  user?: NavbarProps["user"];
-  unreadMessages: number;
-}
-
-export function MobileNav({
-  isOpen,
-  onClose,
-  navLinks,
-  servicesGroups,
-  user,
-  unreadMessages,
-}: MobileNavProps) {
-  return (
-    <div
-      className={`fixed inset-0 z-40 bg-zinc-950/60 backdrop-blur-md transition-all duration-500 lg:hidden ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
-      aria-hidden={!isOpen}
-      onClick={onClose}
-    >
-      <div
-        className={`fixed inset-y-0 right-0 w-full max-w-sm bg-agency-black border-l border-white/5 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-      >
-        <div className="flex-1 overflow-y-auto custom-scrollbar px-8 pt-24 pb-12 flex flex-col gap-y-12">
-
-          <div className="flex flex-col gap-y-10">
-            <div className="flex flex-col gap-y-6">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/30">
-                Menu
-              </span>
-              <div className="flex flex-col gap-y-5">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    onClick={onClose}
-                    className="text-3xl font-display font-medium tracking-tight text-white/80 hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="h-px w-full bg-white/5" />
-
-            <div className="flex flex-col gap-y-8">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/30">
-                Services
-              </span>
-              {servicesGroups.map((group) => (
-                <div key={group.title} className="flex flex-col gap-y-5">
-                  <p className="text-[13px] font-medium text-white/50">
-                    {group.title}
-                  </p>
-                  <div className="flex flex-col gap-y-4 pl-4 border-l border-white/10">
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        onClick={onClose}
-                        className="flex flex-col gap-y-1 group"
-                      >
-                        <span className="text-[15px] font-medium text-white/80 group-hover:text-white transition-colors">
-                          {item.name}
-                        </span>
-                        <span className="text-[13px] text-white/40 group-hover:text-white/60 transition-colors">
-                          {item.description}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-auto pt-10 flex flex-col gap-y-4">
-            {user && (
-              <Link
-                href="/messages"
-                onClick={onClose}
-                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm font-medium text-white/90 transition-colors hover:bg-white/[0.04]"
-              >
-                Messages
-                {unreadMessages > 0 && (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white shadow-sm">
-                    {unreadMessages}
-                  </span>
-                )}
-              </Link>
-            )}
-
-            <div className="grid grid-cols-2 gap-x-4">
-              {user ? (
-                <Link
-                  href="/admin/profile"
-                  onClick={onClose}
-                  className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
-                >
-                  Profile
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  onClick={onClose}
-                  className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
-                >
-                  Login
-                </Link>
-              )}
-
-              <Link
-                href="/#contact"
-                onClick={onClose}
-                className="flex items-center justify-center rounded-xl bg-white text-agency-black px-4 py-3.5 text-sm font-semibold shadow-sm transition-transform active:scale-95"
-              >
-                Book Consultation
-              </Link>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>

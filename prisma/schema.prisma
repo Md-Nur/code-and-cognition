@@ -6,106 +6,160 @@ datasource db {
   provider = "postgresql"
 }
 
-/// Core User model representing both administrators and contractors.
-model User {
-  id               String          @id @default(cuid())
-  name             String
-  email            String          @unique
-  passwordHash     String
-  role             Role            @default(CONTRACTOR)
-  createdAt        DateTime        @default(now())
-  ledgerBalance    LedgerBalance?
-  receivedMessages Message[]       @relation("ReceivedMessages")
-  sentMessages     Message[]       @relation("SentMessages")
-  notifications    Notification[]
-  finderProjects   Project[]       @relation("Finder")
-  memberProjects   ProjectMember[]
-  activityLogs     ActivityLog[]
-  changeRequests   ChangeRequest[]
+model ActivityLog {
+  id        String   @id
+  projectId String
+  userId    String?
+  action    String
+  createdAt DateTime @default(now())
+  Project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  User      User?    @relation(fields: [userId], references: [id])
 }
 
-/// Internal message system for communication between users.
-model Message {
-  id         String   @id @default(cuid())
-  content    String
-  senderId   String
-  receiverId String
-  isRead     Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+model Booking {
+  id          String        @id
+  clientName  String
+  clientEmail String
+  clientPhone String?
+  serviceId   String
+  budgetBDT   Float?
+  budgetUSD   Float?
+  message     String?
+  status      BookingStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  discovery   Json?
+  proposalId  String?       @unique
+  Proposal    Proposal?     @relation(fields: [proposalId], references: [id])
+  Service     Service       @relation(fields: [serviceId], references: [id])
+  Project     Project?
 }
 
-/// System notifications for users regarding bookings, projects, and payments.
-model Notification {
-  id        String           @id @default(cuid())
-  userId    String
-  title     String
-  message   String
-  type      NotificationType
-  link      String? /// Optional link to redirect user (e.g., to a specific booking)
-  isRead    Boolean          @default(false)
-  createdAt DateTime         @default(now())
-  user      User             @relation(fields: [userId], references: [id])
+model ChangeRequest {
+  id                    String    @id
+  projectId             String
+  requestedById         String
+  title                 String
+  description           String
+  estimatedTimeImpact   Float     @default(0)
+  estimatedBudgetImpact Float     @default(0)
+  status                CRStatus  @default(PENDING)
+  clientApprovalAt      DateTime?
+  createdAt             DateTime  @default(now())
+  Project               Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  User                  User      @relation(fields: [requestedById], references: [id])
 }
 
-/// High-level service categories for organizing offerings (e.g., Digital Platforms, Brand Strategy)
-model ServiceCategory {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  description String
-  slug        String    @unique
-  order       Int       @default(0)
-  status      Status    @default(ACTIVE)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  services    Service[]
+model Client {
+  id        String   @id
+  name      String
+  logoUrl   String
+  website   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
 }
 
-/// Main service offerings with business value positioning and overview
-model Service {
-  id               String            @id @default(cuid())
-  categoryId       String
-  title            String            @unique
-  slug             String            @unique
-  description      String /// Technical description
-  overview         String? /// High-level service overview
-  positioningText  String? /// Business value and strategic positioning
-  status           Status            @default(ACTIVE)
-  thumbnailUrl     String?
-  order            Int               @default(0)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  category         ServiceCategory   @relation(fields: [categoryId], references: [id])
-  bookings         Booking[]
-  portfolioItems   PortfolioItem[]
-  engagementModels EngagementModel[]
-}
-
-/// Flexible engagement models for services (Strategy | Implementation | Optimization | Retainer)
 model EngagementModel {
-  id            String      @id @default(cuid())
+  id            String      @id
   serviceId     String
-  name          String /// e.g., Strategy, Implementation, Optimization, Retainer
+  name          String
   description   String
   pricingType   PricingType @default(CUSTOM)
-  basePriceBDT  Float? /// Nullable for custom pricing
-  basePriceUSD  Float? /// Nullable for custom pricing
-  deliverables  String[] /// List of key deliverables
-  estimatedDays Int? /// Estimated timeline in days
+  basePriceBDT  Float?
+  basePriceUSD  Float?
+  deliverables  String[]
+  estimatedDays Int?
   order         Int         @default(0)
   status        Status      @default(ACTIVE)
   createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  service       Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  proposals     Proposal[]
+  updatedAt     DateTime
+  Service       Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  Proposal      Proposal[]
 
   @@unique([serviceId, name])
 }
 
-/// Individual portfolio pieces shown in the portfolio section.
+model Expense {
+  id        String   @id
+  title     String
+  amountBDT Float
+  amountUSD Float?
+  category  String?
+  date      DateTime @default(now())
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model LedgerBalance {
+  id       String @id
+  userId   String @unique
+  totalBDT Float  @default(0)
+  totalUSD Float  @default(0)
+  User     User   @relation(fields: [userId], references: [id])
+}
+
+model LedgerEntry {
+  id        String    @id
+  paymentId String
+  userId    String?
+  type      SplitType
+  amountBDT Float?
+  amountUSD Float?
+  createdAt DateTime  @default(now())
+  Payment   Payment   @relation(fields: [paymentId], references: [id])
+}
+
+model Message {
+  id                            String   @id
+  content                       String
+  senderId                      String
+  receiverId                    String
+  isRead                        Boolean  @default(false)
+  createdAt                     DateTime @default(now())
+  User_Message_receiverIdToUser User     @relation("Message_receiverIdToUser", fields: [receiverId], references: [id])
+  User_Message_senderIdToUser   User     @relation("Message_senderIdToUser", fields: [senderId], references: [id])
+}
+
+model Milestone {
+  id          String          @id
+  projectId   String
+  title       String
+  description String?
+  order       Int             @default(0)
+  status      MilestoneStatus @default(PENDING)
+  completedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime
+  Project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String           @id
+  userId    String
+  title     String
+  message   String
+  type      NotificationType
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  User      User             @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id          String        @id
+  projectId   String
+  amountBDT   Float?
+  amountUSD   Float?
+  currency    Currency
+  note        String?
+  paidAt      DateTime      @default(now())
+  LedgerEntry LedgerEntry[]
+  Project     Project       @relation(fields: [projectId], references: [id])
+}
+
 model PortfolioItem {
-  id           String   @id @default(cuid())
+  id           String   @id
   title        String
   description  String
   imageUrl     String?
@@ -114,126 +168,100 @@ model PortfolioItem {
   technologies String[]
   isFeatured   Boolean  @default(false)
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  service      Service  @relation(fields: [serviceId], references: [id])
+  updatedAt    DateTime
+  Service      Service  @relation(fields: [serviceId], references: [id])
 }
 
-/// Client bookings/leads submitted from the contact or service forms.
-model Booking {
-  id          String        @id @default(cuid())
-  clientName  String
-  clientEmail String
-  clientPhone String?
-  serviceId   String
-  proposalId  String?       @unique
-  budgetBDT   Float?
-  budgetUSD   Float?
-  message     String?
-  discovery   Json? /// Structured discovery data: { companyName, role, goals, timeline, budgetRange, currentStack, successMetrics, additionalNotes }
-  status      BookingStatus @default(PENDING)
-  createdAt   DateTime      @default(now())
-  service     Service       @relation(fields: [serviceId], references: [id])
-  proposal    Proposal?     @relation(fields: [proposalId], references: [id])
-  project     Project?
-}
-
-/// Active projects managed by the agency, converted from bookings.
 model Project {
-  id             String          @id @default(cuid())
-  title          String
-  bookingId      String?         @unique
-  finderId       String /// The user who brought in the project
-  status         ProjectStatus   @default(ACTIVE)
-  health         ProjectHealth   @default(GREEN)
-  viewToken      String?         @unique @default(uuid()) /// Public viewing token for clients
-  scope          String? /// Project scope and objectives
-  startDate      DateTime? /// Project start date
-  endDate        DateTime? /// Project end date / deadline
-  riskNotes      String? /// Risk management notes
-  createdAt      DateTime        @default(now())
-  payments       Payment[]
-  proposals      Proposal[]
-  booking        Booking?        @relation(fields: [bookingId], references: [id])
-  finder         User            @relation("Finder", fields: [finderId], references: [id])
-  members        ProjectMember[]
-  milestones     Milestone[]
-  activityLogs   ActivityLog[]
-  changeRequests ChangeRequest[]
+  id            String          @id
+  title         String
+  bookingId     String?         @unique
+  finderId      String
+  status        ProjectStatus   @default(ACTIVE)
+  health        ProjectHealth   @default(GREEN)
+  viewToken     String?         @unique
+  scope         String?
+  startDate     DateTime?
+  endDate       DateTime?
+  riskNotes     String?
+  createdAt     DateTime        @default(now())
+  ActivityLog   ActivityLog[]
+  ChangeRequest ChangeRequest[]
+  Milestone     Milestone[]
+  Payment       Payment[]
+  Booking       Booking?        @relation(fields: [bookingId], references: [id])
+  User          User            @relation(fields: [finderId], references: [id])
+  ProjectMember ProjectMember[]
+  Proposal      Proposal[]
 }
 
-/// Contractors assigned to a project with their respective execution share (percentage).
 model ProjectMember {
-  id        String  @id @default(cuid())
+  id        String  @id
   projectId String
   userId    String
-  share     Float /// Percentage share of execution earnings
-  project   Project @relation(fields: [projectId], references: [id])
-  user      User    @relation(fields: [userId], references: [id])
+  share     Float
+  Project   Project @relation(fields: [projectId], references: [id])
+  User      User    @relation(fields: [userId], references: [id])
 
   @@unique([projectId, userId])
 }
 
-/// Project proposals with custom scoping, budget, and approval workflow
 model Proposal {
-  id                String           @id @default(cuid())
+  id                String           @id
   projectId         String?
-  booking           Booking?
-  engagementModelId String? /// Can reference an engagement model or be fully custom
-  scopeSummary      String /// Detailed scope of work
-  deliverables      String[] /// List of deliverables
-  milestones        String[] /// Milestones for delivery
+  engagementModelId String?
+  scopeSummary      String
+  deliverables      String[]
   budgetBDT         Float?
   budgetUSD         Float?
   currency          Currency         @default(BDT)
-  estimatedDays     Int? /// Timeline estimate
-  status            ProposalStatus   @default(DRAFT) /// DRAFT -> SENT -> APPROVED | REJECTED
+  estimatedDays     Int?
   approved          Boolean          @default(false)
   approvedAt        DateTime?
-  notes             String? /// Additional notes or terms
-  version           Int              @default(1) /// For proposal versioning
+  notes             String?
+  version           Int              @default(1)
   createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  engagementModel   EngagementModel? @relation(fields: [engagementModelId], references: [id])
+  updatedAt         DateTime
+  milestones        String[]
+  status            ProposalStatus   @default(DRAFT)
+  Booking           Booking?
+  EngagementModel   EngagementModel? @relation(fields: [engagementModelId], references: [id])
+  Project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
-/// Financial payments received for a project.
-model Payment {
-  id        String        @id @default(cuid())
-  projectId String
-  amountBDT Float?
-  amountUSD Float?
-  currency  Currency
-  note      String?
-  paidAt    DateTime      @default(now())
-  splits    LedgerEntry[] /// Automatic splits generated for founders and project members
-  project   Project       @relation(fields: [projectId], references: [id])
+model Service {
+  id              String            @id
+  categoryId      String
+  title           String            @unique
+  slug            String            @unique
+  description     String
+  overview        String?
+  positioningText String?
+  status          Status            @default(ACTIVE)
+  thumbnailUrl    String?
+  order           Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime
+  Booking         Booking[]
+  EngagementModel EngagementModel[]
+  PortfolioItem   PortfolioItem[]
+  ServiceCategory ServiceCategory   @relation(fields: [categoryId], references: [id])
 }
 
-/// Detailed ledger entries for each payment split (e.g., Company, Finder Fee, Execution).
-model LedgerEntry {
-  id        String    @id @default(cuid())
-  paymentId String
-  userId    String? /// Null for COMPANY_FUND
-  type      SplitType
-  amountBDT Float?
-  amountUSD Float?
-  createdAt DateTime  @default(now())
-  payment   Payment   @relation(fields: [paymentId], references: [id])
+model ServiceCategory {
+  id          String    @id
+  name        String    @unique
+  description String
+  slug        String    @unique
+  order       Int       @default(0)
+  status      Status    @default(ACTIVE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  Service     Service[]
 }
 
-/// Running totals of earnings for each user.
-model LedgerBalance {
-  id       String @id @default(cuid())
-  userId   String @unique
-  totalBDT Float  @default(0)
-  totalUSD Float  @default(0)
-  user     User   @relation(fields: [userId], references: [id])
-}
-
-/// Customer testimonials displayed on the landing page.
 model Testimonial {
-  id        String   @id @default(cuid())
+  id        String   @id
   name      String
   role      String?
   company   String?
@@ -242,31 +270,48 @@ model Testimonial {
   rating    Int      @default(5)
   order     Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime
 }
 
-/// Partner or client logos shown in the client section.
-model Client {
-  id        String   @id @default(cuid())
-  name      String
-  logoUrl   String
-  website   String?
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id                               String          @id
+  name                             String
+  email                            String          @unique
+  passwordHash                     String
+  role                             Role            @default(CONTRACTOR)
+  createdAt                        DateTime        @default(now())
+  ActivityLog                      ActivityLog[]
+  ChangeRequest                    ChangeRequest[]
+  LedgerBalance                    LedgerBalance?
+  Message_Message_receiverIdToUser Message[]       @relation("Message_receiverIdToUser")
+  Message_Message_senderIdToUser   Message[]       @relation("Message_senderIdToUser")
+  Notification                     Notification[]
+  Project                          Project[]
+  ProjectMember                    ProjectMember[]
 }
 
-/// Business expenses recorded for profit/revenue tracking.
-model Expense {
-  id        String   @id @default(cuid())
-  title     String
-  amountBDT Float
-  amountUSD Float?
-  category  String?
-  date      DateTime @default(now())
-  note      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum BookingStatus {
+  PENDING
+  REVIEWED
+  CONVERTED
+  REJECTED
+}
+
+enum CRStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Currency {
+  BDT
+  USD
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
 }
 
 enum NotificationType {
@@ -279,21 +324,22 @@ enum NotificationType {
   SYSTEM
 }
 
-enum Role {
-  FOUNDER
-  CONTRACTOR
-  CLIENT
-}
-
-enum Status {
-  ACTIVE
-  INACTIVE
-}
-
 enum PricingType {
-  FIXED /// Fixed price engagement
-  CUSTOM /// Custom pricing per project
-  RETAINER /// Monthly retainer model
+  FIXED
+  CUSTOM
+  RETAINER
+}
+
+enum ProjectHealth {
+  GREEN
+  YELLOW
+  RED
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
 }
 
 enum ProposalStatus {
@@ -303,22 +349,10 @@ enum ProposalStatus {
   REJECTED
 }
 
-enum BookingStatus {
-  PENDING
-  REVIEWED
-  CONVERTED
-  REJECTED
-}
-
-enum ProjectStatus {
-  ACTIVE
-  COMPLETED
-  CANCELLED
-}
-
-enum Currency {
-  BDT
-  USD
+enum Role {
+  FOUNDER
+  CONTRACTOR
+  CLIENT
 }
 
 enum SplitType {
@@ -327,61 +361,7 @@ enum SplitType {
   EXECUTION
 }
 
-enum ProjectHealth {
-  GREEN
-  YELLOW
-  RED
-}
-
-enum MilestoneStatus {
-  PENDING
-  IN_PROGRESS
-  COMPLETED
-}
-
-/// Project milestones for tracking progress and deliverables.
-model Milestone {
-  id          String          @id @default(cuid())
-  projectId   String
-  title       String
-  description String?
-  order       Int             @default(0)
-  status      MilestoneStatus @default(PENDING)
-  completedAt DateTime?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-/// Audit trail of events and actions performed on projects.
-model ActivityLog {
-  id        String   @id @default(cuid())
-  projectId String
-  userId    String?
-  action    String
-  createdAt DateTime @default(now())
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-}
-
-/// Client-initiated or founder-created change requests within a project.
-model ChangeRequest {
-  id                    String    @id @default(cuid())
-  projectId             String
-  requestedById         String
-  title                 String
-  description           String
-  estimatedTimeImpact   Float     @default(0) /// In hours
-  estimatedBudgetImpact Float     @default(0) /// In project currency
-  status                CRStatus  @default(PENDING)
-  clientApprovalAt      DateTime?
-  createdAt             DateTime  @default(now())
-  project               Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  requestedBy           User      @relation(fields: [requestedById], references: [id])
-}
-
-enum CRStatus {
-  PENDING
-  APPROVED
-  REJECTED
+enum Status {
+  ACTIVE
+  INACTIVE
 }
