@@ -46,11 +46,11 @@ export default function Footer() {
                     <div>
                         <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-8">Connect</h4>
                         <div className="flex flex-col gap-6">
-                            <a href="mailto:hello@codencognition.com" className="group flex items-center gap-3 text-gray-500 hover:text-white transition-colors text-sm">
+                            <a href="mailto:codencognition.bd@gmail.com" className="group flex items-center gap-3 text-gray-500 hover:text-white transition-colors text-sm">
                                 <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-agency-accent/50 group-hover:text-agency-accent transition-all">
                                     <Mail className="w-4 h-4" />
                                 </div>
-                                hello@codencognition.com
+                                codencognition.bd@gmail.com
                             </a>
                             <a href="https://linkedin.com/company/codencognition" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 text-gray-500 hover:text-white transition-colors text-sm">
                                 <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-agency-accent/50 group-hover:text-agency-accent transition-all">
