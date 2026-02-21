@@ -24,6 +24,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                 orderBy: { paidAt: "desc" },
                 include: { splits: true },
             },
+            milestones: {
+                orderBy: { order: "asc" },
+            },
+            activityLogs: {
+                orderBy: { createdAt: "desc" },
+                take: 10,
+                include: { user: { select: { name: true } } }
+            }
         },
     });
 
@@ -48,16 +56,19 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const { id } = await params;
     const body = await req.json();
-    const { status } = body;
+    const { status, health } = body;
 
-    if (!status) {
-        return NextResponse.json({ error: "Status is required" }, { status: 400 });
+    if (!status && !health) {
+        return NextResponse.json({ error: "No update data provided" }, { status: 400 });
     }
 
     try {
         const project = await prisma.project.update({
             where: { id },
-            data: { status },
+            data: {
+                ...(status && { status }),
+                ...(health && { health })
+            },
             include: {
                 booking: true,
             }
