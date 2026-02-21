@@ -252,8 +252,8 @@ export default function AdminServicesPage() {
                             {service.subCategories.length === 0 ? (
                                 <div className="text-sm text-gray-600 italic py-2">No sub-services yet. Add one to define pricing tiers.</div>
                             ) : (
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-sm">
+                                <div className="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+                                    <table className="w-full text-sm min-w-[700px]">
                                         <thead>
                                             <tr className="border-b border-white/5">
                                                 <th className="text-left py-2 pr-4 text-[10px] uppercase text-gray-500 font-bold tracking-wide whitespace-nowrap">Sub-service</th>
