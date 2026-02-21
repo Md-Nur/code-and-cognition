@@ -19,7 +19,6 @@ export async function processPaymentSplit(paymentId: string) {
 
     const amount = (payment.amountBDT || payment.amountUSD) as number;
     const currency = payment.currency;
-
     const isBDT = currency === Currency.BDT;
 
     // Split Ratios
@@ -39,37 +38,38 @@ export async function processPaymentSplit(paymentId: string) {
         paymentId: payment.id,
         userId: null, // Company Fund
         type: SplitType.COMPANY_FUND,
-        amountBDT: isBDT ? companyFundAmount : 0,
-        amountUSD: !isBDT ? companyFundAmount : 0,
+        amountBDT: isBDT ? companyFundAmount : null,
+        amountUSD: !isBDT ? companyFundAmount : null,
     });
 
     // 2. Finder Fee Entry
-    // The finder is stored on the Project model
     const finderId = payment.project.finderId;
     entries.push({
         paymentId: payment.id,
         userId: finderId,
         type: SplitType.FINDER_FEE,
-        amountBDT: isBDT ? finderFeeAmount : 0,
-        amountUSD: !isBDT ? finderFeeAmount : 0,
+        amountBDT: isBDT ? finderFeeAmount : null,
+        amountUSD: !isBDT ? finderFeeAmount : null,
     });
 
     // 3. Execution Pool Entries
     const members = payment.project.members;
-    // Total share calculation to normalize if needed, assuming shares sum to 100 or 1.
-    // Let's assume shares are percentages (e.g. 50, 50).
     const totalShare = members.reduce((sum, m) => sum + m.share, 0);
 
     for (const member of members) {
-        const memberShareRatio = member.share / totalShare;
+        // If totalShare is 0 (or not set), split equally among members
+        const memberShareRatio = totalShare > 0
+            ? member.share / totalShare
+            : 1 / members.length;
+
         const memberAmount = executionPoolAmount * memberShareRatio;
 
         entries.push({
             paymentId: payment.id,
             userId: member.userId,
             type: SplitType.EXECUTION,
-            amountBDT: isBDT ? memberAmount : 0,
-            amountUSD: !isBDT ? memberAmount : 0,
+            amountBDT: isBDT ? memberAmount : null,
+            amountUSD: !isBDT ? memberAmount : null,
         });
     }
 
@@ -83,29 +83,28 @@ export async function processPaymentSplit(paymentId: string) {
         // Update Ledger Balances
         for (const entry of entries) {
             if (entry.userId) { // Skip company fund for user balance updates
-                const balance = await tx.ledgerBalance.findUnique({
-                    where: { userId: entry.userId }
+                await tx.ledgerBalance.upsert({
+                    where: { userId: entry.userId },
+                    update: {
+                        totalBDT: { increment: entry.amountBDT || 0 },
+                        totalUSD: { increment: entry.amountUSD || 0 },
+                    },
+                    create: {
+                        userId: entry.userId,
+                        totalBDT: entry.amountBDT || 0,
+                        totalUSD: entry.amountUSD || 0,
+                    }
                 });
-
-                if (balance) {
-                    await tx.ledgerBalance.update({
-                        where: { userId: entry.userId },
-                        data: {
-                            totalBDT: { increment: entry.amountBDT || 0 },
-                            totalUSD: { increment: entry.amountUSD || 0 },
-                        }
-                    });
-                } else {
-                    await tx.ledgerBalance.create({
-                        data: {
-                            userId: entry.userId,
-                            totalBDT: entry.amountBDT || 0,
-                            totalUSD: entry.amountUSD || 0,
-                        }
-                    });
-                }
             }
         }
+
+        // Add Activity Log
+        await tx.activityLog.create({
+            data: {
+                projectId: payment.projectId,
+                action: `recorded a payment of ${amount} ${currency} and processed 20/10/70 splits.`,
+            }
+        });
     });
 
     return { success: true, entriesGenerated: entries.length };
