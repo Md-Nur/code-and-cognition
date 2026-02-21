@@ -3,6 +3,21 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/notifications";
+import { auth } from "@/lib/auth";
+
+export async function markBookingAsReviewedAction(bookingId: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "FOUNDER") {
+    return { ok: false, error: "Unauthorized" } as const;
+  }
+
+  const booking = await prisma.booking.update({
+    where: { id: bookingId },
+    data: { status: "REVIEWED" },
+  });
+
+  return { ok: true, booking } as const;
+}
 
 const bookingActionSchema = z.object({
   clientName: z.string().min(1),

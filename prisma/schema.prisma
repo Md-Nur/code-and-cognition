@@ -129,7 +129,7 @@ model Booking {
   budgetBDT   Float?
   budgetUSD   Float?
   message     String?
-  discovery   Json?
+  discovery   Json? /// Structured discovery data: { companyName, role, goals, timeline, budgetRange, currentStack, successMetrics, additionalNotes }
   status      BookingStatus @default(PENDING)
   createdAt   DateTime      @default(now())
   service     Service       @relation(fields: [serviceId], references: [id])
@@ -186,7 +186,7 @@ model Proposal {
   budgetUSD         Float?
   currency          Currency         @default(BDT)
   estimatedDays     Int? /// Timeline estimate
-  status            ProposalStatus   @default(DRAFT)
+  status            ProposalStatus   @default(DRAFT) /// DRAFT -> SENT -> APPROVED | REJECTED
   approved          Boolean          @default(false)
   approvedAt        DateTime?
   notes             String? /// Additional notes or terms

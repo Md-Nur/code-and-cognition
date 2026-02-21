@@ -53,6 +53,7 @@ export const createProposalForBooking = withProxyValidation(
         currency: data.currency ?? "BDT",
         estimatedDays: data.estimatedDays ?? null,
         notes: data.notes ?? null,
+        status: "DRAFT",
       },
     });
 
@@ -157,6 +158,13 @@ export const approveProposal = withProxyValidation(
         bookingId: proposal.booking.id,
         finderId,
         scope: proposal.scopeSummary,
+        milestones: {
+          create: proposal.milestones.map((milestoneTitle, index) => ({
+            title: milestoneTitle,
+            order: index,
+            status: "PENDING",
+          })),
+        },
       },
     });
 
