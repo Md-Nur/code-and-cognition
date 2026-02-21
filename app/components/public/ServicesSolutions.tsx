@@ -1,5 +1,8 @@
 type Pillar = {
-  title: "Digital Platforms" | "Intelligent Automation" | "Growth Systems";
+  title:
+    | "Digital Platforms"
+    | "Intelligent Automation"
+    | "Performance Growth Systems";
   summary: string;
   outcomes: string[];
 };
@@ -14,31 +17,31 @@ const PILLARS: Pillar[] = [
   {
     title: "Digital Platforms",
     summary:
-      "Product-grade web and client portals that unify brand, data, and user experience.",
+      "Market-ready digital properties that establish brand authority, deepen customer relationships, and generate sustainable revenue growth across all channels.",
     outcomes: [
-      "Unified digital presence",
-      "Conversion-ready experiences",
-      "Operational clarity",
+      "Revenue-generating customer experiences",
+      "Competitive market differentiation",
+      "Global brand scalability",
     ],
   },
   {
     title: "Intelligent Automation",
     summary:
-      "Workflow systems that remove manual overhead and keep delivery consistently on track.",
+      "Intelligent systems that eliminate manual dependencies, reduce operational costs, and accelerate team productivity without sacrificing quality or compliance.",
     outcomes: [
-      "Automated handoffs",
-      "Realtime visibility",
-      "Higher team focus",
+      "Reduced operational overhead",
+      "Process accountability & control",
+      "Faster execution cycles",
     ],
   },
   {
-    title: "Growth Systems",
+    title: "Performance Growth Systems",
     summary:
-      "Measurement and iteration frameworks that turn execution into compounding results.",
+      "Enterprise-grade measurement frameworks and optimization strategies that transform execution into predictable revenue growth and sustainable competitive advantage.",
     outcomes: [
-      "Predictable pipelines",
-      "Aligned KPIs",
-      "Continuous optimization",
+      "Predictable revenue acceleration",
+      "Strategic enterprise alignment",
+      "Continuous market leadership",
     ],
   },
 ];
