@@ -1,19 +1,3 @@
-Implement a "Next Action Required" logic for projects.
-
-Logic Examples:
-- If milestone awaiting client approval → show "Waiting for Client Approval"
-- If payment pending → show "Payment Due"
-- If change request pending → show "Change Request Review Needed"
-
-Add:
-- nextAction field (computed, not stored)
-- Display prominently in project dashboard
-- Role-based message variation
-
-Use clean highlighted card UI.
-
----
-
 Act as a senior product designer and frontend architect.
 
 I am building a premium AI-driven digital agency platform using:

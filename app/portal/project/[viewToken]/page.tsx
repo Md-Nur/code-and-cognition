@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import ProgressBar from "@/app/components/ProgressBar";
 import DownloadBriefButton from "./DownloadBriefButton";
 import ClientChangeRequestsPanel from "@/app/components/portal/ClientChangeRequestsPanel";
+import NextActionPanel from "@/app/components/shared/NextActionPanel";
 
 export default async function ClientPortalPage(props: {
   params: Promise<{ viewToken: string }>;
@@ -34,10 +35,18 @@ export default async function ClientPortalPage(props: {
         },
       },
       booking: true,
+      payments: true,
     },
   });
 
   if (!project) return notFound();
+
+  const pendingChangeRequests = await prisma.changeRequest.count({
+    where: {
+      projectId: project.id,
+      status: "PENDING",
+    },
+  });
 
   // Health color mapping
   const healthColors: Record<
@@ -101,6 +110,12 @@ export default async function ClientPortalPage(props: {
 
         {/* Left Column: Overview & Milestones */}
         <div className="lg:col-span-8 space-y-10">
+          <NextActionPanel
+            project={project}
+            pendingChangeRequests={pendingChangeRequests}
+            userRole="CLIENT"
+          />
+
           {/* Project Title Card */}
           <section className="bg-white dark:bg-gray-900 rounded-3xl p-8 shadow-sm border border-gray-200 dark:border-gray-800 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10">
