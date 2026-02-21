@@ -153,6 +153,21 @@ h6 {
     }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes flowHorizontal {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+}
+
 .animate-float {
     animation: float 4s ease-in-out infinite;
 }
@@ -160,3 +175,21 @@ h6 {
 .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
 }
+
+.animate-fade-in {
+    animation: fadeIn 1s ease-out forwards;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-flow-horizontal {
+    animation: flowHorizontal 3s linear infinite;
+}
+
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+.animation-delay-500 { animation-delay: 500ms; }
+.animation-delay-1000 { animation-delay: 1000ms; }
+.animation-delay-2000 { animation-delay: 2000ms; }
