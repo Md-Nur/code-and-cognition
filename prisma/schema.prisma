@@ -21,6 +21,7 @@ model User {
   finderProjects   Project[]       @relation("Finder")
   memberProjects   ProjectMember[]
   activityLogs     ActivityLog[]
+  changeRequests   ChangeRequest[]
 }
 
 /// Internal message system for communication between users.
@@ -120,20 +121,21 @@ model Booking {
 
 /// Active projects managed by the agency, converted from bookings.
 model Project {
-  id           String          @id @default(cuid())
-  title        String
-  bookingId    String?         @unique
-  finderId     String /// The user who brought in the project
-  status       ProjectStatus   @default(ACTIVE)
-  health       ProjectHealth   @default(GREEN)
-  viewToken    String?         @unique @default(uuid()) /// Public viewing token for clients
-  createdAt    DateTime        @default(now())
-  payments     Payment[]
-  booking      Booking?        @relation(fields: [bookingId], references: [id])
-  finder       User            @relation("Finder", fields: [finderId], references: [id])
-  members      ProjectMember[]
-  milestones   Milestone[]
-  activityLogs ActivityLog[]
+  id             String          @id @default(cuid())
+  title          String
+  bookingId      String?         @unique
+  finderId       String /// The user who brought in the project
+  status         ProjectStatus   @default(ACTIVE)
+  health         ProjectHealth   @default(GREEN)
+  viewToken      String?         @unique @default(uuid()) /// Public viewing token for clients
+  createdAt      DateTime        @default(now())
+  payments       Payment[]
+  booking        Booking?        @relation(fields: [bookingId], references: [id])
+  finder         User            @relation("Finder", fields: [finderId], references: [id])
+  members        ProjectMember[]
+  milestones     Milestone[]
+  activityLogs   ActivityLog[]
+  changeRequests ChangeRequest[]
 }
 
 /// Contractors assigned to a project with their respective execution share (percentage).
@@ -299,4 +301,26 @@ model ActivityLog {
   createdAt DateTime @default(now())
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+/// Client-initiated or founder-created change requests within a project.
+model ChangeRequest {
+  id                    String    @id @default(cuid())
+  projectId             String
+  requestedById         String
+  title                 String
+  description           String
+  estimatedTimeImpact   Float     @default(0) /// In hours
+  estimatedBudgetImpact Float     @default(0) /// In project currency
+  status                CRStatus  @default(PENDING)
+  clientApprovalAt      DateTime?
+  createdAt             DateTime  @default(now())
+  project               Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  requestedBy           User      @relation(fields: [requestedById], references: [id])
+}
+
+enum CRStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

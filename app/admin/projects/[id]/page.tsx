@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Project, User, Booking, Payment, LedgerEntry, ProjectMember, Milestone, MilestoneStatus, ActivityLog } from "@prisma/client";
+import { Project, User, Booking, Payment, LedgerEntry, ProjectMember, Milestone, MilestoneStatus, ActivityLog, ChangeRequest } from "@prisma/client";
+import ChangeRequestsPanel from "@/app/components/admin/ChangeRequestsPanel";
+
+type CRWithUser = ChangeRequest & { requestedBy: { name: string; role: string } };
 
 type ProjectDetails = Project & {
     finder: User;
@@ -18,6 +21,8 @@ export default function AdminProjectDetailsPage() {
     const [project, setProject] = useState<ProjectDetails | null>(null);
     const [loading, setLoading] = useState(true);
     const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [changeRequests, setChangeRequests] = useState<CRWithUser[]>([]);
+    const [currentUserRole, setCurrentUserRole] = useState<string>("CONTRACTOR");
     const [showMemberModal, setShowMemberModal] = useState(false);
     const [memberFormData, setMemberFormData] = useState({ userId: "", share: 0 });
 
@@ -45,6 +50,22 @@ export default function AdminProjectDetailsPage() {
             if (res.ok) setAllUsers(await res.json());
         }
         fetchUsers();
+
+        async function fetchCRs() {
+            if (!params?.id) return;
+            const res = await fetch(`/api/admin/projects/${params.id}/change-requests`);
+            if (res.ok) setChangeRequests(await res.json());
+        }
+        fetchCRs();
+
+        async function fetchSession() {
+            const res = await fetch("/api/auth/me");
+            if (res.ok) {
+                const data = await res.json();
+                setCurrentUserRole(data?.user?.role ?? "CONTRACTOR");
+            }
+        }
+        fetchSession();
     }, [params.id]);
 
     async function handleAddMember(e: React.FormEvent) {
@@ -298,6 +319,13 @@ export default function AdminProjectDetailsPage() {
                             )}
                         </div>
                     </div>
+
+                    {/* Change Requests */}
+                    <ChangeRequestsPanel
+                        projectId={project.id}
+                        initialCRs={changeRequests}
+                        userRole={currentUserRole}
+                    />
 
                     {/* Team Members */}
                     <div className="glass-panel p-6 rounded-xl">

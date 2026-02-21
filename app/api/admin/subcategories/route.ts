@@ -15,7 +15,21 @@ export const POST = withAuth(async (req) => {
         const { title, slug, serviceId, description, imageUrl, basePriceBDT, basePriceUSD, mediumPriceBDT, mediumPriceUSD, proPriceBDT, proPriceUSD, mediumDescription, proDescription } = validation.data;
 
         const subCategory = await prisma.subCategory.create({
-            data: { title, slug, serviceId, description, imageUrl, basePriceBDT, basePriceUSD, mediumPriceBDT, mediumPriceUSD, proPriceBDT, proPriceUSD, mediumDescription, proDescription },
+            data: {
+                title,
+                slug,
+                serviceId,
+                description: description ?? undefined,
+                imageUrl: imageUrl ?? undefined,
+                basePriceBDT: basePriceBDT ?? undefined,
+                basePriceUSD: basePriceUSD ?? undefined,
+                mediumPriceBDT: mediumPriceBDT ?? undefined,
+                mediumPriceUSD: mediumPriceUSD ?? undefined,
+                proPriceBDT: proPriceBDT ?? undefined,
+                proPriceUSD: proPriceUSD ?? undefined,
+                mediumDescription: mediumDescription ?? undefined,
+                proDescription: proDescription ?? undefined,
+            },
         });
 
         return ApiResponse.success(subCategory, 201);
