@@ -126,13 +126,9 @@ export default function Navbar({ user }: NavbarProps) {
 
                     {user && <NotificationBell />}
 
-                    {user?.role === "FOUNDER" ? (
+                    {user?.role === "FOUNDER" && (
                         <Link href="/admin" className="hidden md:inline-flex text-sm font-medium text-agency-accent hover:text-white transition-colors">
                             Admin
-                        </Link>
-                    ) : (
-                        <Link href="/login" className="hidden md:inline-flex text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                            Login
                         </Link>
                     )}
 

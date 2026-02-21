@@ -118,13 +118,6 @@ export default function Footer() {
                             <li><Link href="/#contact" className="text-gray-400 hover:text-white transition-colors">Start a Project</Link></li>
                         </ul>
                     </div>
-
-                    <div>
-                        <h4 className="font-bold mb-6">Account</h4>
-                        <ul className="space-y-4">
-                            <li><Link href="/login" className="text-gray-400 hover:text-white transition-colors">Admin Login</Link></li>
-                        </ul>
-                    </div>
                 </div>
 
                 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
