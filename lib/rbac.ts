@@ -39,6 +39,12 @@ export function isProjectClient(
   return clientEmail.toLowerCase() === user.email.toLowerCase();
 }
 
+/**
+ * Validates if the user has access to a specific resource (usually project-bound)
+ * Founders: Full access
+ * Contractors: Only assigned projects
+ * Clients: Only own project & invoices
+ */
 export function canAccessProject(
   user: UserAccessShape,
   project: ProjectAccessShape,
@@ -52,9 +58,10 @@ export function canAccessProject(
     });
   }
 
-  if (user.role === Role.CLIENT && options?.allowClient) {
+  if (user.role === Role.CLIENT && options?.allowClient !== false) {
     return isProjectClient(user, project);
   }
 
   return false;
 }
+

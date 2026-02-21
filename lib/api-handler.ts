@@ -12,6 +12,9 @@ export type ApiHandler = (
 
 type RoleRequirement = Role | Role[];
 
+/**
+ * API Route Proxy Guard
+ */
 export function withAuth(handler: ApiHandler, requiredRole?: RoleRequirement) {
   return async (req: NextRequest, context: any) => {
     try {
@@ -25,7 +28,7 @@ export function withAuth(handler: ApiHandler, requiredRole?: RoleRequirement) {
         const roles = Array.isArray(requiredRole)
           ? requiredRole
           : [requiredRole];
-        if (!isRoleAllowed(session.user, roles)) {
+        if (!isRoleAllowed(session.user as any, roles)) {
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
       }
@@ -67,7 +70,7 @@ export function withProjectAuth(
         return ApiResponse.notFound("Project");
       }
 
-      const canAccess = canAccessProject(session.user, project, options);
+      const canAccess = canAccessProject(session.user as any, project, options);
       if (!canAccess) {
         return ApiResponse.forbidden();
       }
@@ -79,6 +82,50 @@ export function withProjectAuth(
       return ApiResponse.error("Internal Server Error", 500);
     }
   });
+}
+
+/**
+ * Server Action Proxy Guard
+ */
+export function withProxyValidation<T extends (...args: any[]) => Promise<any>>(
+  action: T,
+  options?: {
+    requiredRole?: RoleRequirement;
+    checkProjectAccess?: (args: Parameters<T>) => Promise<string | undefined>;
+  }
+): T {
+  return (async (...args: Parameters<T>) => {
+    const session = await auth();
+
+    if (!session?.user) {
+      throw new Error("Unauthorized");
+    }
+
+    if (options?.requiredRole) {
+      const roles = Array.isArray(options.requiredRole)
+        ? options.requiredRole
+        : [options.requiredRole];
+      if (!isRoleAllowed(session.user as any, roles)) {
+        throw new Error("Forbidden: Insufficient privileges");
+      }
+    }
+
+    if (options?.checkProjectAccess) {
+      const projectId = await options.checkProjectAccess(args);
+      if (projectId) {
+        const project = await prisma.project.findUnique({
+          where: { id: projectId },
+          include: { booking: true, members: true },
+        });
+
+        if (!project || !canAccessProject(session.user as any, project)) {
+          throw new Error("Forbidden: Project Access Denied");
+        }
+      }
+    }
+
+    return action(...args);
+  }) as T;
 }
 
 export const ApiResponse = {
