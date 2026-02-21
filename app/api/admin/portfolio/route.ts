@@ -6,7 +6,6 @@ export const GET = withAuth(async () => {
     const items = await prisma.portfolioItem.findMany({
         include: {
             service: { select: { title: true } },
-            subCategory: { select: { title: true } }
         },
         orderBy: { createdAt: "desc" },
     });

@@ -1,8 +1,8 @@
 type Pillar = {
   title:
-    | "Digital Platforms"
-    | "Intelligent Automation"
-    | "Performance Growth Systems";
+  | "Digital Platforms"
+  | "Intelligent Automation"
+  | "Performance Growth Systems";
   summary: string;
   outcomes: string[];
 };
@@ -91,13 +91,13 @@ export default function ServicesSolutions() {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
-                href="/#contact"
+                href="#contact"
                 className="btn-brand px-6 py-3 rounded-full text-sm font-semibold"
               >
                 Request Proposal
               </a>
               <a
-                href="/services#engagement"
+                href="#engagement"
                 className="px-6 py-3 rounded-full text-sm font-semibold border border-white/10 text-white/80 hover:text-white hover:border-white/30 transition-colors"
               >
                 View Engagement Approach
@@ -212,7 +212,7 @@ export default function ServicesSolutions() {
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <a
-                href="/#contact"
+                href="#contact"
                 className="btn-brand px-6 py-3 rounded-full text-sm font-semibold"
               >
                 Schedule Strategic Consultation

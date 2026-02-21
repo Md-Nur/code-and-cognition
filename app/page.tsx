@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "./components/public/Navbar";
 import Hero from "./components/public/Hero";
-import ServicesGrid from "./components/public/ServicesGrid";
+import ServicesSolutions from "./components/public/ServicesSolutions";
 import BookingForm from "./components/public/BookingForm";
 import Footer from "./components/public/Footer";
 import Testimonials from "./components/public/Testimonials";
@@ -20,42 +20,6 @@ import { auth } from "@/lib/auth";
 export default async function Home() {
   const session = await auth();
 
-  // Fetch Services
-  const services = await prisma.service.findMany({
-    where: { status: "ACTIVE" },
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      description: true,
-      thumbnailUrl: true,
-      subCategories: {
-        select: {
-          id: true,
-          slug: true,
-          title: true,
-          description: true,
-          imageUrl: true,
-          basePriceBDT: true,
-          basePriceUSD: true,
-          mediumPriceBDT: true,
-          mediumPriceUSD: true,
-          proPriceBDT: true,
-          proPriceUSD: true,
-        }
-      },
-      portfolioItems: {
-        select: {
-          id: true,
-          title: true,
-          imageUrl: true,
-        },
-        take: 3,
-      }
-    },
-    orderBy: { createdAt: "asc" },
-  }) as any;
-
   // Fetch Testimonials
   const testimonials = await prisma.testimonial.findMany({
     orderBy: { order: "asc" },
@@ -71,7 +35,7 @@ export default async function Home() {
       <Navbar user={session?.user} />
       <Hero />
       <Clients clients={clients} />
-      <ServicesGrid initialServices={services} />
+      <ServicesSolutions />
 
       {/* Process Section */}
       <section id="process" className="section-container py-20 border-t border-white/5">

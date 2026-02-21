@@ -5,19 +5,6 @@ import { debounce } from "lodash";
 import Link from "next/link";
 
 
-type SubCategory = {
-    id: string;
-    slug: string;
-    title: string;
-    description?: string | null;
-    imageUrl?: string | null;
-    basePriceBDT: number;
-    basePriceUSD: number;
-    mediumPriceBDT: number;
-    mediumPriceUSD: number;
-    proPriceBDT: number;
-    proPriceUSD: number;
-};
 
 type ServiceType = {
     id: string;
@@ -25,7 +12,6 @@ type ServiceType = {
     title: string;
     description: string;
     thumbnailUrl?: string | null;
-    subCategories: SubCategory[];
     portfolioItems: { id: string; title: string; imageUrl: string | null }[];
 };
 
@@ -36,9 +22,7 @@ const TIERS = [
 ];
 
 function ServiceCard({ service }: { service: ServiceType }) {
-    const [activeSub, setActiveSub] = useState<SubCategory | null>(
-        service.subCategories[0] ?? null
-    );
+   
     const [activeTier, setActiveTier] = useState<"basic" | "plus" | "pro">("basic");
 
     return (
@@ -60,60 +44,6 @@ function ServiceCard({ service }: { service: ServiceType }) {
 
             <h3 className="text-2xl font-bold mb-2">{service.title}</h3>
             <p className="text-gray-400 mb-6 text-sm line-clamp-2">{service.description}</p>
-
-            {/* Sub-service tabs (Scrollable on mobile) */}
-            {service.subCategories.length > 0 && (
-                <>
-                    <div className="flex flex-nowrap sm:flex-wrap gap-2 mb-4 overflow-x-auto pb-2 sm:pb-0 custom-scrollbar">
-                        {service.subCategories.map((sub) => (
-                            <button
-                                key={sub.id}
-                                onClick={() => setActiveSub(sub)}
-                                className={`text-[10px] sm:text-[11px] px-3 py-1.5 rounded-full border font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${activeSub?.id === sub.id
-                                    ? "border-agency-accent bg-agency-accent/10 text-agency-accent"
-                                    : "border-white/10 bg-white/5 text-gray-400 hover:border-white/20"
-                                    }`}
-                            >
-                                {sub.title}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Tier toggle + Price display */}
-                    {activeSub && (
-                        <div className="mb-6 p-4 rounded-xl bg-white/5 border border-white/5">
-                            {activeSub.description && (
-                                <p className="text-xs text-gray-500 mb-3">{activeSub.description}</p>
-                            )}
-                            <div className="flex gap-1 mb-4 p-1 bg-white/5 rounded-lg">
-                                {TIERS.map((tier) => (
-                                    <button
-                                        key={tier.key}
-                                        onClick={() => setActiveTier(tier.key)}
-                                        className={`flex-1 text-[10px] sm:text-[11px] font-bold uppercase py-1.5 rounded-md transition-all ${activeTier === tier.key
-                                            ? "bg-white/10 text-white"
-                                            : "text-gray-500 hover:text-gray-300"
-                                            }`}
-                                    >
-                                        {tier.label}
-                                    </button>
-                                ))}
-                            </div>
-                            {TIERS.filter(t => t.key === activeTier).map((tier) => (
-                                <div key={tier.key} className="flex items-end justify-between">
-                                    <div>
-                                        <div className="text-xs text-gray-500 uppercase font-semibold">Starting at</div>
-                                        <div className={`text-2xl font-bold ${tier.color}`}>
-                                            ৳{activeSub[tier.bdtKey].toLocaleString()}
-                                        </div>
-                                        <div className="text-xs text-gray-500">${activeSub[tier.usdKey]}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </>
-            )}
 
             {/* Previous Work Showcase */}
             {service.portfolioItems && service.portfolioItems.length > 0 && (

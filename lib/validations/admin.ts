@@ -44,21 +44,6 @@ export const serviceSchema = z.object({
     status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
 });
 
-export const subcategorySchema = z.object({
-    title: z.string().min(1),
-    slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
-    serviceId: z.string().min(1),
-    description: z.string().optional().nullable(),
-    imageUrl: z.string().optional().nullable(),
-    basePriceBDT: z.number().optional().nullable(),
-    basePriceUSD: z.number().optional().nullable(),
-    mediumPriceBDT: z.number().optional().nullable(),
-    mediumPriceUSD: z.number().optional().nullable(),
-    proPriceBDT: z.number().optional().nullable(),
-    proPriceUSD: z.number().optional().nullable(),
-    mediumDescription: z.string().optional().nullable(),
-    proDescription: z.string().optional().nullable(),
-});
 
 export const testimonialSchema = z.object({
     name: z.string().min(1),

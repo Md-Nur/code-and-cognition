@@ -21,15 +21,9 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-type SubCategory = {
-  id: string;
-  title: string;
-};
-
 type Service = {
   id: string;
   title: string;
-  subCategories: SubCategory[];
 };
 
 interface BookingFormProps {
@@ -145,16 +139,12 @@ export default function BookingForm({ defaultServiceId }: BookingFormProps) {
                         onClick={() => {
                           setSelectedServiceId(srv.id);
                         }}
-                        className={`text-left p-4 rounded-xl border transition-all ${
-                          selectedServiceId === srv.id
-                            ? "border-agency-accent bg-agency-accent/10 text-white"
-                            : "border-white/10 bg-white/5 text-gray-300 hover:border-white/20"
-                        }`}
+                        className={`text-left p-4 rounded-xl border transition-all ${selectedServiceId === srv.id
+                          ? "border-agency-accent bg-agency-accent/10 text-white"
+                          : "border-white/10 bg-white/5 text-gray-300 hover:border-white/20"
+                          }`}
                       >
                         <div className="font-semibold text-sm">{srv.title}</div>
-                        <div className="text-[11px] text-gray-500 mt-1">
-                          {srv.subCategories.length} solutions
-                        </div>
                       </button>
                     ))}
                   </div>

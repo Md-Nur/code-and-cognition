@@ -25,7 +25,7 @@ A comprehensive project management and service delivery platform built for agenc
 The system uses a PostgreSQL database with Prisma ORM. Key entities include:
 
 - **Users & Roles**: Supports `FOUNDER` (Admin) and `CONTRACTOR` roles.
-- **Service Catalog**: `Service` and `SubCategory` models define offerings and pricing tiers (Base, Medium, Pro) in both BDT and USD.
+- **Service Catalog**: `Service`  models define offerings and pricing tiers (Base, Medium, Pro) in both BDT and USD.
 - **Project Management**: `Booking` leads are converted into `Project` entities with `Milestone` tracking and `ActivityLog` audit trails.
 - **Financial Engine**: `Payment` records trigger automatic `LedgerEntry` splits.
 - **Ledger System**: Tracks internal balances for the `COMPANY_FUND`, `FINDER_FEE`, and contractor `EXECUTION` shares.

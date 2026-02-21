@@ -1,19 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PortfolioItem, Service, SubCategory } from "@prisma/client";
+import { PortfolioItem, Service } from "@prisma/client";
 import ImageUpload from "@/app/components/admin/ImageUpload";
 
 type ItemWithService = PortfolioItem & {
     service: { title: string },
-    subCategory?: { title: string } | null
 };
-
-type ServiceWithSubs = Service & { subCategories: SubCategory[] };
 
 export default function AdminPortfolioPage() {
     const [items, setItems] = useState<ItemWithService[]>([]);
-    const [services, setServices] = useState<ServiceWithSubs[]>([]);
+    const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
 
@@ -22,7 +19,6 @@ export default function AdminPortfolioPage() {
         title: "",
         description: "",
         serviceId: "",
-        subCategoryId: "",
         projectUrl: "",
         imageUrl: "",
         technologies: "",
@@ -62,7 +58,6 @@ export default function AdminPortfolioPage() {
                 body: JSON.stringify({
                     ...formData,
                     technologies: formData.technologies.split(",").map(t => t.trim()).filter(Boolean),
-                    subCategoryId: formData.subCategoryId || null
                 }),
             });
             if (res.ok) {
@@ -71,7 +66,6 @@ export default function AdminPortfolioPage() {
                     title: "",
                     description: "",
                     serviceId: "",
-                    subCategoryId: "",
                     projectUrl: "",
                     imageUrl: "",
                     technologies: "",
@@ -118,24 +112,10 @@ export default function AdminPortfolioPage() {
                                         required
                                         className="select-field"
                                         value={formData.serviceId}
-                                        onChange={e => setFormData({ ...formData, serviceId: e.target.value, subCategoryId: "" })}
+                                        onChange={e => setFormData({ ...formData, serviceId: e.target.value })}
                                     >
                                         <option value="">Select a service</option>
                                         {services.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="input-label">Sub-service (Optional)</label>
-                                    <select
-                                        className="select-field"
-                                        value={formData.subCategoryId}
-                                        onChange={e => setFormData({ ...formData, subCategoryId: e.target.value })}
-                                        disabled={!formData.serviceId}
-                                    >
-                                        <option value="">Select sub-service</option>
-                                        {selectedService?.subCategories.map(sub => (
-                                            <option key={sub.id} value={sub.id}>{sub.title}</option>
-                                        ))}
                                     </select>
                                 </div>
                             </div>
@@ -218,9 +198,6 @@ export default function AdminPortfolioPage() {
                         <div>
                             <div className="flex flex-wrap gap-1 mb-1">
                                 <span className="text-[10px] text-agency-accent font-bold uppercase">{item.service.title}</span>
-                                {item.subCategory && (
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase">• {item.subCategory.title}</span>
-                                )}
                             </div>
                             <h3 className="font-bold text-lg">{item.title}</h3>
                             <p className="text-xs text-gray-400 line-clamp-2 mt-1">{item.description}</p>
