@@ -79,12 +79,12 @@ export default function ServicesSolutions() {
         <div className="section-container relative">
           <span className="section-tag mb-6">Enterprise Services</span>
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
+            <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-white">
               Structured Digital Execution for Growth-Focused Companies
             </h1>
             <p className="text-gray-400 mt-6 text-lg leading-relaxed">
-              We align strategy, build execution-ready platforms, and deploy
-              automation so your team can scale with confidence.
+              We design platform, automation, and growth systems that keep
+              execution focused, measurable, and resilient as you scale.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
@@ -108,19 +108,19 @@ export default function ServicesSolutions() {
         <div className="section-container">
           <div className="max-w-2xl mb-12">
             <span className="section-tag mb-4">Three Core Pillars</span>
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Solution Architecture, Not Packages
+            <h2 className="text-3xl md:text-4xl font-semibold">
+              Solution Architecture Aligned to Outcomes
             </h2>
             <p className="text-gray-400 mt-4">
-              Each engagement is assembled around the systems required to reach
-              your growth targets.
+              Each engagement is configured around the systems required to
+              achieve your growth objectives.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {PILLARS.map((pillar) => (
               <div
                 key={pillar.title}
-                className="glass-panel rounded-2xl p-8 border border-white/10"
+                className="rounded-2xl p-8 border border-white/10 bg-white/5"
               >
                 <h3 className="text-xl font-semibold mb-3">{pillar.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -150,19 +150,19 @@ export default function ServicesSolutions() {
         <div className="section-container">
           <div className="max-w-2xl mb-12">
             <span className="section-tag mb-4">Engagement Approach</span>
-            <h2 className="text-3xl md:text-4xl font-bold">
+            <h2 className="text-3xl md:text-4xl font-semibold">
               Strategy -{">"} Build -{">"} Scale
             </h2>
             <p className="text-gray-400 mt-4">
-              A clear, repeatable operating model that keeps scope, delivery,
-              and outcomes aligned.
+              A repeatable operating model that keeps scope, delivery, and
+              outcomes aligned across every phase.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {APPROACH.map((step, index) => (
               <div
                 key={step.title}
-                className="relative glass-panel rounded-2xl p-8 border border-white/10"
+                className="relative rounded-2xl p-8 border border-white/10 bg-white/5"
               >
                 <div className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-4">
                   Step {index + 1}
@@ -196,15 +196,15 @@ export default function ServicesSolutions() {
           <div className="absolute top-[-40%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
         </div>
         <div className="section-container relative">
-          <div className="glass-panel rounded-3xl p-10 md:p-14 border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="rounded-3xl p-10 md:p-14 border border-white/10 bg-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="max-w-xl">
               <span className="section-tag mb-4">Strategic Partnership</span>
-              <h2 className="text-3xl md:text-4xl font-bold">
+              <h2 className="text-3xl md:text-4xl font-semibold">
                 Schedule Strategic Consultation
               </h2>
               <p className="text-gray-400 mt-4">
-                Discuss your growth objectives and we will design a tailored
-                execution roadmap with a proposal-backed plan.
+                Share your growth objectives and receive a tailored roadmap
+                aligned to measurable execution outcomes.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -213,12 +213,6 @@ export default function ServicesSolutions() {
                 className="btn-brand px-6 py-3 rounded-full text-sm font-semibold"
               >
                 Schedule Strategic Consultation
-              </a>
-              <a
-                href="/#contact"
-                className="px-6 py-3 rounded-full text-sm font-semibold border border-white/10 text-white/80 hover:text-white hover:border-white/30 transition-colors"
-              >
-                Request Proposal
               </a>
             </div>
           </div>
