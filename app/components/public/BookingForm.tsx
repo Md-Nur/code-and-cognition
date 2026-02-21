@@ -29,12 +29,17 @@ type Service = {
     subCategories: SubCategory[];
 };
 
-export default function BookingForm() {
-    const [step, setStep] = useState(1);
+interface BookingFormProps {
+    defaultServiceId?: string;
+    defaultSubCategoryId?: string;
+}
+
+export default function BookingForm({ defaultServiceId, defaultSubCategoryId }: BookingFormProps) {
+    const [step, setStep] = useState(defaultServiceId ? 2 : 1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
-    const [selectedServiceId, setSelectedServiceId] = useState("");
+    const [selectedServiceId, setSelectedServiceId] = useState(defaultServiceId || "");
 
     const {
         register,
@@ -48,8 +53,15 @@ export default function BookingForm() {
     useEffect(() => {
         fetch("/api/services")
             .then(r => r.json())
-            .then(data => setServices(Array.isArray(data) ? data : []));
-    }, []);
+            .then(data => {
+                const servicesData = Array.isArray(data) ? data : [];
+                setServices(servicesData);
+
+                if (defaultSubCategoryId) {
+                    setValue("subCategoryId", defaultSubCategoryId);
+                }
+            });
+    }, [defaultSubCategoryId, setValue]);
 
     const selectedService = services.find(s => s.id === selectedServiceId);
 

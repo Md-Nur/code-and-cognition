@@ -1,19 +1,10 @@
-in sub service page "Let's Build Something Amazing" component should set the service and sub service by default
-
 One thing, that is, here is the option to edit and delete payments. Yes, for now, I would see if the revenue minus is shown on the dashboard.
 
 Big agencies like Accenture, TCS, or even high-end boutique agencies use Client Portals to bridge the gap between "working on a project" and "making the client feel secure. I also make my website like them (Professional Client Experience (CX))
 
-
-Your Prisma schema is exceptionally well-structured. You’ve already laid the groundwork for a high-level agency system by including `ProjectMember`, `LedgerEntry`, and `LedgerBalance`.
-
-Here is how you can implement the specific features you mentioned—the financial splits and the professional client experience—using the schema you’ve already built.
-
----
-
 ### 1. Implementing the 20/10/70 Logic
 
-In your schema, the `Payment` model is the trigger. When a payment is recorded, you need a function in your backend (e.g., a Next.js Server Action or an Express controller) to create the `LedgerEntry` records.
+In your schema, the `Payment` model is the trigger. When a payment is recorded, you need a function in your backend to create the `LedgerEntry` records.
 
 **The Algorithm:**
 
@@ -62,7 +53,7 @@ enum MilestoneStatus {
 Big companies usually do one of two things:
 
 1. **The Magic Link (Low Friction):** Add a `viewToken` field (a unique UUID) to the `Project` model. You send the client a link like `codencognition.com/portal/project/[viewToken]`. They don't need a password; they just see their project's progress.
-2. **Client Login:** You create a `User` for them with a `Role.CLIENT` and restrict their view so they only see their own project milestones.
+<!-- 2. **Client Login:** You create a `User` for them with a `Role.CLIENT` and restrict their view so they only see their own project milestones. -->
 
 ---
 

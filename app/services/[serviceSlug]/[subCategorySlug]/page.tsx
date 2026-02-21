@@ -149,7 +149,10 @@ export default async function SubCategoryDetailPage({ params }: PageProps) {
                 </section>
             )}
 
-            <BookingForm />
+            <BookingForm
+                defaultServiceId={subCategory.serviceId}
+                defaultSubCategoryId={subCategory.id}
+            />
             <Footer />
         </main>
     );
