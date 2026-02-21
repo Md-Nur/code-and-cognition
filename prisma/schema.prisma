@@ -128,6 +128,10 @@ model Project {
   status         ProjectStatus   @default(ACTIVE)
   health         ProjectHealth   @default(GREEN)
   viewToken      String?         @unique @default(uuid()) /// Public viewing token for clients
+  scope          String? /// Project scope and objectives
+  startDate      DateTime? /// Project start date
+  endDate        DateTime? /// Project end date / deadline
+  riskNotes      String? /// Risk management notes
   createdAt      DateTime        @default(now())
   payments       Payment[]
   booking        Booking?        @relation(fields: [bookingId], references: [id])

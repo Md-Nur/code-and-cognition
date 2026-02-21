@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import ProgressBar from "@/app/components/ProgressBar";
+import DownloadBriefButton from "./DownloadBriefButton";
 
 export default async function ClientPortalPage(props: {
   params: Promise<{ viewToken: string }>;
@@ -92,6 +93,11 @@ export default async function ClientPortalPage(props: {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-6 pt-32 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Download Brief Button - Prominent at top */}
+        <div className="lg:col-span-12 flex justify-end">
+          <DownloadBriefButton viewToken={params.viewToken} />
+        </div>
+
         {/* Left Column: Overview & Milestones */}
         <div className="lg:col-span-8 space-y-10">
           {/* Project Title Card */}

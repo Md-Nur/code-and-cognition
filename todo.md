@@ -1,34 +1,3 @@
-Implement automatic Project Brief PDF generation in my ERP.
-
-Stack: Next.js App Router.
-
-Requirements:
-
-1. Create:
-- /api/project/[id]/generate-brief route
-
-2. Use:
-- @react-pdf/renderer
-
-3. Include in PDF:
-- Client Name
-- Project Scope
-- Timeline
-- Milestones
-- Budget
-- Risk Notes
-
-4. Add:
-- "Download Brief" button in Admin and Client view
-
-Ensure:
-- Only project-related users can access
-- Styled professionally (minimal black & white)
-
-
-------
-
-
 Refactor my existing RBAC system.
 
 Roles:
