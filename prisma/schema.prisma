@@ -6,6 +6,7 @@ datasource db {
   provider = "postgresql"
 }
 
+/// Core User model representing both administrators and contractors.
 model User {
   id               String          @id @default(cuid())
   name             String
@@ -22,6 +23,7 @@ model User {
   activityLogs     ActivityLog[]
 }
 
+/// Internal message system for communication between users.
 model Message {
   id         String   @id @default(cuid())
   content    String
@@ -33,18 +35,20 @@ model Message {
   sender     User     @relation("SentMessages", fields: [senderId], references: [id])
 }
 
+/// System notifications for users regarding bookings, projects, and payments.
 model Notification {
   id        String           @id @default(cuid())
   userId    String
   title     String
   message   String
   type      NotificationType
-  link      String?
+  link      String? /// Optional link to redirect user (e.g., to a specific booking)
   isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
   user      User             @relation(fields: [userId], references: [id])
 }
 
+/// Main service offerings displayed on the landing page and services page.
 model Service {
   id             String          @id @default(cuid())
   title          String          @unique
@@ -59,6 +63,7 @@ model Service {
   subCategories  SubCategory[]
 }
 
+/// Specific sub-categories of services with their own pricing tiers.
 model SubCategory {
   id                String          @id @default(cuid())
   title             String
@@ -80,6 +85,7 @@ model SubCategory {
   service           Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
+/// Individual portfolio pieces shown in the portfolio section.
 model PortfolioItem {
   id            String       @id @default(cuid())
   title         String
@@ -96,6 +102,7 @@ model PortfolioItem {
   subCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
 }
 
+/// Client bookings/leads submitted from the contact or service forms.
 model Booking {
   id          String        @id @default(cuid())
   clientName  String
@@ -111,14 +118,15 @@ model Booking {
   project     Project?
 }
 
+/// Active projects managed by the agency, converted from bookings.
 model Project {
   id           String          @id @default(cuid())
   title        String
   bookingId    String?         @unique
-  finderId     String
+  finderId     String /// The user who brought in the project
   status       ProjectStatus   @default(ACTIVE)
   health       ProjectHealth   @default(GREEN)
-  viewToken    String?         @unique @default(uuid())
+  viewToken    String?         @unique @default(uuid()) /// Public viewing token for clients
   createdAt    DateTime        @default(now())
   payments     Payment[]
   booking      Booking?        @relation(fields: [bookingId], references: [id])
@@ -128,17 +136,19 @@ model Project {
   activityLogs ActivityLog[]
 }
 
+/// Contractors assigned to a project with their respective execution share (percentage).
 model ProjectMember {
   id        String  @id @default(cuid())
   projectId String
   userId    String
-  share     Float
+  share     Float /// Percentage share of execution earnings
   project   Project @relation(fields: [projectId], references: [id])
   user      User    @relation(fields: [userId], references: [id])
 
   @@unique([projectId, userId])
 }
 
+/// Financial payments received for a project.
 model Payment {
   id        String        @id @default(cuid())
   projectId String
@@ -147,14 +157,15 @@ model Payment {
   currency  Currency
   note      String?
   paidAt    DateTime      @default(now())
-  splits    LedgerEntry[]
+  splits    LedgerEntry[] /// Automatic splits generated for founders and project members
   project   Project       @relation(fields: [projectId], references: [id])
 }
 
+/// Detailed ledger entries for each payment split (e.g., Company, Finder Fee, Execution).
 model LedgerEntry {
   id        String    @id @default(cuid())
   paymentId String
-  userId    String?
+  userId    String? /// Null for COMPANY_FUND
   type      SplitType
   amountBDT Float?
   amountUSD Float?
@@ -162,6 +173,7 @@ model LedgerEntry {
   payment   Payment   @relation(fields: [paymentId], references: [id])
 }
 
+/// Running totals of earnings for each user.
 model LedgerBalance {
   id       String @id @default(cuid())
   userId   String @unique
@@ -170,6 +182,7 @@ model LedgerBalance {
   user     User   @relation(fields: [userId], references: [id])
 }
 
+/// Customer testimonials displayed on the landing page.
 model Testimonial {
   id        String   @id @default(cuid())
   name      String
@@ -183,6 +196,7 @@ model Testimonial {
   updatedAt DateTime @updatedAt
 }
 
+/// Partner or client logos shown in the client section.
 model Client {
   id        String   @id @default(cuid())
   name      String
@@ -193,6 +207,7 @@ model Client {
   updatedAt DateTime @updatedAt
 }
 
+/// Business expenses recorded for profit/revenue tracking.
 model Expense {
   id        String   @id @default(cuid())
   title     String
@@ -261,6 +276,7 @@ enum MilestoneStatus {
   COMPLETED
 }
 
+/// Project milestones for tracking progress and deliverables.
 model Milestone {
   id          String          @id @default(cuid())
   projectId   String
@@ -274,6 +290,7 @@ model Milestone {
   project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
+/// Audit trail of events and actions performed on projects.
 model ActivityLog {
   id        String   @id @default(cuid())
   projectId String
