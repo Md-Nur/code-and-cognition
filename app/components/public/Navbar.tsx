@@ -317,7 +317,22 @@ export function ServicesDropdown({
   groups,
 }: ServicesDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const panelId = "services-mega-menu";
+
+  const handleMouseLeave = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  };
+
+  const handleMouseEnter = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setIsOpen(true);
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -346,11 +361,19 @@ export function ServicesDropdown({
     };
   }, [isOpen, setIsOpen]);
 
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div
       className="relative"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       ref={dropdownRef}
     >
       <button
@@ -382,11 +405,13 @@ export function ServicesDropdown({
 
       <div
         id={panelId}
-        className={`absolute left-1/2 top-[calc(100%+18px)] w-[min(960px,92vw)] -translate-x-1/2 rounded-2xl border border-white/10 bg-agency-black/95 shadow-[0_24px_60px_rgba(0,0,0,0.45)] transition-all duration-300 ${
+        className={`absolute left-1/2 top-[calc(100%+12px)] w-[min(960px,92vw)] -translate-x-1/2 rounded-2xl border border-white/10 bg-agency-black/95 shadow-[0_24px_60px_rgba(0,0,0,0.45)] transition-all duration-300 pointer-events-none ${
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-2 pointer-events-none"
+            : "opacity-0 translate-y-1"
         }`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <div className="grid gap-8 p-8 md:grid-cols-3">
           {groups.map((group) => (
@@ -445,8 +470,8 @@ export function MobileNav({
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex h-full flex-col px-6 pb-10 pt-24">
-        <div className="space-y-10 overflow-y-auto">
+      <div className="flex h-full flex-col px-6 pb-6 pt-20 sm:pt-24">
+        <div className="flex-1 min-h-0 space-y-10 overflow-y-auto pr-2">
           <div className="space-y-6">
             <Link
               href="/services"
