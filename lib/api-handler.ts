@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 import { Role } from "@prisma/client";
-import { isRoleAllowed } from "./rbac";
+import { isRoleAllowed, canAccessProject } from "./rbac";
+import { prisma } from "./prisma";
 
 export type ApiHandler = (
   req: NextRequest,
@@ -38,6 +39,46 @@ export function withAuth(handler: ApiHandler, requiredRole?: RoleRequirement) {
       );
     }
   };
+}
+
+export function withProjectAuth(
+  handler: ApiHandler,
+  options?: { allowClient?: boolean; includeFinder?: boolean }
+) {
+  return withAuth(async (req, context, session) => {
+    try {
+      // In Next.js App Router context.params is a Promise
+      const params = await context.params;
+      const id = params?.id;
+
+      if (!id) {
+        return ApiResponse.error("Project ID is required");
+      }
+
+      const project = await prisma.project.findUnique({
+        where: { id },
+        include: {
+          booking: true,
+          members: true,
+        },
+      });
+
+      if (!project) {
+        return ApiResponse.notFound("Project");
+      }
+
+      const canAccess = canAccessProject(session.user, project, options);
+      if (!canAccess) {
+        return ApiResponse.forbidden();
+      }
+
+      context.project = project;
+      return handler(req, context, session);
+    } catch (error) {
+      console.error("Project Auth Error:", error);
+      return ApiResponse.error("Internal Server Error", 500);
+    }
+  });
 }
 
 export const ApiResponse = {

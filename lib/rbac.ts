@@ -52,5 +52,9 @@ export function canAccessProject(
     });
   }
 
+  if (user.role === Role.CLIENT && options?.allowClient) {
+    return isProjectClient(user, project);
+  }
+
   return false;
 }
