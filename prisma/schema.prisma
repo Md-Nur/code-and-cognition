@@ -49,22 +49,41 @@ model Notification {
   user      User             @relation(fields: [userId], references: [id])
 }
 
-/// Main service offerings displayed on the landing page and services page.
-model Service {
-  id             String          @id @default(cuid())
-  title          String          @unique
-  slug           String          @unique
-  description    String
-  status         Status          @default(ACTIVE)
-  thumbnailUrl   String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  bookings       Booking[]
-  portfolioItems PortfolioItem[]
-  subCategories  SubCategory[]
+/// High-level service categories for organizing offerings (e.g., Digital Platforms, Brand Strategy)
+model ServiceCategory {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String
+  slug        String    @unique
+  order       Int       @default(0)
+  status      Status    @default(ACTIVE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  services    Service[]
 }
 
-/// Specific sub-categories of services with their own pricing tiers.
+/// Main service offerings with business value positioning and overview
+model Service {
+  id               String            @id @default(cuid())
+  categoryId       String
+  title            String            @unique
+  slug             String            @unique
+  description      String /// Technical description
+  overview         String? /// High-level service overview
+  positioningText  String? /// Business value and strategic positioning
+  status           Status            @default(ACTIVE)
+  thumbnailUrl     String?
+  order            Int               @default(0)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  category         ServiceCategory   @relation(fields: [categoryId], references: [id])
+  bookings         Booking[]
+  portfolioItems   PortfolioItem[]
+  engagementModels EngagementModel[]
+  subCategories    SubCategory[] /// @deprecated - kept for backward compatibility
+}
+
+/// @deprecated - Specific sub-categories of services with their own pricing tiers (legacy, use EngagementModel instead)
 model SubCategory {
   id                String          @id @default(cuid())
   title             String
@@ -86,6 +105,28 @@ model SubCategory {
   service           Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
+/// Flexible engagement models for services (Strategy | Implementation | Optimization | Retainer)
+model EngagementModel {
+  id            String      @id @default(cuid())
+  serviceId     String
+  name          String /// e.g., Strategy, Implementation, Optimization, Retainer
+  description   String
+  pricingType   PricingType @default(CUSTOM)
+  basePriceBDT  Float? /// Nullable for custom pricing
+  basePriceUSD  Float? /// Nullable for custom pricing
+  deliverables  String[] /// List of key deliverables
+  estimatedDays Int? /// Estimated timeline in days
+  order         Int         @default(0)
+  status        Status      @default(ACTIVE)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  service       Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  proposals     Proposal[]
+  bookings      Booking[]
+
+  @@unique([serviceId, name])
+}
+
 /// Individual portfolio pieces shown in the portfolio section.
 model PortfolioItem {
   id            String       @id @default(cuid())
@@ -105,18 +146,20 @@ model PortfolioItem {
 
 /// Client bookings/leads submitted from the contact or service forms.
 model Booking {
-  id          String        @id @default(cuid())
-  clientName  String
-  clientEmail String
-  clientPhone String?
-  serviceId   String
-  budgetBDT   Float?
-  budgetUSD   Float?
-  message     String?
-  status      BookingStatus @default(PENDING)
-  createdAt   DateTime      @default(now())
-  service     Service       @relation(fields: [serviceId], references: [id])
-  project     Project?
+  id                String           @id @default(cuid())
+  clientName        String
+  clientEmail       String
+  clientPhone       String?
+  serviceId         String
+  engagementModelId String? /// New: selected engagement model (nullable for legacy bookings)
+  budgetBDT         Float?
+  budgetUSD         Float?
+  message           String?
+  status            BookingStatus    @default(PENDING)
+  createdAt         DateTime         @default(now())
+  service           Service          @relation(fields: [serviceId], references: [id])
+  engagementModel   EngagementModel? @relation(fields: [engagementModelId], references: [id])
+  project           Project?
 }
 
 /// Active projects managed by the agency, converted from bookings.
@@ -134,6 +177,7 @@ model Project {
   riskNotes      String? /// Risk management notes
   createdAt      DateTime        @default(now())
   payments       Payment[]
+  proposals      Proposal[]
   booking        Booking?        @relation(fields: [bookingId], references: [id])
   finder         User            @relation("Finder", fields: [finderId], references: [id])
   members        ProjectMember[]
@@ -152,6 +196,27 @@ model ProjectMember {
   user      User    @relation(fields: [userId], references: [id])
 
   @@unique([projectId, userId])
+}
+
+/// Project proposals with custom scoping, budget, and approval workflow
+model Proposal {
+  id                String           @id @default(cuid())
+  projectId         String
+  engagementModelId String? /// Can reference an engagement model or be fully custom
+  scopeSummary      String /// Detailed scope of work
+  deliverables      String[] /// List of deliverables
+  budgetBDT         Float?
+  budgetUSD         Float?
+  currency          Currency         @default(BDT)
+  estimatedDays     Int? /// Timeline estimate
+  approved          Boolean          @default(false)
+  approvedAt        DateTime?
+  notes             String? /// Additional notes or terms
+  version           Int              @default(1) /// For proposal versioning
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  project           Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  engagementModel   EngagementModel? @relation(fields: [engagementModelId], references: [id])
 }
 
 /// Financial payments received for a project.
@@ -245,6 +310,12 @@ enum Role {
 enum Status {
   ACTIVE
   INACTIVE
+}
+
+enum PricingType {
+  FIXED /// Fixed price engagement
+  CUSTOM /// Custom pricing per project
+  RETAINER /// Monthly retainer model
 }
 
 enum BookingStatus {

@@ -9,7 +9,8 @@ export default async function ContractorPage() {
     redirect("/login");
   }
 
-  if (![Role.CONTRACTOR, Role.FOUNDER].includes(session.user.role)) {
+  const allowedRoles: Role[] = [Role.CONTRACTOR, Role.FOUNDER];
+  if (!allowedRoles.includes(session.user.role)) {
     redirect("/login");
   }
 

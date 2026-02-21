@@ -132,7 +132,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <nav
-      className={`sticky top-0 z-[100] transition-all duration-300 ${
+      className={`sticky top-0 z-100 transition-all duration-300 ${
         isScrolled || isMenuOpen
           ? "bg-agency-black/90 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.25)]"
           : "bg-transparent"
@@ -441,7 +441,7 @@ export function MobileNav({
 }: MobileNavProps) {
   return (
     <div
-      className={`fixed inset-0 z-[90] bg-agency-black/95 backdrop-blur-lg transition-transform duration-500 lg:hidden ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+      className={`fixed inset-0 z-90 bg-agency-black/95 backdrop-blur-lg transition-transform duration-500 lg:hidden ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       role="dialog"
       aria-modal="true"
     >

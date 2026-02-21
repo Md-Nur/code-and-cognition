@@ -1013,7 +1013,7 @@ export default function AdminProjectDetailsPage() {
 
           <div className="glass-panel p-6 rounded-xl">
             <h3 className="text-lg font-bold mb-4">Payment History</h3>
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-100 overflow-y-auto pr-2">
               {project.payments.map((payment) => (
                 <div
                   key={payment.id}
@@ -1058,7 +1058,7 @@ export default function AdminProjectDetailsPage() {
 
           <div className="glass-panel p-6 rounded-xl">
             <h3 className="text-lg font-bold mb-4">Activity Feed</h3>
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-100 overflow-y-auto pr-2">
               {project.activityLogs.map((log) => (
                 <div
                   key={log.id}
