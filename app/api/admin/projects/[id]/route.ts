@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { canAccessProject } from "@/lib/rbac";
 import { createNotification } from "@/lib/notifications";
+import { getNextAction } from "@/lib/next-action";
 
 export async function GET(
   req: Request,
@@ -50,7 +51,19 @@ export async function GET(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  return NextResponse.json(project);
+  const pendingChangeRequests = await prisma.changeRequest.count({
+    where: { projectId: id, status: "PENDING" },
+  });
+
+  const nextAction = getNextAction({
+    status: project.status,
+    milestones: project.milestones,
+    booking: project.booking,
+    payments: project.payments,
+    pendingChangeRequests,
+  });
+
+  return NextResponse.json({ ...project, nextAction });
 }
 
 export async function PATCH(
