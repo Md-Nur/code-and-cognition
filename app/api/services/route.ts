@@ -38,16 +38,6 @@ export async function GET(request: Request) {
             where.OR = [
                 ...expandedTerms.map(term => ({ title: { contains: term, mode: "insensitive" } })),
                 ...expandedTerms.map(term => ({ description: { contains: term, mode: "insensitive" } })),
-                {
-                    subCategories: {
-                        some: {
-                            OR: [
-                                ...expandedTerms.map(term => ({ title: { contains: term, mode: "insensitive" } })),
-                                ...expandedTerms.map(term => ({ description: { contains: term, mode: "insensitive" } })),
-                            ],
-                        },
-                    },
-                },
             ];
 
             // If multiple words, add an AND condition requiring ALL words to be present somewhere
@@ -57,16 +47,6 @@ export async function GET(request: Request) {
                         OR: [
                             { title: { contains: word, mode: "insensitive" } },
                             { description: { contains: word, mode: "insensitive" } },
-                            {
-                                subCategories: {
-                                    some: {
-                                        OR: [
-                                            { title: { contains: word, mode: "insensitive" } },
-                                            { description: { contains: word, mode: "insensitive" } },
-                                        ],
-                                    },
-                                },
-                            },
                         ]
                     }))
                 });
@@ -81,21 +61,6 @@ export async function GET(request: Request) {
                 title: true,
                 description: true,
                 thumbnailUrl: true,
-                subCategories: {
-                    select: {
-                        id: true,
-                        slug: true,
-                        title: true,
-                        description: true,
-                        imageUrl: true,
-                        basePriceBDT: true,
-                        basePriceUSD: true,
-                        mediumPriceBDT: true,
-                        mediumPriceUSD: true,
-                        proPriceBDT: true,
-                        proPriceUSD: true,
-                    }
-                },
                 portfolioItems: {
                     select: {
                         id: true,

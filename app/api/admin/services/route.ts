@@ -5,9 +5,6 @@ import { serviceSchema } from "@/lib/validations/admin";
 
 export const GET = withAuth(async () => {
     const services = await prisma.service.findMany({
-        include: {
-            subCategories: true
-        },
         orderBy: { createdAt: "desc" },
     });
     return ApiResponse.success(services);
