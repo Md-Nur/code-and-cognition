@@ -1,36 +1,3 @@
-Act as a backend product architect.
-
-Remove direct Plan selection from booking flow.
-
-New Booking Flow:
-
-1. Client selects Service
-2. Client fills structured discovery form
-3. Founder reviews request
-4. Founder generates Proposal:
-   - scope
-   - milestones
-   - budget
-5. Client approves proposal
-6. Project is created
-
-Implement:
-
-- Remove planId from Booking model
-- Add proposalId relation
-- Add proposal status:
-   - DRAFT
-   - SENT
-   - APPROVED
-   - REJECTED
-
-Generate:
-- Prisma schema updates
-- Server actions
-- Updated booking logic
-
----
-
 Act as a branding strategist.
 
 Rewrite my services positioning.
