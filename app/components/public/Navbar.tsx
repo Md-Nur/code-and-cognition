@@ -105,7 +105,7 @@ export default function Navbar({ user }: NavbarProps) {
               </div>
 
               {/* Main Navigation - Center */}
-              <div className="hidden lg:flex flex-1 items-center justify-center gap-9">
+              <div className="hidden lg:flex flex-[2] items-center justify-center gap-7">
                 <ServicesDropdown
                   isOpen={isServicesOpen}
                   setIsOpen={setIsServicesOpen}
