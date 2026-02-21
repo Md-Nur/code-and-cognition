@@ -80,29 +80,6 @@ model Service {
   bookings         Booking[]
   portfolioItems   PortfolioItem[]
   engagementModels EngagementModel[]
-  subCategories    SubCategory[] /// @deprecated - kept for backward compatibility
-}
-
-/// @deprecated - Specific sub-categories of services with their own pricing tiers (legacy, use EngagementModel instead)
-model SubCategory {
-  id                String          @id @default(cuid())
-  title             String
-  slug              String          @unique
-  description       String?
-  serviceId         String
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  basePriceBDT      Float           @default(0)
-  basePriceUSD      Float           @default(0)
-  imageUrl          String?
-  mediumPriceBDT    Float           @default(0)
-  mediumPriceUSD    Float           @default(0)
-  proPriceBDT       Float           @default(0)
-  proPriceUSD       Float           @default(0)
-  mediumDescription String?
-  proDescription    String?
-  portfolioItems    PortfolioItem[]
-  service           Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
 /// Flexible engagement models for services (Strategy | Implementation | Optimization | Retainer)
@@ -128,19 +105,17 @@ model EngagementModel {
 
 /// Individual portfolio pieces shown in the portfolio section.
 model PortfolioItem {
-  id            String       @id @default(cuid())
-  title         String
-  description   String
-  imageUrl      String?
-  projectUrl    String?
-  serviceId     String
-  technologies  String[]
-  isFeatured    Boolean      @default(false)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  subCategoryId String?
-  service       Service      @relation(fields: [serviceId], references: [id])
-  subCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  imageUrl     String?
+  projectUrl   String?
+  serviceId    String
+  technologies String[]
+  isFeatured   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  service      Service  @relation(fields: [serviceId], references: [id])
 }
 
 /// Client bookings/leads submitted from the contact or service forms.
