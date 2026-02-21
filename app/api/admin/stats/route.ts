@@ -44,22 +44,28 @@ export const GET = withAuth(async () => {
         ]);
 
         const totalRevenueBDT = revenue._sum.amountBDT || 0;
+        const totalRevenueUSD = revenue._sum.amountUSD || 0;
         const totalExpensesBDT = totalExpenses._sum.amountBDT || 0;
+        const totalExpensesUSD = totalExpenses._sum.amountUSD || 0;
 
         return ApiResponse.success({
             revenue: {
                 bdt: totalRevenueBDT,
+                usd: totalRevenueUSD,
             },
             activeProjects,
             pendingBookings,
             companyFund: {
                 bdt: companyFunds._sum.amountBDT || 0,
+                usd: companyFunds._sum.amountUSD || 0,
             },
             expenses: {
                 bdt: totalExpensesBDT,
+                usd: totalExpensesUSD,
             },
             netProfit: {
                 bdt: totalRevenueBDT - totalExpensesBDT,
+                usd: totalRevenueUSD - totalExpensesUSD,
             }
         });
     } catch (error) {

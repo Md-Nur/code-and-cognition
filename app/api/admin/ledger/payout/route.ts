@@ -31,8 +31,8 @@ export const POST = withAuth(async (req) => {
                 data: {
                     projectId: (await tx.project.findFirst())?.id || "",
                     currency,
-                    amountBDT: currency === "BDT" ? -amount : 0,
-                    amountUSD: currency === "USD" ? -amount : 0,
+                    amountBDT: currency === "BDT" ? -amount : null,
+                    amountUSD: currency === "USD" ? -amount : null,
                     note: `Payout to user ${userId}`,
                 }
             });
@@ -42,8 +42,8 @@ export const POST = withAuth(async (req) => {
                     paymentId: systemPayment.id,
                     userId,
                     type: SplitType.EXECUTION, // Or Payout if we had it
-                    amountBDT: currency === "BDT" ? -amount : 0,
-                    amountUSD: currency === "USD" ? -amount : 0,
+                    amountBDT: currency === "BDT" ? -amount : null,
+                    amountUSD: currency === "USD" ? -amount : null,
                 }
             });
 
