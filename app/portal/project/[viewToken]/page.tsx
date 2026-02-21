@@ -13,6 +13,7 @@ import {
 import { format } from "date-fns";
 import ProgressBar from "@/app/components/ProgressBar";
 import DownloadBriefButton from "./DownloadBriefButton";
+import ClientChangeRequestsPanel from "@/app/components/portal/ClientChangeRequestsPanel";
 
 export default async function ClientPortalPage(props: {
   params: Promise<{ viewToken: string }>;
@@ -197,6 +198,9 @@ export default async function ClientPortalPage(props: {
               )}
             </div>
           </section>
+
+          {/* Change Requests Panel */}
+          <ClientChangeRequestsPanel viewToken={params.viewToken} />
         </div>
 
         {/* Right Column: Activity Feed */}

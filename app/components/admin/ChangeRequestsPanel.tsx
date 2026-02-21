@@ -86,20 +86,6 @@ export default function ChangeRequestsPanel({
     }
   }
 
-  async function handleDecision(crId: string, status: "APPROVED" | "REJECTED") {
-    const label = status === "APPROVED" ? "approve" : "reject";
-    if (!confirm(`Are you sure you want to ${label} this change request?`))
-      return;
-    const res = await fetch(
-      `/api/admin/projects/${projectId}/change-requests`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ crId, status }),
-      },
-    );
-    if (res.ok) await refreshCRs();
-  }
 
   return (
     <div className="glass-panel p-6 rounded-xl">
@@ -185,23 +171,6 @@ export default function ChangeRequestsPanel({
                   </div>
                 </div>
 
-                {/* Approve / Reject — only for FOUNDER and PENDING CRs */}
-                {isFounder && cr.status === "PENDING" && (
-                  <div className="flex gap-2 shrink-0">
-                    <button
-                      onClick={() => handleDecision(cr.id, "APPROVED")}
-                      className="text-[10px] px-2.5 py-1 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/40 transition-colors font-semibold"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleDecision(cr.id, "REJECTED")}
-                      className="text-[10px] px-2.5 py-1 rounded-lg bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600/40 transition-colors font-semibold"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           ))}
