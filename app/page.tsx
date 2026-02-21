@@ -4,9 +4,9 @@ import HeroSection from "./components/public/HeroSection";
 import CorePillars from "./components/public/CorePillars";
 import HowWeWork from "./components/public/HowWeWork";
 import CaseStudies from "./components/public/CaseStudies";
-import TestimonialsSection from "./components/public/TestimonialsSection";
+import Testimonials from "./components/public/Testimonials";
 import KnowledgeSection from "./components/public/KnowledgeSection";
-import LandingFooter from "./components/public/LandingFooter";
+import Footer from "./components/public/Footer";
 import BookingForm from "./components/public/BookingForm";
 import Clients from "./components/public/Clients";
 
@@ -48,7 +48,7 @@ export default async function LandingPage() {
       <CaseStudies />
 
       {/* Global Recognition / Social Proof */}
-      <TestimonialsSection />
+      <Testimonials />
 
       {/* Strategic Intelligence */}
       <KnowledgeSection />
@@ -75,7 +75,7 @@ export default async function LandingPage() {
       </section>
 
       {/* Footer */}
-      <LandingFooter />
+      <Footer />
     </main>
   );
 }

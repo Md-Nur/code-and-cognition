@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "../components/public/Navbar";
-import ServicesSolutions from "../components/public/ServicesSolutions";
+import CorePillars from "../components/public/CorePillars";
+import HowWeWork from "../components/public/HowWeWork";
 import BookingForm from "../components/public/BookingForm";
 import Footer from "../components/public/Footer";
 import { auth } from "@/lib/auth";
@@ -18,7 +19,8 @@ export default async function ServicesPage() {
     return (
         <main className="min-h-screen bg-agency-black selection:bg-agency-accent selection:text-white">
             <Navbar user={session?.user} />
-            <ServicesSolutions />
+            <CorePillars />
+            <HowWeWork />
             <BookingForm />
             <Footer />
         </main>
