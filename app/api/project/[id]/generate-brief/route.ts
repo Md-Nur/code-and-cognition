@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
+import { canAccessProject } from "@/lib/rbac";
 import React from "react";
 import { renderToStream } from "@react-pdf/renderer";
 import ProjectBriefDocument, {
@@ -39,13 +39,10 @@ export async function GET(
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    // Authorization: Check if user has access to this project
-    // Allowed: Founders, project finder, or project members
-    const isMember = project.members.some((m) => m.userId === session.user.id);
-    const isFinder = project.finderId === session.user.id;
-    const isFounder = session.user.role === Role.FOUNDER;
-
-    if (!isFounder && !isFinder && !isMember) {
+    const canAccess = canAccessProject(session.user, project, {
+      allowClient: true,
+    });
+    if (!canAccess) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
