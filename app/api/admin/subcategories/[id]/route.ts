@@ -44,6 +44,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                 mediumPriceUSD: body.mediumPriceUSD ?? 0,
                 proPriceBDT: body.proPriceBDT ?? 0,
                 proPriceUSD: body.proPriceUSD ?? 0,
+                mediumDescription: body.mediumDescription,
+                proDescription: body.proDescription,
             },
         });
         return NextResponse.json(updated);

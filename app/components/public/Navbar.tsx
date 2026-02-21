@@ -119,7 +119,7 @@ export default function Navbar({ user }: NavbarProps) {
                     )}
                 </div>
 
-                <div className="hidden md:flex items-center gap-2 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                     <Link href="/#contact" className="hidden md:inline-flex btn-brand text-sm">
                         Start a Project
                     </Link>

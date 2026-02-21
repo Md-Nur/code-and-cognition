@@ -18,6 +18,8 @@ const emptySubForm = {
     mediumPriceUSD: "",
     proPriceBDT: "",
     proPriceUSD: "",
+    mediumDescription: "",
+    proDescription: "",
 };
 
 function slugify(text: string) {
@@ -73,6 +75,8 @@ export default function AdminServicesPage() {
                 mediumPriceUSD: editingSub.mediumPriceUSD.toString(),
                 proPriceBDT: editingSub.proPriceBDT.toString(),
                 proPriceUSD: editingSub.proPriceUSD.toString(),
+                mediumDescription: editingSub.mediumDescription ?? "",
+                proDescription: editingSub.proDescription ?? "",
             });
         } else {
             setSubForm(emptySubForm);
@@ -169,7 +173,7 @@ export default function AdminServicesPage() {
         } else alert("Failed to delete sub-service");
     }
 
-    const pricingField = (label: string, bdtKey: keyof typeof subForm, usdKey: keyof typeof subForm) => (
+    const pricingField = (label: string, bdtKey: keyof typeof subForm, usdKey: keyof typeof subForm, descKey?: keyof typeof subForm) => (
         <div className="border border-white/5 rounded-lg p-4 bg-white/5 space-y-3">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -184,6 +188,17 @@ export default function AdminServicesPage() {
                         onChange={(e) => setSubForm({ ...subForm, [usdKey]: e.target.value })} />
                 </div>
             </div>
+            {descKey && (
+                <div>
+                    <label className="input-label">Package Description</label>
+                    <textarea
+                        className="input-field min-h-[80px] py-3"
+                        placeholder="What's included in this package..."
+                        value={subForm[descKey]}
+                        onChange={(e) => setSubForm({ ...subForm, [descKey]: e.target.value })}
+                    />
+                </div>
+            )}
         </div>
     );
 
@@ -398,9 +413,13 @@ export default function AdminServicesPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="input-label">Description (optional)</label>
-                                    <input type="text" className="input-field" placeholder="Short description..."
-                                        value={subForm.description} onChange={(e) => setSubForm({ ...subForm, description: e.target.value })} />
+                                    <label className="input-label">Description (Basic Package)</label>
+                                    <textarea
+                                        className="input-field min-h-[100px] py-3"
+                                        placeholder="What's included in the basic package..."
+                                        value={subForm.description}
+                                        onChange={(e) => setSubForm({ ...subForm, description: e.target.value })}
+                                    />
                                 </div>
                                 <ImageUpload
                                     label="Sub-service Image"
@@ -408,9 +427,9 @@ export default function AdminServicesPage() {
                                     onChange={(url) => setSubForm({ ...subForm, imageUrl: url })}
                                     description="Visual representation for this specific sub-service."
                                 />
-                                {pricingField("Basic Package", "basePriceBDT", "basePriceUSD")}
-                                {pricingField("Plus Package", "mediumPriceBDT", "mediumPriceUSD")}
-                                {pricingField("Pro Package", "proPriceBDT", "proPriceUSD")}
+                                {pricingField("Basic Package Price", "basePriceBDT", "basePriceUSD")}
+                                {pricingField("Plus Package", "mediumPriceBDT", "mediumPriceUSD", "mediumDescription")}
+                                {pricingField("Pro Package", "proPriceBDT", "proPriceUSD", "proDescription")}
                             </form>
                         </div>
                         <div className="p-4 sm:p-8 pt-4 border-t border-white/5 flex gap-4">
