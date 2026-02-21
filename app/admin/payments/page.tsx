@@ -18,6 +18,8 @@ export default function AdminPaymentsPage() {
         currency: "BDT",
         note: ""
     });
+    const [editingPaymentId, setEditingPaymentId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
     useEffect(() => {
         fetchPayments();
@@ -38,8 +40,13 @@ export default function AdminPaymentsPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         try {
-            const res = await fetch("/api/admin/payments", {
-                method: "POST",
+            const url = editingPaymentId
+                ? `/api/admin/payments/${editingPaymentId}`
+                : "/api/admin/payments";
+            const method = editingPaymentId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...formData,
@@ -51,19 +58,61 @@ export default function AdminPaymentsPage() {
                 setShowModal(false);
                 fetchPayments();
                 setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
+                setEditingPaymentId(null);
             } else {
-                alert("Failed to create payment");
+                alert(`Failed to ${editingPaymentId ? 'update' : 'create'} payment`);
             }
         } catch (error) {
             console.error(error);
         }
     }
 
+    function handleEdit(payment: PaymentWithProject) {
+        setFormData({
+            projectId: payment.projectId,
+            amount: payment.currency === "BDT" ? (payment.amountBDT?.toString() || "") : (payment.amountUSD?.toString() || ""),
+            currency: payment.currency,
+            note: payment.note || ""
+        });
+        setEditingPaymentId(payment.id);
+        setShowModal(true);
+    }
+
+    async function handleDelete(id: string) {
+        if (!window.confirm("Are you sure you want to delete this payment? This will reverse the splits and affect user balances.")) return;
+
+        setIsDeleting(id);
+        try {
+            const res = await fetch(`/api/admin/payments/${id}`, {
+                method: "DELETE"
+            });
+            if (res.ok) {
+                fetchPayments();
+            } else {
+                alert("Failed to delete payment");
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsDeleting(null);
+        }
+    }
+
+    function handleCloseModal() {
+        setShowModal(false);
+        setEditingPaymentId(null);
+        setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Payments & Splits</h1>
-                <button onClick={() => setShowModal(true)} className="btn-brand">
+                <button onClick={() => {
+                    setEditingPaymentId(null);
+                    setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
+                    setShowModal(true);
+                }} className="btn-brand">
                     + Record Payment
                 </button>
             </div>
@@ -78,6 +127,7 @@ export default function AdminPaymentsPage() {
                             <th className="text-left p-4">Amount</th>
                             <th className="text-left p-4">Note</th>
                             <th className="text-left p-4">Status</th>
+                            <th className="text-right p-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,6 +148,21 @@ export default function AdminPaymentsPage() {
                                         Split Processed
                                     </span>
                                 </td>
+                                <td className="p-4 text-right">
+                                    <button
+                                        onClick={() => handleEdit(payment)}
+                                        className="text-blue-400 hover:text-blue-300 text-sm mr-4"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(payment.id)}
+                                        className="text-red-400 hover:text-red-300 text-sm"
+                                        disabled={isDeleting === payment.id}
+                                    >
+                                        {isDeleting === payment.id ? "Deleting..." : "Delete"}
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -108,7 +173,7 @@ export default function AdminPaymentsPage() {
             {showModal && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="glass-panel w-full max-w-md p-6 rounded-xl animate-fade-in-up">
-                        <h2 className="text-xl font-bold mb-4">Record New Payment</h2>
+                        <h2 className="text-xl font-bold mb-4">{editingPaymentId ? "Edit Payment" : "Record New Payment"}</h2>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
@@ -163,11 +228,11 @@ export default function AdminPaymentsPage() {
                             </div>
 
                             <div className="flex gap-4 pt-2">
-                                <button type="button" onClick={() => setShowModal(false)} className="btn-outline flex-1">
+                                <button type="button" onClick={handleCloseModal} className="btn-outline flex-1">
                                     Cancel
                                 </button>
                                 <button type="submit" className="btn-brand flex-1">
-                                    Process Split
+                                    {editingPaymentId ? "Update Payment Info" : "Process Split"}
                                 </button>
                             </div>
                         </form>

@@ -110,3 +110,41 @@ export async function processPaymentSplit(paymentId: string) {
 
     return { success: true, entriesGenerated: entries.length };
 }
+
+export async function reversePaymentSplit(paymentId: string) {
+    const payment = await prisma.payment.findUnique({
+        where: { id: paymentId },
+        include: { splits: true },
+    });
+
+    if (!payment) throw new Error("Payment not found");
+
+    // Database Transaction
+    await prisma.$transaction(async (tx) => {
+        // Reverse Ledger Balances
+        for (const entry of payment.splits) {
+            if (entry.userId) { // Skip company fund as it's not tracked in LedgerBalance
+                const balance = await tx.ledgerBalance.findUnique({
+                    where: { userId: entry.userId }
+                });
+
+                if (balance) {
+                    await tx.ledgerBalance.update({
+                        where: { userId: entry.userId },
+                        data: {
+                            totalBDT: { decrement: entry.amountBDT || 0 },
+                            totalUSD: { decrement: entry.amountUSD || 0 },
+                        }
+                    });
+                }
+            }
+        }
+
+        // Delete Ledger Entries
+        await tx.ledgerEntry.deleteMany({
+            where: { paymentId },
+        });
+    });
+
+    return { success: true };
+}
