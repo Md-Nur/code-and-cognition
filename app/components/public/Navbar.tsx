@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import NotificationBell from "@/app/components/NotificationBell";
 
+// Types
 interface NavbarProps {
   user?: {
     id: string;
@@ -36,7 +37,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
 
@@ -132,133 +133,116 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <nav
-      className={`sticky top-0 z-100 transition-all duration-300 ${
-        isScrolled || isMenuOpen
-          ? "bg-agency-black/90 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.25)]"
-          : "bg-transparent"
-      }`}
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-out ${isScrolled || isMenuOpen
+          ? "bg-agency-black/85 backdrop-blur-xl shadow-sm border-b border-white/5 py-3"
+          : "bg-transparent py-5 lg:py-6"
+        }`}
       aria-label="Primary"
     >
-      <div
-        className={`section-container flex items-center justify-between ${isScrolled || isMenuOpen ? "py-3" : "py-5"}`}
-      >
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <Image
-            src="/Main-Logo.png"
-            alt="Code & Cognition Logo"
-            width={40}
-            height={40}
-            className="w-auto h-7 sm:h-8"
-            priority
-          />
-          <span className="text-base sm:text-lg font-display font-semibold tracking-tight whitespace-nowrap">
-            Code <span className="text-agency-accent">&</span> Cognition
-          </span>
-        </Link>
-
-        <div className="hidden lg:flex items-center gap-8">
-          <ServicesDropdown
-            isOpen={isServicesOpen}
-            setIsOpen={setIsServicesOpen}
-            groups={servicesGroups}
-          />
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              href={link.href}
-              isActive={pathname === link.href}
-            >
-              {link.name}
-            </NavLink>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-3 sm:gap-4">
-          <Link
-            href="/#contact"
-            className="hidden md:inline-flex items-center justify-center rounded-lg bg-white/95 text-agency-black px-4 py-2 text-sm font-semibold shadow-sm shadow-black/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/30"
-          >
-            Book Consultation
-          </Link>
-
-          {user && (
-            <Link
-              href="/messages"
-              className="relative hidden md:inline-flex p-2 text-white/70 hover:text-white transition-colors"
-              aria-label="Messages"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-              </svg>
-              {unreadMessages > 0 && (
-                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white ring-2 ring-agency-black">
-                  {unreadMessages}
-                </span>
-              )}
+      <div className="max-w-7xl mx-auto px-5 lg:px-8">
+        <div className="flex items-center justify-between">
+          {/* Logo - Left */}
+          <div className="flex-1 flex items-center justify-start">
+            <Link href="/" className="flex items-center gap-2 lg:gap-3 shrink-0 group">
+              <Image
+                src="/Main-Logo.png"
+                alt="Code & Cognition Logo"
+                width={40}
+                height={40}
+                className="w-auto h-7 sm:h-8 transition-transform duration-500 group-hover:scale-105"
+                priority
+              />
+              <span className="text-[15px] sm:text-lg font-display font-medium tracking-tight whitespace-nowrap text-white">
+                Code <span className="text-agency-accent font-semibold">&</span> Cognition
+              </span>
             </Link>
-          )}
+          </div>
 
-          {user && <NotificationBell />}
-
-          {user ? (
-            <Link
-              href="/admin/profile"
-              className="hidden md:inline-flex text-sm font-medium text-white/70 hover:text-white transition-colors"
-            >
-              Profile
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="hidden md:inline-flex text-sm font-medium text-white/70 hover:text-white transition-colors"
-            >
-              Login
-            </Link>
-          )}
-
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="inline-flex items-center justify-center p-2 text-white/70 hover:text-white transition-colors lg:hidden"
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}
-          >
-            {isMenuOpen ? (
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          {/* Main Navigation - Center */}
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-9">
+            <ServicesDropdown
+              isOpen={isServicesOpen}
+              setIsOpen={setIsServicesOpen}
+              groups={servicesGroups}
+            />
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                href={link.href}
+                isActive={pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/')}
               >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                {link.name}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* CTA & Profile - Right */}
+          <div className="flex-1 flex items-center justify-end gap-x-3 lg:gap-x-5">
+            {user && (
+              <Link
+                href="/messages"
+                className="relative hidden md:inline-flex p-2 text-white/80 hover:text-white transition-colors group"
+                aria-label="Messages"
               >
-                <path d="M3 12h18M3 6h18M3 18h18" />
-              </svg>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="transition-transform duration-300 group-hover:-translate-y-0.5"
+                >
+                  <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
+                </svg>
+                {unreadMessages > 0 && (
+                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white ring-2 ring-agency-black shadow-sm">
+                    {unreadMessages}
+                  </span>
+                )}
+              </Link>
             )}
-          </button>
+
+            {user && <NotificationBell />}
+
+            {user ? (
+              <Link
+                href="/admin/profile"
+                className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
+              >
+                Profile
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
+              >
+                Login
+              </Link>
+            )}
+
+            <Link
+              href="/#contact"
+              className="hidden md:inline-flex items-center justify-center rounded-lg bg-white text-agency-black px-5 py-2 lg:py-2.5 text-sm font-medium shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_6px_20px_rgba(255,255,255,0.15)] hover:-translate-y-0.5"
+            >
+              Book Consultation
+            </Link>
+
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="inline-flex items-center justify-center p-2 text-white/80 hover:text-white transition-colors lg:hidden z-[100] relative focus:outline-none"
+              aria-label="Toggle menu"
+              aria-expanded={isMenuOpen}
+            >
+              <div className="relative w-6 h-[16px] flex flex-col justify-between overflow-hidden">
+                <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 origin-center ${isMenuOpen ? 'rotate-45 translate-y-[7.25px]' : ''}`} />
+                <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 ${isMenuOpen ? 'opacity-0 translate-x-4' : 'opacity-100'}`} />
+                <span className={`w-full h-[1.5px] bg-current rounded-full transition-all duration-300 origin-center ${isMenuOpen ? '-rotate-45 -translate-y-[7.25px]' : ''}`} />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -273,6 +257,10 @@ export default function Navbar({ user }: NavbarProps) {
     </nav>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Components
+// ─────────────────────────────────────────────────────────────────────────────
 
 interface NavLinkProps {
   href: string;
@@ -293,11 +281,14 @@ export function NavLink({
     <Link
       href={href}
       onClick={onClick}
-      className={`relative text-sm font-medium tracking-wide transition-colors ${
-        isActive ? "text-white after:w-full" : "text-white/70 hover:text-white"
-      } after:absolute after:left-0 after:-bottom-2 after:h-px after:w-0 after:bg-white/70 after:transition-all after:duration-300 hover:after:w-full ${className ?? ""}`}
+      className={`group relative text-[14px] font-medium tracking-wide transition-colors duration-300 ${isActive ? "text-white" : "text-white/70 hover:text-white"
+        } ${className ?? ""}`}
     >
       {children}
+      <span
+        className={`absolute -bottom-1.5 left-0 h-px bg-white transition-all duration-300 ease-out ${isActive ? "w-full opacity-100" : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
+          }`}
+      />
     </Link>
   );
 }
@@ -380,59 +371,67 @@ export function ServicesDropdown({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         onFocus={() => setIsOpen(true)}
-        className={`relative text-sm font-medium tracking-wide transition-colors ${isOpen ? "text-white" : "text-white/70 hover:text-white"} after:absolute after:left-0 after:-bottom-2 after:h-px after:w-0 after:bg-white/70 after:transition-all after:duration-300 hover:after:w-full`}
+        className={`group relative flex items-center gap-1.5 text-[14px] font-medium tracking-wide transition-colors duration-300 outline-none ${isOpen ? "text-white" : "text-white/70 hover:text-white"
+          }`}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls={panelId}
       >
-        <span className="inline-flex items-center gap-2">
-          Services
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={`transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </span>
+        Services
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`transition-transform duration-300 ease-out ${isOpen ? "-rotate-180 text-white" : "rotate-0 text-white/50 group-hover:text-white/80"
+            }`}
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+        <span
+          className={`absolute -bottom-1.5 left-0 h-px bg-white transition-all duration-300 ease-out ${isOpen ? "w-full opacity-100" : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
+            }`}
+        />
       </button>
 
+      {/* Mega Menu Panel */}
       <div
         id={panelId}
-        className={`absolute left-1/2 top-[calc(100%+12px)] w-[min(960px,92vw)] -translate-x-1/2 rounded-2xl border border-white/10 bg-agency-black/95 shadow-[0_24px_60px_rgba(0,0,0,0.45)] transition-all duration-300 pointer-events-none ${
-          isOpen
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-1"
-        }`}
+        className={`absolute left-1/2 top-full mt-[28px] w-[850px] -translate-x-1/2 rounded-2xl border border-white/5 bg-agency-black/95 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top pointer-events-none before:absolute before:-top-6 before:left-0 before:h-6 before:w-full ${isOpen
+            ? "opacity-100 scale-100 pointer-events-auto translate-y-0"
+            : "opacity-0 scale-95 -translate-y-2"
+          }`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="grid gap-8 p-8 md:grid-cols-3">
+        <div className="grid grid-cols-3 gap-x-8 p-10 relative overflow-hidden">
+          {/* Subtle background glow effect */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-agency-accent/5 blur-[100px] rounded-full pointer-events-none" />
+
           {groups.map((group) => (
-            <div key={group.title} className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+            <div key={group.title} className="relative z-10 flex flex-col gap-y-6">
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/40 flex items-center gap-3">
                 {group.title}
-              </p>
-              <div className="space-y-3">
+              </h3>
+              <div className="flex flex-col gap-y-2">
                 {group.items.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="group block rounded-xl border border-white/5 bg-white/5 px-4 py-3 transition-all duration-300 hover:border-white/10 hover:bg-white/10"
+                    className="group/item flex flex-col gap-y-1.5 rounded-xl p-3 -mx-3 transition-colors duration-300 hover:bg-white/[0.04]"
                   >
-                    <div className="text-sm font-semibold text-white group-hover:text-white">
+                    <span className="text-sm font-medium text-white/90 group-hover/item:text-white transition-colors">
                       {item.name}
-                    </div>
-                    <div className="text-xs text-white/60 mt-1">
+                    </span>
+                    <span className="text-[13px] text-white/60 leading-relaxed transition-colors group-hover/item:text-white/80">
                       {item.description}
-                    </div>
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -466,103 +465,117 @@ export function MobileNav({
 }: MobileNavProps) {
   return (
     <div
-      className={`fixed inset-0 z-90 bg-agency-black/95 backdrop-blur-lg transition-transform duration-500 lg:hidden ${isOpen ? "translate-x-0" : "translate-x-full"}`}
-      role="dialog"
-      aria-modal="true"
+      className={`fixed inset-0 z-40 bg-zinc-950/60 backdrop-blur-md transition-all duration-500 lg:hidden ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+      aria-hidden={!isOpen}
+      onClick={onClose}
     >
-      <div className="flex h-full flex-col px-6 pb-6 pt-20 sm:pt-24">
-        <div className="flex-1 min-h-0 space-y-10 overflow-y-auto pr-2">
-          <div className="space-y-6">
-            <Link
-              href="/services"
-              onClick={onClose}
-              className="text-3xl font-semibold tracking-tight text-white"
-            >
-              Services
-            </Link>
-            <div className="space-y-6">
+      <div
+        className={`fixed inset-y-0 right-0 w-full max-w-sm bg-agency-black border-l border-white/5 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+      >
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-8 pt-24 pb-12 flex flex-col gap-y-12">
+
+          <div className="flex flex-col gap-y-10">
+            <div className="flex flex-col gap-y-6">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/30">
+                Menu
+              </span>
+              <div className="flex flex-col gap-y-5">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={onClose}
+                    className="text-3xl font-display font-medium tracking-tight text-white/80 hover:text-white transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="h-px w-full bg-white/5" />
+
+            <div className="flex flex-col gap-y-8">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/30">
+                Services
+              </span>
               {servicesGroups.map((group) => (
-                <div key={group.title} className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+                <div key={group.title} className="flex flex-col gap-y-5">
+                  <p className="text-[13px] font-medium text-white/50">
                     {group.title}
                   </p>
-                  {group.items.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={onClose}
-                      className="flex items-start justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3"
-                    >
-                      <div>
-                        <p className="text-sm font-semibold text-white">
+                  <div className="flex flex-col gap-y-4 pl-4 border-l border-white/10">
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={onClose}
+                        className="flex flex-col gap-y-1 group"
+                      >
+                        <span className="text-[15px] font-medium text-white/80 group-hover:text-white transition-colors">
                           {item.name}
-                        </p>
-                        <p className="text-xs text-white/60 mt-1">
+                        </span>
+                        <span className="text-[13px] text-white/40 group-hover:text-white/60 transition-colors">
                           {item.description}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="space-y-4">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                href={link.href}
+          <div className="mt-auto pt-10 flex flex-col gap-y-4">
+            {user && (
+              <Link
+                href="/messages"
                 onClick={onClose}
-                className="text-2xl font-semibold text-white"
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm font-medium text-white/90 transition-colors hover:bg-white/[0.04]"
               >
-                {link.name}
-              </NavLink>
-            ))}
-          </div>
-        </div>
+                Messages
+                {unreadMessages > 0 && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white shadow-sm">
+                    {unreadMessages}
+                  </span>
+                )}
+              </Link>
+            )}
 
-        <div className="mt-auto pt-8 space-y-4">
-          {user && (
-            <Link
-              href="/messages"
-              onClick={onClose}
-              className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white"
-            >
-              Messages
-              {unreadMessages > 0 && (
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-agency-accent text-xs font-bold text-white">
-                  {unreadMessages}
-                </span>
+            <div className="grid grid-cols-2 gap-x-4">
+              {user ? (
+                <Link
+                  href="/admin/profile"
+                  onClick={onClose}
+                  className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
+                >
+                  Profile
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={onClose}
+                  className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
+                >
+                  Login
+                </Link>
               )}
-            </Link>
-          )}
 
-          {user ? (
-            <Link
-              href="/admin/profile"
-              onClick={onClose}
-              className="text-sm font-semibold text-white/70 hover:text-white transition-colors"
-            >
-              Profile
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              onClick={onClose}
-              className="text-sm font-semibold text-white/70 hover:text-white transition-colors"
-            >
-              Login
-            </Link>
-          )}
+              <Link
+                href="/#contact"
+                onClick={onClose}
+                className="flex items-center justify-center rounded-xl bg-white text-agency-black px-4 py-3.5 text-sm font-semibold shadow-sm transition-transform active:scale-95"
+              >
+                Book Consultation
+              </Link>
+            </div>
+          </div>
 
-          <Link
-            href="/#contact"
-            onClick={onClose}
-            className="inline-flex items-center justify-center rounded-lg bg-white/95 text-agency-black px-4 py-3 text-sm font-semibold shadow-sm shadow-black/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/30"
-          >
-            Book Consultation
-          </Link>
         </div>
       </div>
     </div>
