@@ -16,7 +16,7 @@ const formSchema = z.object({
     discovery: z.object({
         companyName: z.string().min(1, "Company name is required"),
         industry: z.string().min(1, "Industry is required"),
-        revenueRange: z.string().min(1, "Revenue range is required"),
+        revenueRange: z.string().optional(),
         budgetRange: z.string().min(1, "Budget range is required"),
         problemStatement: z.string().min(10, "Please briefly describe the core challenge (min 10 characters)"),
         timeline: z.string().min(1, "Timeline is required"),
@@ -80,9 +80,9 @@ export default function SchedulePage() {
 
     if (isSuccess) {
         return (
-            <main className="min-h-screen pt-32 pb-24 bg-base-200">
+            <main className="min-h-screen pt-32 pb-24 bg-agency-black">
                 <div className="container mx-auto px-6 max-w-4xl">
-                    <div className="bg-base-100 rounded-3xl p-8 md:p-12 shadow-xl border border-base-300 text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                    <div className="premium-card p-8 md:p-12 text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                         <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 text-primary mb-4">
                             <CheckCircle2 className="w-10 h-10" />
                         </div>
@@ -103,7 +103,7 @@ export default function SchedulePage() {
     }
 
     return (
-        <main className="min-h-screen pt-32 pb-24 bg-base-200 selection:bg-primary/30">
+        <main className="min-h-screen pt-32 pb-24 bg-agency-black selection:bg-agency-accent/30">
             <div className="container mx-auto px-6 max-w-6xl">
                 <div className="grid lg:grid-cols-[1fr_1.5fr] gap-12 lg:gap-24 items-start">
 
@@ -117,7 +117,7 @@ export default function SchedulePage() {
                             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
                                 Schedule a Strategic Consultation
                             </h1>
-                            <p className="text-lg text-base-content/70">
+                            <p className="text-lg">
                                 We partner with ambitious companies to build intelligent, scalable digital platforms. This application helps us understand your current challenges and ensures we provide maximum value during our call.
                             </p>
                         </div>
@@ -137,7 +137,7 @@ export default function SchedulePage() {
                                         <div className="mt-1 w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                                             <ChevronRight className="w-3 h-3 text-primary" />
                                         </div>
-                                        <span className="text-base-content/80">{item}</span>
+                                        <span className="text-gray-400">{item}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -145,8 +145,8 @@ export default function SchedulePage() {
                     </div>
 
                     {/* Right Column: Form */}
-                    <div className="bg-base-100 rounded-3xl p-8 md:p-12 shadow-xl border border-base-300">
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="premium-card p-8 md:p-12">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
                             {serverError && (
                                 <div className="p-4 rounded-xl bg-error/10 text-error text-sm font-medium">
                                     {serverError}
@@ -154,40 +154,40 @@ export default function SchedulePage() {
                             )}
 
                             {/* Personal Details */}
-                            <div className="space-y-6">
+                            <div className="space-y-8">
                                 <h3 className="text-xl font-bold flex items-center gap-2">
                                     <User className="w-5 h-5 text-primary" />
                                     Your Details
                                 </h3>
 
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-base-content/80">Full Name *</label>
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-medium text-gray-400">Full Name *</label>
                                         <input
                                             {...register("clientName")}
-                                            className="input input-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
+                                            className="input-field"
                                             placeholder="John Doe"
                                         />
                                         {errors.clientName && <p className="text-error text-xs">{errors.clientName.message}</p>}
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-base-content/80">Work Email *</label>
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-medium text-gray-400">Work Email *</label>
                                         <input
                                             {...register("clientEmail")}
                                             type="email"
-                                            className="input input-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
+                                            className="input-field"
                                             placeholder="john@company.com"
                                         />
                                         {errors.clientEmail && <p className="text-error text-xs">{errors.clientEmail.message}</p>}
                                     </div>
                                 </div>
 
-                                <div className="space-y-2 max-w-md">
-                                    <label className="text-sm font-medium text-base-content/80">Phone Number</label>
+                                <div className="space-y-3 max-w-md">
+                                    <label className="text-sm font-medium text-gray-400">Phone Number</label>
                                     <input
                                         {...register("clientPhone")}
                                         type="tel"
-                                        className="input input-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
+                                        className="input-field"
                                         placeholder="+1 (555) 000-0000"
                                     />
                                 </div>
@@ -196,90 +196,88 @@ export default function SchedulePage() {
                             <hr className="border-base-300" />
 
                             {/* Company Details */}
-                            <div className="space-y-6">
+                            <div className="space-y-8">
                                 <h3 className="text-xl font-bold flex items-center gap-2">
                                     <Building2 className="w-5 h-5 text-primary" />
                                     Company Overview
                                 </h3>
 
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-base-content/80">Company Name *</label>
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-medium text-gray-400">Company Name *</label>
                                         <input
                                             {...register("discovery.companyName")}
-                                            className="input input-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
+                                            className="input-field"
                                             placeholder="Acme Corp"
                                         />
                                         {errors.discovery?.companyName && <p className="text-error text-xs">{errors.discovery.companyName.message}</p>}
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-base-content/80">Industry *</label>
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-medium text-gray-400">Industry *</label>
                                         <input
                                             {...register("discovery.industry")}
-                                            className="input input-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
+                                            className="input-field"
                                             placeholder="e.g. Fintech, Healthcare"
                                         />
                                         {errors.discovery?.industry && <p className="text-error text-xs">{errors.discovery.industry.message}</p>}
                                     </div>
                                 </div>
 
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-base-content/80">Annual Revenue *</label>
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-medium text-gray-400">Annual Revenue (Optional)</label>
                                         <select
                                             {...register("discovery.revenueRange")}
-                                            className="select select-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
+                                            className="input-field appearance-none"
                                             defaultValue=""
                                         >
-                                            <option value="" disabled>Select range</option>
-                                            {REVENUE_RANGES.map(r => <option key={r} value={r}>{r}</option>)}
+                                            <option value="" disabled className="bg-agency-black">Select range</option>
+                                            {REVENUE_RANGES.map(r => <option key={r} value={r} className="bg-agency-black">{r}</option>)}
                                         </select>
                                         {errors.discovery?.revenueRange && <p className="text-error text-xs">{errors.discovery.revenueRange.message}</p>}
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-base-content/80">Estimated Budget *</label>
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-medium text-gray-400">Estimated Budget *</label>
                                         <select
                                             {...register("discovery.budgetRange")}
-                                            className="select select-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
+                                            className="input-field appearance-none"
                                             defaultValue=""
                                         >
-                                            <option value="" disabled>Select budget</option>
-                                            {BUDGET_RANGES.map(r => <option key={r} value={r}>{r}</option>)}
+                                            <option value="" disabled className="bg-agency-black">Select budget</option>
+                                            {BUDGET_RANGES.map(r => <option key={r} value={r} className="bg-agency-black">{r}</option>)}
                                         </select>
                                         {errors.discovery?.budgetRange && <p className="text-error text-xs">{errors.discovery.budgetRange.message}</p>}
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-base-content/80">What is the primary technical or business problem you are trying to solve? *</label>
+                                <div className="space-y-3">
+                                    <label className="text-sm font-medium text-gray-400">What is the primary technical or business problem you are trying to solve? *</label>
                                     <textarea
                                         {...register("discovery.problemStatement")}
-                                        className="textarea textarea-bordered w-full h-32 bg-base-200/50 focus:bg-base-100 transition-colors resize-none"
+                                        className="textarea w-full"
                                         placeholder="Describe your current bottlenecks, challenges, or goals..."
                                     />
                                     {errors.discovery?.problemStatement && <p className="text-error text-xs">{errors.discovery.problemStatement.message}</p>}
                                 </div>
 
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-base-content/80">Desired Timeline *</label>
-                                        <select
-                                            {...register("discovery.timeline")}
-                                            className="select select-bordered w-full bg-base-200/50 focus:bg-base-100 transition-colors"
-                                            defaultValue=""
-                                        >
-                                            <option value="" disabled>Select timeline</option>
-                                            {TIMELINES.map(r => <option key={r} value={r}>{r}</option>)}
-                                        </select>
-                                        {errors.discovery?.timeline && <p className="text-error text-xs">{errors.discovery.timeline.message}</p>}
-                                    </div>
+                                <div className="space-y-3">
+                                    <label className="text-sm font-medium text-gray-400">Desired Timeline *</label>
+                                    <select
+                                        {...register("discovery.timeline")}
+                                        className="input-field appearance-none"
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled className="bg-agency-black">Select timeline</option>
+                                        {TIMELINES.map(r => <option key={r} value={r} className="bg-agency-black">{r}</option>)}
+                                    </select>
+                                    {errors.discovery?.timeline && <p className="text-error text-xs">{errors.discovery.timeline.message}</p>}
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-base-content/80">Anything else we should know? (Optional)</label>
+                                <div className="space-y-3">
+                                    <label className="text-sm font-medium text-gray-400">Anything else we should know? (Optional)</label>
                                     <textarea
                                         {...register("discovery.additionalNotes")}
-                                        className="textarea textarea-bordered w-full h-24 bg-base-200/50 focus:bg-base-100 transition-colors resize-none"
+                                        className="textarea w-full"
                                         placeholder="Specific technologies in mind, constraints, etc."
                                     />
                                 </div>
@@ -289,13 +287,12 @@ export default function SchedulePage() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="btn btn-primary w-full h-14 text-lg rounded-xl group relative overflow-hidden"
+                                    className="btn-brand w-full h-14 text-lg group relative overflow-hidden"
                                 >
                                     <span className="relative z-10 flex items-center justify-center gap-2">
                                         {isSubmitting ? "Submitting..." : "Apply for Consultation"}
                                         {!isSubmitting && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                                     </span>
-                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
                                 </button>
                                 <p className="text-xs text-center text-base-content/50 mt-4">
                                     Upon submission, you will be directed to our calendar to pick a time slot.

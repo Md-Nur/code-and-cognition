@@ -28,7 +28,7 @@ const bookingActionSchema = z.object({
     .object({
       companyName: z.string().min(1),
       industry: z.string().min(1),
-      revenueRange: z.string().min(1),
+      revenueRange: z.string().optional(),
       budgetRange: z.string().min(1),
       problemStatement: z.string().min(1),
       timeline: z.string().min(1),
