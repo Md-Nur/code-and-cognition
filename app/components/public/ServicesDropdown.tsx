@@ -16,21 +16,11 @@ export function ServicesDropdown({
     groups,
 }: ServicesDropdownProps) {
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const panelId = "services-mega-menu";
 
-    const handleMouseLeave = () => {
-        closeTimeoutRef.current = setTimeout(() => {
-            setIsOpen(false);
-        }, 150);
-    };
-
-    const handleMouseEnter = () => {
-        if (closeTimeoutRef.current) {
-            clearTimeout(closeTimeoutRef.current);
-            closeTimeoutRef.current = null;
-        }
-        setIsOpen(true);
+    // Toggle dropdown on click
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
     };
 
     useEffect(() => {
@@ -60,24 +50,11 @@ export function ServicesDropdown({
         };
     }, [isOpen, setIsOpen]);
 
-    useEffect(() => {
-        return () => {
-            if (closeTimeoutRef.current) {
-                clearTimeout(closeTimeoutRef.current);
-            }
-        };
-    }, []);
-
     return (
-        <div
-            className="relative"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            ref={dropdownRef}
-        >
+        <div className="relative" ref={dropdownRef}>
             <button
                 type="button"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={handleToggle}
                 onFocus={() => setIsOpen(true)}
                 className={`group relative flex items-center gap-1.5 text-[14px] font-medium tracking-wide transition-colors duration-300 outline-none ${isOpen ? "text-white" : "text-white/70 hover:text-white"
                     }`}
@@ -113,12 +90,10 @@ export function ServicesDropdown({
             {/* Mega Menu Panel */}
             <div
                 id={panelId}
-                className={`absolute left-1/2 top-full mt-[28px] w-[850px] -translate-x-1/2 rounded-2xl border border-white/5 bg-agency-black/95 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top pointer-events-none before:absolute before:-top-6 before:left-0 before:h-6 before:w-full ${isOpen
+                className={`absolute left-1/2 top-full mt-[28px] w-[850px] -translate-x-1/2 rounded-2xl border border-white/5 bg-agency-black/95 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top pointer-events-none ${isOpen
                     ? "opacity-100 scale-100 pointer-events-auto translate-y-0"
                     : "opacity-0 scale-95 -translate-y-2"
                     }`}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
             >
                 <div className="grid grid-cols-3 gap-x-8 p-10 relative overflow-hidden">
                     {/* Subtle background glow effect */}

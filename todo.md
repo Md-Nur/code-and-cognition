@@ -1,19 +1,3 @@
-Act as a senior SaaS architect and Next.js App Router expert.
-
-I am building a premium digital agency platform called "Code & Cognition".
-
-Stack:
-- Next.js (App Router)
-- TypeScript
-- Tailwind CSS
-- Prisma ORM
-- PostgreSQL
-- RBAC (FOUNDER, CONTRACTOR, CLIENT)
-
-I want to generate a clean, scalable page architecture separating:
-
-1. Public Website (Client Acquisition)
-2. Authenticated ERP Portal (Operations)
 
 --------------------------------------------------
 PUBLIC WEBSITE STRUCTURE

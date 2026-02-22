@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Linkedin, Mail, ArrowUp } from "lucide-react";
+import Image from "next/image";
+import { Linkedin, Mail, ArrowUp, Facebook, Youtube, Instagram, Twitter, MessageSquare } from "lucide-react";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -15,7 +16,14 @@ export default function Footer() {
             <div className="section-container">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
                     <div className="lg:col-span-1">
-                        <Link href="/" className="inline-block mb-10">
+                        <Link href="/" className="flex items-center gap-3 mb-10 group">
+                            <Image
+                                src="/Main-Logo.png"
+                                alt="Code & Cognition Logo"
+                                width={32}
+                                height={32}
+                                className="w-auto h-7 transition-transform duration-500 group-hover:scale-105"
+                            />
                             <span className="text-2xl font-bold tracking-tight text-white">
                                 Code<span className="text-agency-accent">&</span>Cognition
                             </span>
@@ -52,12 +60,26 @@ export default function Footer() {
                                 </div>
                                 codencognition.bd@gmail.com
                             </a>
-                            <a href="https://linkedin.com/company/codencognition" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 text-gray-500 hover:text-white transition-colors text-sm">
-                                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-agency-accent/50 group-hover:text-agency-accent transition-all">
+                            <div className="grid grid-cols-3 gap-4">
+                                <a href="https://linkedin.com/company/codencognition" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-agency-accent/50 hover:text-agency-accent transition-all" title="LinkedIn">
                                     <Linkedin className="w-4 h-4" />
-                                </div>
-                                LinkedIn Profile
-                            </a>
+                                </a>
+                                <a href="https://www.facebook.com/CodeNCognition" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-agency-accent/50 hover:text-agency-accent transition-all" title="Facebook">
+                                    <Facebook className="w-4 h-4" />
+                                </a>
+                                <a href="https://www.youtube.com/@CodeNCognitionBD" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-agency-accent/50 hover:text-agency-accent transition-all" title="YouTube">
+                                    <Youtube className="w-4 h-4" />
+                                </a>
+                                <a href="https://www.instagram.com/codencognition.bd/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-agency-accent/50 hover:text-agency-accent transition-all" title="Instagram">
+                                    <Instagram className="w-4 h-4" />
+                                </a>
+                                <a href="https://www.threads.net/@codencognition.bd" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-agency-accent/50 hover:text-agency-accent transition-all" title="Threads">
+                                    <MessageSquare className="w-4 h-4" />
+                                </a>
+                                <a href="https://x.com/codencognition" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-agency-accent/50 hover:text-agency-accent transition-all" title="X (Twitter)">
+                                    <Twitter className="w-4 h-4" />
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
