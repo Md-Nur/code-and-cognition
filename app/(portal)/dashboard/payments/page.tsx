@@ -119,54 +119,56 @@ export default function AdminPaymentsPage() {
 
             {/* Payment History Table */}
             <div className="glass-panel overflow-hidden rounded-xl">
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th className="text-left p-4">Date</th>
-                            <th className="text-left p-4">Project</th>
-                            <th className="text-left p-4">Amount</th>
-                            <th className="text-left p-4">Note</th>
-                            <th className="text-left p-4">Status</th>
-                            <th className="text-right p-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={5} className="text-center py-8">Loading...</td></tr>
-                        ) : payments.map((payment) => (
-                            <tr key={payment.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                <td className="p-4 text-gray-400">
-                                    {new Date(payment.paidAt).toLocaleDateString()}
-                                </td>
-                                <td className="p-4 font-medium">{payment.project.title}</td>
-                                <td className="p-4 font-bold text-white">
-                                    {payment.currency === "BDT" ? `৳${payment.amountBDT}` : `$${payment.amountUSD}`}
-                                </td>
-                                <td className="p-4 text-sm text-gray-500">{payment.note || "-"}</td>
-                                <td className="p-4">
-                                    <span className="text-xs px-2 py-1 rounded border border-green-500/30 text-green-400 bg-green-500/10">
-                                        Split Processed
-                                    </span>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <button
-                                        onClick={() => handleEdit(payment)}
-                                        className="text-blue-400 hover:text-blue-300 text-sm mr-4"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(payment.id)}
-                                        className="text-red-400 hover:text-red-300 text-sm"
-                                        disabled={isDeleting === payment.id}
-                                    >
-                                        {isDeleting === payment.id ? "Deleting..." : "Delete"}
-                                    </button>
-                                </td>
+                <div className="table-container">
+                    <table className="data-table min-w-[800px]">
+                        <thead>
+                            <tr>
+                                <th className="text-left p-4">Date</th>
+                                <th className="text-left p-4">Project</th>
+                                <th className="text-left p-4">Amount</th>
+                                <th className="text-left p-4">Note</th>
+                                <th className="text-left p-4">Status</th>
+                                <th className="text-right p-4">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr><td colSpan={5} className="text-center py-8">Loading...</td></tr>
+                            ) : payments.map((payment) => (
+                                <tr key={payment.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td className="p-4 text-gray-400">
+                                        {new Date(payment.paidAt).toLocaleDateString()}
+                                    </td>
+                                    <td className="p-4 font-medium">{payment.project.title}</td>
+                                    <td className="p-4 font-bold text-white">
+                                        {payment.currency === "BDT" ? `৳${payment.amountBDT}` : `$${payment.amountUSD}`}
+                                    </td>
+                                    <td className="p-4 text-sm text-gray-500">{payment.note || "-"}</td>
+                                    <td className="p-4">
+                                        <span className="text-xs px-2 py-1 rounded border border-green-500/30 text-green-400 bg-green-500/10">
+                                            Split Processed
+                                        </span>
+                                    </td>
+                                    <td className="p-4 text-right">
+                                        <button
+                                            onClick={() => handleEdit(payment)}
+                                            className="text-blue-400 hover:text-blue-300 text-sm mr-4"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(payment.id)}
+                                            className="text-red-400 hover:text-red-300 text-sm"
+                                            disabled={isDeleting === payment.id}
+                                        >
+                                            {isDeleting === payment.id ? "Deleting..." : "Delete"}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Modal Overlay */}

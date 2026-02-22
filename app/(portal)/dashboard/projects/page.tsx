@@ -38,8 +38,9 @@ export default function DashboardProjectsPage() {
                 </Link>
             </div>
 
-            <div className="glass-panel overflow-hidden rounded-xl table-container">
-                <table className="data-table">
+            <div className="glass-panel overflow-hidden rounded-xl">
+                <div className="table-container">
+                    <table className="data-table min-w-[800px]">
                     <thead>
                         <tr>
                             <th className="text-left p-4">Project Title</th>
@@ -83,6 +84,7 @@ export default function DashboardProjectsPage() {
                         ))}
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     );

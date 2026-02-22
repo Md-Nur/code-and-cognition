@@ -69,29 +69,31 @@ export default function AdminLedgerPage() {
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         🏛️ Company Fund History
                     </h2>
-                    <div className="glass-panel overflow-hidden rounded-xl table-container">
-                        <table className="data-table">
-                            <thead>
-                                <tr>
-                                    <th className="text-left p-4">Date</th>
-                                    <th className="text-left p-4">Source</th>
-                                    <th className="text-right p-4">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data?.companyFundEntries.map((entry) => (
-                                    <tr key={entry.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                        <td className="p-4 text-sm text-gray-500">
-                                            {new Date(entry.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td className="p-4 text-sm">{entry.payment.project.title}</td>
-                                        <td className="p-4 text-right font-mono text-green-400">
-                                            {entry.amountBDT ? `৳${entry.amountBDT.toLocaleString()}` : `$${entry.amountUSD?.toLocaleString()}`}
-                                        </td>
+                    <div className="glass-panel overflow-hidden rounded-xl">
+                        <div className="table-container">
+                            <table className="data-table min-w-[500px]">
+                                <thead>
+                                    <tr>
+                                        <th className="text-left p-4">Date</th>
+                                        <th className="text-left p-4">Source</th>
+                                        <th className="text-right p-4">Amount</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {data?.companyFundEntries.map((entry) => (
+                                        <tr key={entry.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                            <td className="p-4 text-sm text-gray-500">
+                                                {new Date(entry.createdAt).toLocaleDateString()}
+                                            </td>
+                                            <td className="p-4 text-sm">{entry.payment.project.title}</td>
+                                            <td className="p-4 text-right font-mono text-green-400">
+                                                {entry.amountBDT ? `৳${entry.amountBDT.toLocaleString()}` : `$${entry.amountUSD?.toLocaleString()}`}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -100,38 +102,40 @@ export default function AdminLedgerPage() {
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         👥 Contractor Balances
                     </h2>
-                    <div className="glass-panel overflow-hidden rounded-xl table-container">
-                        <table className="data-table">
-                            <thead>
-                                <tr>
-                                    <th className="text-left p-4">User</th>
-                                    <th className="text-right p-4">Balance</th>
-                                    <th className="text-right p-4">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data?.userBalances.map((balance) => (
-                                    <tr key={balance.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                        <td className="p-4 font-medium">{balance.user.name}</td>
-                                        <td className="p-4 text-right">
-                                            <div className="text-sm">৳{balance.totalBDT.toLocaleString()}</div>
-                                            <div className="text-xs text-gray-500">${balance.totalUSD.toLocaleString()}</div>
-                                        </td>
-                                        <td className="p-4 text-right">
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedUser(balance.user);
-                                                    setShowPayoutModal(true);
-                                                }}
-                                                className="text-xs btn-outline py-1 px-2"
-                                            >
-                                                Payout
-                                            </button>
-                                        </td>
+                    <div className="glass-panel overflow-hidden rounded-xl">
+                        <div className="table-container">
+                            <table className="data-table min-w-[400px]">
+                                <thead>
+                                    <tr>
+                                        <th className="text-left p-4">User</th>
+                                        <th className="text-right p-4">Balance</th>
+                                        <th className="text-right p-4">Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {data?.userBalances.map((balance) => (
+                                        <tr key={balance.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                            <td className="p-4 font-medium">{balance.user.name}</td>
+                                            <td className="p-4 text-right">
+                                                <div className="text-sm">৳{balance.totalBDT.toLocaleString()}</div>
+                                                <div className="text-xs text-gray-500">${balance.totalUSD.toLocaleString()}</div>
+                                            </td>
+                                            <td className="p-4 text-right">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedUser(balance.user);
+                                                        setShowPayoutModal(true);
+                                                    }}
+                                                    className="text-xs btn-outline py-1 px-2"
+                                                >
+                                                    Payout
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
