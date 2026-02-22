@@ -177,7 +177,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 lg:ml-64 p-5 md:p-8 pt-24 lg:pt-8 min-h-screen bg-[#050505]">
+            <main className="flex-1 min-w-0 lg:ml-64 p-5 md:p-8 pt-24 lg:pt-8 min-h-screen bg-[#050505]">
                 <div className="max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                     {children}
                 </div>
