@@ -6,9 +6,9 @@ import { useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import NotificationBell from "@/app/components/NotificationBell";
 import { NavLink } from "./NavLink";
-import { ServicesDropdown } from "./ServicesDropdown";
+
 import { MobileNav } from "./MobileNav";
-import { navLinks, servicesGroups } from "./nav-config";
+import { navLinks } from "./nav-config";
 
 // Types
 interface NavbarProps {
@@ -23,7 +23,7 @@ interface NavbarProps {
 export default function Navbar({ user }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
+
   const [unreadMessages, setUnreadMessages] = useState(0);
   const pathname = usePathname();
 
@@ -106,11 +106,15 @@ export default function Navbar({ user }: NavbarProps) {
 
               {/* Main Navigation - Center */}
               <div className="hidden lg:flex flex-[2] items-center justify-center gap-7">
-                <ServicesDropdown
-                  isOpen={isServicesOpen}
-                  setIsOpen={setIsServicesOpen}
-                  groups={servicesGroups}
-                />
+                <NavLink
+                  href="/services"
+                  isActive={
+                    pathname === "/services" ||
+                    pathname.startsWith("/services/")
+                  }
+                >
+                  Services
+                </NavLink>
                 {navLinks.map((link) => (
                   <NavLink
                     key={link.name}
@@ -158,7 +162,7 @@ export default function Navbar({ user }: NavbarProps) {
 
                 {user ? (
                   <Link
-                    href="/admin/profile"
+                    href="/dashboard/profile"
                     className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
                   >
                     Profile
@@ -211,7 +215,6 @@ export default function Navbar({ user }: NavbarProps) {
         user={user}
         unreadMessages={unreadMessages}
         navLinks={navLinks}
-        servicesGroups={servicesGroups}
       />
     </div>
   );

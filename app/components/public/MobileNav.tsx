@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { type NavLinkConfig, type ServiceGroup } from "./nav-config";
+import { type NavLinkConfig } from "./nav-config";
 
 export interface MobileNavProps {
     isOpen: boolean;
@@ -12,7 +12,6 @@ export interface MobileNavProps {
     } | null;
     unreadMessages: number;
     navLinks: NavLinkConfig[];
-    servicesGroups: ServiceGroup[];
 }
 
 export function MobileNav({
@@ -21,7 +20,6 @@ export function MobileNav({
     user,
     unreadMessages,
     navLinks,
-    servicesGroups,
 }: MobileNavProps) {
     return (
         <div className="drawer-side z-[60]">
@@ -72,37 +70,7 @@ export function MobileNav({
                             </div>
                         </div>
 
-                        <div className="h-px w-full bg-white/5" />
 
-                        <div className="flex flex-col gap-y-8">
-                            <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/30">
-                                Services
-                            </span>
-                            {servicesGroups.map((group) => (
-                                <div key={group.title} className="flex flex-col gap-y-5">
-                                    <p className="text-[13px] font-medium text-white/50">
-                                        {group.title}
-                                    </p>
-                                    <div className="flex flex-col gap-y-4 pl-4 border-l border-white/10">
-                                        {group.items.map((item) => (
-                                            <Link
-                                                key={item.name}
-                                                href={item.href}
-                                                onClick={() => setIsOpen(false)}
-                                                className="flex flex-col gap-y-1 group"
-                                            >
-                                                <span className="text-[15px] font-medium text-white/80 group-hover:text-white transition-colors">
-                                                    {item.name}
-                                                </span>
-                                                <span className="text-[13px] text-white/40 group-hover:text-white/60 transition-colors">
-                                                    {item.description}
-                                                </span>
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
                     </div>
 
                     <div className="mt-auto pt-10 flex flex-col gap-y-4">
@@ -124,7 +92,7 @@ export function MobileNav({
                         <div className="grid grid-cols-2 gap-x-4">
                             {user ? (
                                 <Link
-                                    href="/admin/profile"
+                                    href="/dashboard/profile"
                                     onClick={() => setIsOpen(false)}
                                     className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
                                 >

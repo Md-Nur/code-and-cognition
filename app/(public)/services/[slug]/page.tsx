@@ -4,9 +4,10 @@ import Link from "next/link";
 import { ArrowLeft, MoveRight, CheckCircle2, Shield, Zap, Target } from "lucide-react";
 import BookingForm from "@/app/components/public/BookingForm";
 
-export default async function ServiceDetailPage({ params }: { params: { slug: string } }) {
+export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     const service = await prisma.service.findUnique({
-        where: { slug: params.slug },
+        where: { slug },
         include: {
             category: true,
             engagementModels: {

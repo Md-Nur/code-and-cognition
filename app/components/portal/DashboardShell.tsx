@@ -141,8 +141,8 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                                 href={item.href}
                                 onClick={() => setIsSidebarOpen(false)}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${isActive
-                                        ? "bg-agency-accent/10 text-agency-accent border border-agency-accent/20"
-                                        : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                                    ? "bg-agency-accent/10 text-agency-accent border border-agency-accent/20"
+                                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
                                     }`}
                             >
                                 <Icon className={`w-4 h-4 ${isActive ? "text-agency-accent" : "text-gray-500 group-hover:text-white"}`} />
@@ -155,10 +155,10 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 <div className="mt-6 pt-6 border-t border-white/5 space-y-4">
                     <div className="flex items-center gap-3 px-4 py-2">
                         <div className="w-8 h-8 rounded-full bg-agency-accent/20 flex items-center justify-center text-agency-accent font-bold text-[10px]">
-                            {user.name.split(' ').map(n => n[0]).join('')}
+                            {(user?.name || "U").split(" ").map(n => n[0]).join("")}
                         </div>
                         <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-bold truncate">{user.name}</span>
+                            <span className="text-xs font-bold truncate">{user?.name || "User"}</span>
                             <span className="text-[10px] text-gray-500 truncate">{user.email}</span>
                         </div>
                     </div>
