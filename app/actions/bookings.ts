@@ -23,16 +23,15 @@ const bookingActionSchema = z.object({
   clientName: z.string().min(1),
   clientEmail: z.string().email(),
   clientPhone: z.string().optional(),
-  serviceId: z.string().min(1),
+  serviceId: z.string().optional(),
   discovery: z
     .object({
       companyName: z.string().min(1),
-      role: z.string().min(1),
-      goals: z.string().min(1),
+      industry: z.string().min(1),
+      revenueRange: z.string().min(1),
+      budgetRange: z.string().min(1),
+      problemStatement: z.string().min(1),
       timeline: z.string().min(1),
-      budgetRange: z.string().optional(),
-      currentStack: z.string().optional(),
-      successMetrics: z.string().optional(),
       additionalNotes: z.string().optional(),
     })
     .optional(),
@@ -56,7 +55,7 @@ export async function createBookingAction(
       clientPhone,
       serviceId,
       discovery,
-      message: discovery?.additionalNotes || discovery?.goals,
+      message: discovery?.problemStatement || discovery?.additionalNotes || "Strategic Consultation Request",
       status: "PENDING",
     },
   });
@@ -69,8 +68,8 @@ export async function createBookingAction(
     founders.map((founder) =>
       createNotification({
         userId: founder.id,
-        title: "New Booking Request",
-        message: `${clientName} has requested a new booking.`,
+        title: "New Consultation Request",
+        message: `${clientName} ${discovery?.companyName ? `from ${discovery?.companyName}` : ''} requested a strategic consultation.`,
         type: "BOOKING_NEW",
         link: `/admin/bookings`,
       }),

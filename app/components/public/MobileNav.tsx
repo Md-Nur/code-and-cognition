@@ -109,7 +109,7 @@ export function MobileNav({
                             )}
 
                             <Link
-                                href="/#contact"
+                                href="/schedule"
                                 onClick={() => setIsOpen(false)}
                                 className="flex items-center justify-center text-center rounded-xl bg-white text-agency-black px-4 py-3.5 text-sm font-semibold shadow-sm transition-transform active:scale-95 whitespace-nowrap overflow-hidden text-ellipsis"
                             >

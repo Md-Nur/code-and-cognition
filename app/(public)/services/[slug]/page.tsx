@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, CheckCircle2, Shield, Zap, Target } from "lucide-react";
-import BookingForm from "@/app/components/public/BookingForm";
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -121,10 +120,14 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                             Share your objectives for {service.title} and receive a tailored proposal architected by our founders.
                         </p>
                     </div>
-                    <div className="max-w-4xl mx-auto">
-                        <div className="glass-panel p-8 md:p-12 rounded-[40px] border border-white/10">
-                            <BookingForm />
-                        </div>
+                    <div className="max-w-xl mx-auto text-center">
+                        <Link
+                            href="/schedule"
+                            className="btn-brand px-12 py-5 rounded-full text-lg font-bold shadow-2xl shadow-agency-accent/20 inline-flex items-center gap-3 hover:-translate-y-1 transition-transform w-full justify-center"
+                        >
+                            Schedule Strategic Consultation
+                            <MoveRight className="w-5 h-5" />
+                        </Link>
                     </div>
                 </div>
             </section>

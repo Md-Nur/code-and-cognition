@@ -1,4 +1,4 @@
-import BookingForm from "@/app/components/public/BookingForm";
+import Link from "next/link";
 import { Mail, MessageSquare, Globe } from "lucide-react";
 
 export default function ContactPage() {
@@ -68,12 +68,20 @@ export default function ContactPage() {
                             </div>
                         </div>
 
-                        {/* Booking Form */}
+                        {/* CTA */}
                         <div className="lg:col-span-2">
-                            <div className="glass-panel p-8 md:p-12 rounded-[40px] border border-white/10 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-agency-accent/10 blur-[60px] rounded-full" />
-                                <div className="relative z-10">
-                                    <BookingForm />
+                            <div className="glass-panel p-8 md:p-16 rounded-[40px] border border-white/10 relative overflow-hidden flex flex-col items-center justify-center text-center h-full">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-agency-accent/10 blur-[80px] rounded-full" />
+                                <div className="relative z-10 max-w-md">
+                                    <h2 className="text-3xl font-bold text-white mb-6">Ready to Scale?</h2>
+                                    <p className="text-gray-400 mb-10 leading-relaxed">Fill out our strategic qualification form to help us understand your core challenges, and you'll be able to immediately select a consultation time.</p>
+                                    <Link
+                                        href="/schedule"
+                                        className="btn-brand px-10 py-5 rounded-full text-base font-bold shadow-2xl shadow-agency-accent/20 inline-flex items-center gap-3 hover:-translate-y-1 transition-transform w-full justify-center"
+                                    >
+                                        Apply for Consultation
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

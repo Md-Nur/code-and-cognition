@@ -73,7 +73,7 @@ export const createProposalForBooking = withProxyValidation(
       await createNotification({
         userId: clientUser.id,
         title: "Proposal Drafted",
-        message: `A proposal draft is ready for ${booking.service.title}.`,
+        message: `A proposal draft is ready for ${booking.service?.title || "your strategic consultation"}.`,
         type: "SYSTEM",
         link: `/services`,
       });
@@ -150,7 +150,7 @@ export const approveProposal = withProxyValidation(
       return { ok: false, error: "No founder available" } as const;
     }
 
-    const projectTitle = `${proposal.booking.service.title} - ${proposal.booking.clientName}`;
+    const projectTitle = `${proposal.booking.service?.title || "Consultation Project"} - ${proposal.booking.clientName}`;
 
     const project = await prisma.project.create({
       data: {

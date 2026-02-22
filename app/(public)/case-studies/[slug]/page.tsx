@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, CheckCircle2 } from "lucide-react";
-import BookingForm from "@/app/components/public/BookingForm";
 
 export default async function CaseStudyPage({ params }: { params: { slug: string } }) {
     // Note: PortfolioItem doesn't have a slug yet in the schema I see, 
@@ -123,8 +122,14 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-16">
                         Schedule a strategic consultation to discuss how we can apply a similar methodology to your unique business objectives.
                     </p>
-                    <div className="max-w-4xl mx-auto text-left">
-                        <BookingForm />
+                    <div className="max-w-xl mx-auto text-center">
+                        <Link
+                            href="/schedule"
+                            className="btn-brand px-12 py-5 rounded-full text-lg font-bold shadow-2xl shadow-agency-accent/20 inline-flex items-center gap-3 hover:-translate-y-1 transition-transform w-full justify-center"
+                        >
+                            Schedule Strategic Consultation
+                            <MoveRight className="w-5 h-5" />
+                        </Link>
                     </div>
                 </div>
             </section>

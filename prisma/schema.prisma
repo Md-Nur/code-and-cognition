@@ -124,15 +124,15 @@ model Booking {
   clientName  String
   clientEmail String
   clientPhone String?
-  serviceId   String
+  serviceId   String?
   proposalId  String?       @unique
   budgetBDT   Float?
   budgetUSD   Float?
   message     String?
-  discovery   Json? /// Structured discovery data: { companyName, role, goals, timeline, budgetRange, currentStack, successMetrics, additionalNotes }
+  discovery   Json? /// Structured discovery data: { companyName, role, industry, revenueRange, budgetRange, problemStatement, timeline, etc. }
   status      BookingStatus @default(PENDING)
   createdAt   DateTime      @default(now())
-  service     Service       @relation(fields: [serviceId], references: [id])
+  service     Service?      @relation(fields: [serviceId], references: [id])
   proposal    Proposal?     @relation(fields: [proposalId], references: [id])
   project     Project?
 }

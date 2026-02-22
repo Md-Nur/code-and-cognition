@@ -5,8 +5,8 @@ import HowWeWork from "@/app/components/public/HowWeWork";
 import CaseStudies from "@/app/components/public/CaseStudies";
 import Testimonials from "@/app/components/public/Testimonials";
 import KnowledgeSection from "@/app/components/public/KnowledgeSection";
-import BookingForm from "@/app/components/public/BookingForm";
 import Clients from "@/app/components/public/Clients";
+import Link from "next/link";
 
 import { prisma } from "@/lib/prisma";
 
@@ -63,7 +63,15 @@ export default async function LandingPage() {
               Share your growth objectives and receive a tailored roadmap aligned to measurable execution outcomes.
             </p>
           </div>
-          <BookingForm />
+          <div className="flex justify-center mt-12 pb-12">
+            <Link
+              href="/schedule"
+              className="btn-brand px-12 py-5 rounded-full text-lg font-bold shadow-2xl shadow-agency-accent/20 flex items-center gap-3 hover:-translate-y-1 transition-transform"
+            >
+              Start Your Application
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+            </Link>
+          </div>
         </div>
       </section>
     </main>

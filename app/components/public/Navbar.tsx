@@ -106,15 +106,6 @@ export default function Navbar({ user }: NavbarProps) {
 
               {/* Main Navigation - Center */}
               <div className="hidden lg:flex flex-[2] items-center justify-center gap-7">
-                <NavLink
-                  href="/services"
-                  isActive={
-                    pathname === "/services" ||
-                    pathname.startsWith("/services/")
-                  }
-                >
-                  Services
-                </NavLink>
                 {navLinks.map((link) => (
                   <NavLink
                     key={link.name}
@@ -177,7 +168,7 @@ export default function Navbar({ user }: NavbarProps) {
                 )}
 
                 <Link
-                  href="/#contact"
+                  href="/schedule"
                   className="hidden md:inline-flex items-center justify-center rounded-lg bg-white text-agency-black px-5 py-2 lg:py-2.5 text-sm font-medium shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_6px_20px_rgba(255,255,255,0.15)] hover:-translate-y-0.5 whitespace-nowrap"
                 >
                   Book Consultation

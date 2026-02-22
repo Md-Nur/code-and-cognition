@@ -29,7 +29,7 @@ export default function HeroSection() {
 
                     <div className="flex flex-col sm:flex-row items-center gap-6 animate-slide-up animation-delay-300">
                         <Link
-                            href="#consultation"
+                            href="/schedule"
                             className="btn-brand px-10 py-5 rounded-full text-base font-bold shadow-2xl shadow-agency-accent/20 group w-full sm:w-auto"
                         >
                             <span className="flex items-center justify-center gap-3">
