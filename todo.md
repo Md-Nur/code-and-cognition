@@ -1,27 +1,3 @@
-After Submission
-System should:
-Save lead to database
-Send confirmation email
-Notify you instantly
-Add to CRM pipeline (if you built one)
-Now the client waits for consultation.
-
-----
-
-Custom Proposal Creation
-you:
-Create custom scope
-Define deliverables
-Define phases
-Define timeline
-Define investment
-Then send:
-Proposal PDF
-Contract
-Payment terms
-
-----
-
 Client Signs & Pays
 After approval:
 Create internal project record

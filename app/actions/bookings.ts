@@ -37,6 +37,9 @@ const bookingActionSchema = z.object({
     .optional(),
 });
 
+import { sendMail } from "@/lib/mailer";
+import { clientConfirmationEmailHtml, founderNotificationEmailHtml } from "@/app/components/emails/ConsultationEmails";
+
 export async function createBookingAction(
   input: z.infer<typeof bookingActionSchema>,
 ) {
@@ -64,6 +67,7 @@ export async function createBookingAction(
     where: { role: "FOUNDER" },
   });
 
+  // 1. In-App Notifications
   await Promise.all(
     founders.map((founder) =>
       createNotification({
@@ -75,6 +79,38 @@ export async function createBookingAction(
       }),
     ),
   );
+
+  // 2. Email Delivery (Non-blocking)
+  try {
+    // Send Confirmation to Client
+    await sendMail(
+      clientEmail,
+      "Consultation Request Received - Code & Cognition",
+      clientConfirmationEmailHtml(clientName)
+    );
+
+    // Send Notification to Founders
+    const founderEmails = founders.map(f => f.email).join(",");
+    const notificationTo = process.env.FOUNDER_EMAIL || founderEmails || "hello@codeandcognition.com";
+
+    await sendMail(
+      notificationTo,
+      `New Lead: ${discovery?.companyName || clientName}`,
+      founderNotificationEmailHtml(
+        clientName,
+        clientEmail,
+        discovery?.companyName || "N/A",
+        discovery?.industry || "N/A",
+        discovery?.revenueRange || "N/A",
+        discovery?.budgetRange || "N/A",
+        discovery?.timeline || "N/A",
+        discovery?.problemStatement || "N/A"
+      )
+    );
+  } catch (error) {
+    console.error("Failed to send SMTP emails:", error);
+    // We don't fail the booking if emails fail
+  }
 
   return { ok: true, booking } as const;
 }
