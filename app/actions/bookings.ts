@@ -75,7 +75,7 @@ export async function createBookingAction(
         title: "New Consultation Request",
         message: `${clientName} ${discovery?.companyName ? `from ${discovery?.companyName}` : ''} requested a strategic consultation.`,
         type: "BOOKING_NEW",
-        link: `/admin/bookings`,
+        link: `/dashboard/leads`,
       }),
     ),
   );

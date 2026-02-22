@@ -72,7 +72,7 @@ function CreateProjectForm() {
             });
 
             if (res.ok) {
-                router.push("/admin/projects");
+                router.push("/dashboard/projects");
             } else {
                 const err = await res.json();
                 alert(`Error: ${err.message || "Failed to create project"}`);

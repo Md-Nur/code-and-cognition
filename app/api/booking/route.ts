@@ -60,7 +60,7 @@ export async function POST(req: Request) {
         title: "New Booking Request",
         message: `${clientName} has requested a new booking.`,
         type: "BOOKING_NEW",
-        link: `/admin/bookings`,
+        link: `/dashboard/leads`,
       });
     }
 
