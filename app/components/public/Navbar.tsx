@@ -170,7 +170,7 @@ export default function Navbar({ user }: NavbarProps) {
 
                 <Link
                   href="/schedule"
-                  className="hidden md:inline-flex btn-brand scale-90 lg:scale-100"
+                  className="hidden md:inline-flex btn-brand scale-90 lg:scale-100 whitespace-nowrap"
                 >
                   Apply Now
                 </Link>
