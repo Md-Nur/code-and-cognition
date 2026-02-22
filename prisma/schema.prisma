@@ -269,6 +269,22 @@ model Expense {
   updatedAt DateTime @updatedAt
 }
 
+/// Articles and thought leadership pieces for the Insights section.
+model Article {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  content      String /// Markdown or HTML content
+  excerpt      String? /// Brief summary for grid view
+  category     String /// e.g., AI & Automation, Product Strategy
+  thumbnailUrl String?
+  isFeatured   Boolean  @default(false)
+  viewCount    Int      @default(0)
+  publishedAt  DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 enum NotificationType {
   BOOKING_NEW
   BOOKING_STATUS_CHANGE

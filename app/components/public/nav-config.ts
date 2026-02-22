@@ -15,11 +15,11 @@ export interface ServiceGroup {
 }
 
 export const navLinks: NavLinkConfig[] = [
-    { name: "Process", href: "/#process" },
-    { name: "Case Studies", href: "/portfolio" },
-    { name: "About", href: "/#about" },
+    { name: "Services", href: "/services" },
+    { name: "Case Studies", href: "/case-studies" },
     { name: "Insights", href: "/insights" },
-    { name: "Contact", href: "/#contact" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
 ];
 
 export const servicesGroups: ServiceGroup[] = [
