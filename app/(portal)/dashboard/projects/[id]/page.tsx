@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import ProgressBar from "@/app/components/ProgressBar";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
+import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },
@@ -91,8 +92,8 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                                 const isInProgress = milestone.status === "IN_PROGRESS";
                                 return (
                                     <div key={milestone.id} className={`flex items-start gap-4 p-5 rounded-2xl border transition-colors ${isCompleted ? "bg-emerald-500/5 border-emerald-500/20" :
-                                            isInProgress ? "bg-blue-500/5 border-blue-500/20" :
-                                                "bg-white/[0.02] border-white/5"
+                                        isInProgress ? "bg-blue-500/5 border-blue-500/20" :
+                                            "bg-white/[0.02] border-white/5"
                                         }`}>
                                         <div className={`mt-0.5 shrink-0 ${isCompleted ? "text-emerald-500" : isInProgress ? "text-blue-500" : "text-gray-600"}`}>
                                             {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isInProgress ? <Clock className="w-5 h-5 animate-pulse" /> : <CircleDashed className="w-5 h-5" />}
@@ -132,8 +133,8 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                                                     <p className="text-xs text-gray-500">{cr.description}</p>
                                                 </div>
                                                 <span className={`text-[10px] font-bold uppercase tracking-widest shrink-0 px-3 py-1 rounded-full ${cr.status === "PENDING" ? "bg-amber-500/10 text-amber-500" :
-                                                        cr.status === "APPROVED" ? "bg-emerald-500/10 text-emerald-500" :
-                                                            "bg-red-500/10 text-red-400"}`}>
+                                                    cr.status === "APPROVED" ? "bg-emerald-500/10 text-emerald-500" :
+                                                        "bg-red-500/10 text-red-400"}`}>
                                                     {cr.status}
                                                 </span>
                                             </div>
@@ -173,6 +174,15 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                             </div>
                         )}
                     </div>
+
+                    {/* Admin Actions */}
+                    {user.role === Role.FOUNDER && (
+                        <ProjectAdminActions
+                            projectId={project.id}
+                            currentStatus={project.status}
+                            currentHealth={project.health}
+                        />
+                    )}
 
                     {/* Activity Feed */}
                     <div className="glass-panel p-8 rounded-3xl border border-white/5">

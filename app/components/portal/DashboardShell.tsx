@@ -20,7 +20,8 @@ import {
     LogOut,
     Menu,
     X,
-    User as UserIcon
+    User as UserIcon,
+    Target
 } from "lucide-react";
 
 interface DashboardShellProps {
@@ -48,7 +49,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
         if (role === Role.FOUNDER) {
             return [
                 ...common,
-                { name: "Bookings", href: "/dashboard/bookings", icon: MessageCircle },
+                { name: "Leads", href: "/dashboard/bookings", icon: Target },
                 { name: "Proposals", href: "/dashboard/proposals", icon: FileText },
                 { name: "Clients", href: "/dashboard/clients", icon: Briefcase },
                 { name: "Services", href: "/dashboard/services", icon: Wrench },

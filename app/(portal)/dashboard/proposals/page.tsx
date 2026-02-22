@@ -30,8 +30,8 @@ export default async function ProposalsPage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-2xl md:text-3xl font-display font-medium tracking-tight text-white">Proposals</h1>
-                <p className="text-gray-500 text-sm mt-1">{proposals.length} proposals across all projects.</p>
+                <h1 className="text-2xl md:text-3xl font-display font-medium tracking-tight text-white">Proposal System</h1>
+                <p className="text-gray-500 text-sm mt-1">Strategic project definitions and investment outlines for your qualified leads.</p>
             </div>
 
             {proposals.length === 0 ? (

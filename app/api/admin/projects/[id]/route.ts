@@ -98,51 +98,60 @@ export async function PATCH(
       },
     });
 
-    // Automation: If COMPLETED, move to Portfolio
-    if (status === "COMPLETED") {
-      // Check if already exists in portfolio to avoid duplicates (optional but good)
-      const existing = await prisma.portfolioItem.findFirst({
-        where: { title: project.title },
-      });
+    // Automation: If COMPLETED or DELIVERED, notify relevant users
+    if (status === "COMPLETED" || status === "DELIVERED") {
+      const isCompleted = status === "COMPLETED";
 
-      if (!existing) {
-        await prisma.portfolioItem.create({
-          data: {
-            title: project.title,
-            description:
-              project.booking?.message || "Successfully completed project.",
-            serviceId: project.booking?.serviceId || "unassigned",
-            technologies: [],
-            isFeatured: false,
-          },
+      // If COMPLETED, also move to Portfolio
+      if (isCompleted) {
+        const existing = await prisma.portfolioItem.findFirst({
+          where: { title: project.title },
         });
 
-        // Notify members and founders about completion
-        const members = await prisma.projectMember.findMany({
-          where: { projectId: id },
-          include: { user: true },
-        });
-
-        const founders = await prisma.user.findMany({
-          where: { role: "FOUNDER" },
-        });
-
-        const notifyUsers = [...members.map((m) => m.user), ...founders];
-
-        // Deduplicate by ID
-        const uniqueUsers = Array.from(
-          new Map(notifyUsers.map((u) => [u.id, u])).values(),
-        );
-
-        for (const user of uniqueUsers) {
-          await createNotification({
-            userId: user.id,
-            title: "Project Completed",
-            message: `Project "${project.title}" has been marked as completed.`,
-            type: "PROJECT_STATUS_CHANGE",
-            link: `/admin/projects/${id}`,
+        if (!existing) {
+          await prisma.portfolioItem.create({
+            data: {
+              title: project.title,
+              description:
+                project.booking?.message || "Successfully completed project.",
+              serviceId: project.booking?.serviceId || "unassigned",
+              technologies: [],
+              isFeatured: false,
+            },
           });
         }
+      }
+
+      // Notify members and founders
+      const members = await prisma.projectMember.findMany({
+        where: { projectId: id },
+        include: { user: true },
+      });
+
+      const founders = await prisma.user.findMany({
+        where: { role: "FOUNDER" },
+      });
+
+      const notifyUsers = [...members.map((m) => m.user), ...founders];
+
+      // Deduplicate by ID
+      const uniqueUsers = Array.from(
+        new Map(notifyUsers.map((u) => [u.id, u])).values(),
+      );
+
+      const title = isCompleted ? "Project Completed" : "Project Delivered";
+      const message = isCompleted
+        ? `Project "${project.title}" has been marked as completed.`
+        : `Project "${project.title}" has been marked as delivered. Final review is now pending.`;
+
+      for (const user of uniqueUsers) {
+        await createNotification({
+          userId: user.id,
+          title,
+          message,
+          type: "PROJECT_STATUS_CHANGE",
+          link: `/admin/projects/${id}`,
+        });
       }
     }
 

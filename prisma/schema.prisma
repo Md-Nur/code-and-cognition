@@ -334,6 +334,7 @@ enum BookingStatus {
 
 enum ProjectStatus {
   ACTIVE
+  DELIVERED
   COMPLETED
   CANCELLED
 }

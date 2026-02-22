@@ -81,8 +81,8 @@ export default function AdminBookingsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold">Lead Management</h1>
-                    <p className="text-sm text-gray-500">Track and manage your sales pipeline</p>
+                    <h1 className="text-2xl font-bold">Lead Database / CRM</h1>
+                    <p className="text-sm text-gray-500">Manage your strategic sales pipeline and conversion funnel</p>
                 </div>
                 <button onClick={() => setShowModal(true)} className="btn-brand w-full sm:w-auto">
                     + Add Manual Lead

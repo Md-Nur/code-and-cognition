@@ -5,7 +5,7 @@ export type NextActionKey =
   | "NO_ACTION";
 
 type MilestoneStatusKey = "PENDING" | "IN_PROGRESS" | "COMPLETED";
-type ProjectStatusKey = "ACTIVE" | "COMPLETED" | "CANCELLED";
+type ProjectStatusKey = "ACTIVE" | "DELIVERED" | "COMPLETED" | "CANCELLED";
 
 type NextActionInput = {
   status: ProjectStatusKey;
