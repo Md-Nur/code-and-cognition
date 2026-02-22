@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import DashboardShell from "@/app/components/portal/DashboardShell";
 
 export default async function PortalLayout({
     children,
@@ -13,8 +14,8 @@ export default async function PortalLayout({
     }
 
     return (
-        <div className="min-h-screen bg-agency-black">
+        <DashboardShell user={session.user}>
             {children}
-        </div>
+        </DashboardShell>
     );
 }
