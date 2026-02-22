@@ -76,7 +76,7 @@ export function MobileNav({
                     <div className="mt-auto pt-10 flex flex-col gap-y-4">
                         {user && (
                             <Link
-                                href="/messages"
+                                href="/dashboard/messages"
                                 onClick={() => setIsOpen(false)}
                                 className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm font-medium text-white/90 transition-colors hover:bg-white/[0.04]"
                             >

@@ -125,7 +125,7 @@ export default function Navbar({ user }: NavbarProps) {
               <div className="flex-1 flex items-center justify-end gap-x-4 lg:gap-x-6">
                 {user && (
                   <Link
-                    href="/messages"
+                    href="/dashboard/messages"
                     className="relative hidden md:inline-flex p-2 text-white/50 hover:text-white transition-colors group"
                     aria-label="Messages"
                   >
