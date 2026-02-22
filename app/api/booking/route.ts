@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         serviceId,
         discovery,
         message: discovery?.additionalNotes || discovery?.goals,
-        status: "PENDING",
+        status: "NEW",
       },
     });
 

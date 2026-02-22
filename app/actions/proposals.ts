@@ -65,7 +65,7 @@ export const createProposalForBooking = withProxyValidation(
       where: { id: booking.id },
       data: {
         proposalId: proposal.id,
-        status: "REVIEWED",
+        status: "QUALIFIED",
       },
     });
 
@@ -115,6 +115,11 @@ export const sendProposal = withProxyValidation(
           link: `/services`,
         });
       }
+
+      await prisma.booking.update({
+        where: { id: proposal.booking.id },
+        data: { status: "PROPOSAL_SENT" },
+      });
     }
 
     return { ok: true, proposal } as const;
@@ -143,6 +148,8 @@ export const approveProposal = withProxyValidation(
       return { ok: false, error: "Proposal booking not found" } as const;
     }
 
+    const booking = proposal.booking;
+
     const finderId =
       session.user.role === Role.FOUNDER
         ? session.user.id
@@ -152,7 +159,7 @@ export const approveProposal = withProxyValidation(
       return { ok: false, error: "No founder available" } as const;
     }
 
-    const projectTitle = `${proposal.booking.service?.title || "Consultation Project"} - ${proposal.booking.clientName}`;
+    const projectTitle = `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
 
     // Perform inside a transaction to ensure atomicity
     const result = await prisma.$transaction(async (tx) => {
@@ -160,7 +167,7 @@ export const approveProposal = withProxyValidation(
       const project = await tx.project.create({
         data: {
           title: projectTitle,
-          bookingId: proposal.booking.id,
+          bookingId: booking.id,
           finderId,
           scope: proposal.scopeSummary,
           workspaceUrl: `/dashboard/projects/workspace-pending`, // Placeholder URL
@@ -198,8 +205,8 @@ export const approveProposal = withProxyValidation(
 
       // 4. Update Booking
       await tx.booking.update({
-        where: { id: proposal.booking.id },
-        data: { status: "CONVERTED" },
+        where: { id: booking.id },
+        data: { status: "CLOSED_WON" },
       });
 
       // 5. Log Activity
@@ -235,7 +242,7 @@ export const rejectProposal = withProxyValidation(
     if (proposal.booking) {
       await prisma.booking.update({
         where: { id: proposal.booking.id },
-        data: { status: "REJECTED" },
+        data: { status: "CLOSED_LOST" },
       });
     }
 

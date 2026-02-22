@@ -24,7 +24,7 @@ export const GET = withAuth(async () => {
             }),
             // Pending Bookings
             prisma.booking.count({
-                where: { status: BookingStatus.PENDING }
+                where: { status: BookingStatus.NEW }
             }),
             // Company Fund (Sum of LedgerEntry with type COMPANY_FUND)
             prisma.ledgerEntry.aggregate({

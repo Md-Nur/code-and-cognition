@@ -10,7 +10,7 @@ That’s enterprise agency model.
 
 ----
 
-In the footer there have a legal and privacy policy section. make it functional. I provide our Agreement.md file in public folder you can get idea from it. Don't share any sensitive information.
+In the footer there have a legal and privacy policy link. make it functional. I provide our Agreement.md file in public folder you can get idea from it. Don't share any sensitive information.
 
 ----
 

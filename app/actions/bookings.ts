@@ -13,7 +13,7 @@ export async function markBookingAsReviewedAction(bookingId: string) {
 
   const booking = await prisma.booking.update({
     where: { id: bookingId },
-    data: { status: "REVIEWED" },
+    data: { status: "QUALIFIED" },
   });
 
   return { ok: true, booking } as const;
@@ -59,7 +59,7 @@ export async function createBookingAction(
       serviceId,
       discovery,
       message: discovery?.problemStatement || discovery?.additionalNotes || "Strategic Consultation Request",
-      status: "PENDING",
+      status: "NEW",
     },
   });
 

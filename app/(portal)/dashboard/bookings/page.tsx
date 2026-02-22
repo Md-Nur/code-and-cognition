@@ -10,6 +10,7 @@ export default function AdminBookingsPage() {
     const [bookings, setBookings] = useState<BookingWithRelations[]>([]);
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
+    const [filterStatus, setFilterStatus] = useState<string>("ALL");
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
         clientName: "",
@@ -79,27 +80,47 @@ export default function AdminBookingsPage() {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-bold">Booking Requests</h1>
+                <div>
+                    <h1 className="text-2xl font-bold">Lead Management</h1>
+                    <p className="text-sm text-gray-500">Track and manage your sales pipeline</p>
+                </div>
                 <button onClick={() => setShowModal(true)} className="btn-brand w-full sm:w-auto">
-                    + Add Manual Booking
+                    + Add Manual Lead
                 </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pb-2">
+                {["ALL", "NEW", "QUALIFIED", "PROPOSAL_SENT", "CLOSED_WON", "CLOSED_LOST"].map((status) => (
+                    <button
+                        key={status}
+                        onClick={() => setFilterStatus(status)}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${filterStatus === status
+                            ? "bg-agency-accent text-white"
+                            : "bg-white/5 text-gray-400 hover:bg-white/10"
+                            }`}
+                    >
+                        {status.replace("_", " ")}
+                    </button>
+                ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
-                    <p className="text-gray-500 col-span-3 text-center py-10">Loading requests...</p>
-                ) : bookings.length === 0 ? (
-                    <p className="text-gray-500 col-span-3 text-center py-10">No pending bookings.</p>
-                ) : bookings.map((booking) => (
+                    <p className="text-gray-500 col-span-3 text-center py-10">Loading leads...</p>
+                ) : bookings.filter(b => filterStatus === "ALL" || b.status === filterStatus).length === 0 ? (
+                    <p className="text-gray-500 col-span-3 text-center py-10">No leads found.</p>
+                ) : bookings.filter(b => filterStatus === "ALL" || b.status === filterStatus).map((booking) => (
                     <div key={booking.id} className="glass-panel p-6 rounded-xl flex flex-col hover:border-white/20 transition-colors">
                         <div className="flex justify-between items-start mb-4">
-                            <span className={`text-xs px-2 py-1 rounded border uppercase font-bold tracking-wider ${booking.status === "PENDING" ? "border-yellow-500/30 text-yellow-400 bg-yellow-500/10" :
-                                booking.status === "REVIEWED" ? "border-green-500/30 text-green-400 bg-green-500/10" :
-                                    "border-red-500/30 text-red-400 bg-red-500/10"
+                            <span className={`text-[10px] px-2 py-0.5 rounded border uppercase font-bold tracking-wider ${(booking.status as string) === "NEW" ? "border-amber-500/30 text-amber-400 bg-amber-500/10" :
+                                (booking.status as string) === "QUALIFIED" ? "border-blue-500/30 text-blue-400 bg-blue-500/10" :
+                                    (booking.status as string) === "PROPOSAL_SENT" ? "border-purple-500/30 text-purple-400 bg-purple-500/10" :
+                                        (booking.status as string) === "CLOSED_WON" ? "border-green-500/30 text-green-400 bg-green-500/10" :
+                                            "border-gray-500/30 text-gray-400 bg-gray-500/10"
                                 }`}>
-                                {booking.status}
+                                {booking.status.replace("_", " ")}
                             </span>
-                            <span className="text-xs text-gray-500">{new Date(booking.createdAt).toLocaleDateString()}</span>
+                            <span className="text-[10px] text-gray-500">{new Date(booking.createdAt).toLocaleDateString()}</span>
                         </div>
 
                         <h3 className="font-bold text-lg mb-1">{booking.service.title}</h3>
@@ -119,48 +140,95 @@ export default function AdminBookingsPage() {
                             <p className="text-sm text-gray-400 italic mb-6 flex-grow">"{booking.message}"</p>
                         )}
 
-                        <div className="mt-auto grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
-                            {booking.status === "PENDING" && (
-                                <>
+                        <div className="mt-auto pt-4 border-t border-white/5 space-y-3">
+                            <div className="grid grid-cols-2 gap-2">
+                                {(booking.status as string) === "NEW" && (
+                                    <>
+                                        <button
+                                            onClick={() => updateStatus(booking.id, "CLOSED_LOST")}
+                                            className="btn-outline text-[10px] py-2 hover:bg-red-500/10 hover:text-red-400"
+                                        >
+                                            Discard
+                                        </button>
+                                        <button
+                                            onClick={() => updateStatus(booking.id, "QUALIFIED")}
+                                            className="btn-brand text-[10px] py-2"
+                                        >
+                                            Qualify
+                                        </button>
+                                    </>
+                                )}
+                                {(booking.status as string) === "QUALIFIED" && (
+                                    <>
+                                        <button
+                                            onClick={() => updateStatus(booking.id, "CLOSED_LOST")}
+                                            className="btn-outline text-[10px] py-2"
+                                        >
+                                            Lose Lead
+                                        </button>
+                                        <Link
+                                            href={`/dashboard/proposals/new?bookingId=${booking.id}`}
+                                            className="btn-brand text-[10px] py-2 text-center"
+                                        >
+                                            Create Proposal
+                                        </Link>
+                                    </>
+                                )}
+                                {(booking.status as string) === "PROPOSAL_SENT" && (
+                                    <>
+                                        <button
+                                            onClick={() => updateStatus(booking.id, "CLOSED_LOST")}
+                                            className="btn-outline text-[10px] py-2"
+                                        >
+                                            Closed Lost
+                                        </button>
+                                        <button
+                                            onClick={() => updateStatus(booking.id, "CLOSED_WON")}
+                                            className="btn-brand text-[10px] py-2"
+                                        >
+                                            Closed Won
+                                        </button>
+                                    </>
+                                )}
+                                {(booking.status as string) === "CLOSED_WON" && (
+                                    booking.project ? (
+                                        <Link
+                                            href={`/dashboard/projects/${booking.project.id}`}
+                                            className="btn-outline text-[10px] py-2 col-span-2 text-center"
+                                        >
+                                            View Project →
+                                        </Link>
+                                    ) : (
+                                        <button
+                                            className="btn-brand text-[10px] py-2 col-span-2"
+                                            onClick={() => alert("Please convert this won lead into a project from the project management section or we can add a quick convert here.")}
+                                        >
+                                            Convert to Project
+                                        </button>
+                                    )
+                                )}
+                                {(booking.status as string) === "CLOSED_LOST" && (
                                     <button
-                                        onClick={() => updateStatus(booking.id, "REJECTED")}
-                                        className="btn-outline text-xs py-2 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
+                                        onClick={() => updateStatus(booking.id, "NEW")}
+                                        className="btn-outline text-[10px] py-2 col-span-2"
                                     >
-                                        Reject
+                                        Re-open Lead
                                     </button>
-                                    <button
-                                        onClick={() => updateStatus(booking.id, "REVIEWED")}
-                                        className="btn-brand text-xs py-2"
-                                    >
-                                        Approve
-                                    </button>
-                                </>
-                            )}
-                            {booking.status === "REVIEWED" && (
-                                booking.project ? (
-                                    <Link
-                                        href={`/admin/projects/${booking.project.id}`}
-                                        className="btn-outline text-xs py-2 col-span-2 text-center"
-                                    >
-                                        View Project →
-                                    </Link>
-                                ) : (
-                                    <Link
-                                        href={`/dashboard/proposals/new?bookingId=${booking.id}`}
-                                        className="btn-brand text-xs py-2 col-span-2 text-center"
-                                    >
-                                        Create Proposal →
-                                    </Link>
-                                )
-                            )}
-                            {booking.status === "REJECTED" && (
-                                <button
-                                    onClick={() => updateStatus(booking.id, "PENDING")}
-                                    className="btn-outline text-xs py-2 col-span-2"
-                                >
-                                    Restore to Pending
-                                </button>
-                            )}
+                                )}
+                            </div>
+
+                            {/* Fast Status Change for Admin */}
+                            <select
+                                className="w-full bg-white/5 border border-white/10 rounded-lg text-[10px] py-1 px-2 focus:outline-none focus:border-agency-accent/50"
+                                value={booking.status}
+                                onChange={(e) => updateStatus(booking.id, e.target.value)}
+                            >
+                                <option value="NEW">Change Status: NEW</option>
+                                <option value="QUALIFIED">Change Status: QUALIFIED</option>
+                                <option value="PROPOSAL_SENT">Change Status: PROPOSAL SENT</option>
+                                <option value="CLOSED_WON">Change Status: CLOSED WON</option>
+                                <option value="CLOSED_LOST">Change Status: CLOSED LOST</option>
+                            </select>
                         </div>
                     </div>
                 ))}
@@ -170,7 +238,7 @@ export default function AdminBookingsPage() {
             {showModal && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="glass-panel w-full max-w-md p-6 rounded-xl animate-fade-in-up">
-                        <h2 className="text-xl font-bold mb-4">Add Manual Booking</h2>
+                        <h2 className="text-xl font-bold mb-4">Add Manual Lead</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -230,7 +298,7 @@ export default function AdminBookingsPage() {
                                     Cancel
                                 </button>
                                 <button type="submit" className="btn-brand flex-1">
-                                    Create Booking
+                                    Create Lead
                                 </button>
                             </div>
                         </form>
