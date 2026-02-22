@@ -16,6 +16,8 @@ const proposalCreateSchema = z.object({
   budgetUSD: z.number().positive().optional().nullable(),
   currency: z.enum(["BDT", "USD"]).optional(),
   estimatedDays: z.number().int().positive().optional().nullable(),
+  paymentTerms: z.string().optional().nullable(),
+  contractText: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
 });
 
@@ -52,6 +54,8 @@ export const createProposalForBooking = withProxyValidation(
         budgetUSD: data.budgetUSD ?? null,
         currency: data.currency ?? "BDT",
         estimatedDays: data.estimatedDays ?? null,
+        paymentTerms: data.paymentTerms ?? null,
+        contractText: data.contractText ?? null,
         notes: data.notes ?? null,
         status: "DRAFT",
       },

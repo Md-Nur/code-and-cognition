@@ -146,10 +146,10 @@ export default function AdminBookingsPage() {
                                     </Link>
                                 ) : (
                                     <Link
-                                        href={`/admin/projects/new?bookingId=${booking.id}`}
+                                        href={`/dashboard/proposals/new?bookingId=${booking.id}`}
                                         className="btn-brand text-xs py-2 col-span-2 text-center"
                                     >
-                                        Create Project →
+                                        Create Proposal →
                                     </Link>
                                 )
                             )}

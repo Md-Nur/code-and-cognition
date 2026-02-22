@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import Link from "next/link";
-import { FileText, ChevronRight } from "lucide-react";
+import { FileText } from "lucide-react";
+import ProposalPDFLink from "@/app/components/portal/ProposalPDFLink";
 
 const statusConfig: Record<string, { label: string; cls: string }> = {
     DRAFT: { label: "Draft", cls: "bg-gray-500/10 text-gray-400 border-gray-500/20" },
@@ -22,6 +23,7 @@ export default async function ProposalsPage() {
         include: {
             project: { select: { id: true, title: true } },
             engagementModel: { select: { name: true, service: { select: { title: true } } } },
+            booking: { include: { service: true } },
         },
     });
 
@@ -46,7 +48,7 @@ export default async function ProposalsPage() {
                                 <th className="text-left p-5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hidden md:table-cell">Project</th>
                                 <th className="text-left p-5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hidden lg:table-cell">Budget</th>
                                 <th className="text-left p-5 text-[10px] font-bold uppercase tracking-widest text-gray-500">Status</th>
-                                <th className="text-right p-5 text-[10px] font-bold uppercase tracking-widest text-gray-500">Created</th>
+                                <th className="text-right p-5 text-[10px] font-bold uppercase tracking-widest text-gray-500">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,8 +58,10 @@ export default async function ProposalsPage() {
                                     <tr key={p.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                                         <td className="p-5">
                                             <p className="font-medium text-white line-clamp-1">{p.scopeSummary}</p>
-                                            {p.engagementModel && (
-                                                <p className="text-xs text-gray-500 mt-0.5">{p.engagementModel.service.title} — {p.engagementModel.name}</p>
+                                            {(p.engagementModel || p.booking?.service) && (
+                                                <p className="text-xs text-gray-500 mt-0.5">
+                                                    {p.engagementModel?.service.title || p.booking?.service?.title} {p.engagementModel ? `— ${p.engagementModel.name}` : ""}
+                                                </p>
                                             )}
                                         </td>
                                         <td className="p-5 hidden md:table-cell">
@@ -71,8 +75,10 @@ export default async function ProposalsPage() {
                                         <td className="p-5">
                                             <span className={`text-[10px] px-3 py-1 rounded-full border font-bold uppercase tracking-widest ${s.cls}`}>{s.label}</span>
                                         </td>
-                                        <td className="p-5 text-right text-gray-500 text-xs">
-                                            {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                        <td className="p-5 text-right">
+                                            {p.booking && (
+                                                <ProposalPDFLink proposal={p} booking={p.booking} />
+                                            )}
                                         </td>
                                     </tr>
                                 );
