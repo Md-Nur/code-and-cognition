@@ -76,9 +76,14 @@ export default async function ProposalsPage() {
                                             <span className={`text-[10px] px-3 py-1 rounded-full border font-bold uppercase tracking-widest ${s.cls}`}>{s.label}</span>
                                         </td>
                                         <td className="p-5 text-right">
-                                            {p.booking && (
-                                                <ProposalPDFLink proposal={p} booking={p.booking} />
-                                            )}
+                                            <div className="flex justify-end items-center gap-3">
+                                                <Link href={`/dashboard/proposals/${p.id}`} className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                                                    View Detail
+                                                </Link>
+                                                {p.booking && (
+                                                    <ProposalPDFLink proposal={p} booking={p.booking} />
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 );

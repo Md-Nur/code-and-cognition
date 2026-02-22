@@ -1,21 +1,3 @@
-Client Signs & Pays
-After approval:
-Create internal project record
-Create workspace
-Assign team
-Define milestones
-Now project officially starts.
-
-----
-
-You should have:
-Admin Dashboard:
-View all leads
-Filter by status
-Change status (eg. New → Qualified → Proposal Sent → Closed Won → Closed Lost)
-
-----
-
 Your system should now be:
 Visitor
 → Consultation Form
@@ -28,3 +10,12 @@ That’s enterprise agency model.
 
 ----
 
+In the footer there have a legal and privacy policy section. make it functional. I provide our Agreement.md file in public folder you can get idea from it. Don't share any sensitive information.
+
+----
+
+Website must have
+Lead database
+Admin dashboard
+CRM pipeline
+Email automation

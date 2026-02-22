@@ -130,7 +130,7 @@ model Booking {
   budgetUSD   Float?
   message     String?
   discovery   Json? /// Structured discovery data: { companyName, role, industry, revenueRange, budgetRange, problemStatement, timeline, etc. }
-  status      BookingStatus @default(PENDING)
+  status      BookingStatus @default(NEW)
   createdAt   DateTime      @default(now())
   service     Service?      @relation(fields: [serviceId], references: [id])
   proposal    Proposal?     @relation(fields: [proposalId], references: [id])
@@ -139,26 +139,28 @@ model Booking {
 
 /// Active projects managed by the agency, converted from bookings.
 model Project {
-  id             String          @id @default(cuid())
-  title          String
-  bookingId      String?         @unique
-  finderId       String /// The user who brought in the project
-  status         ProjectStatus   @default(ACTIVE)
-  health         ProjectHealth   @default(GREEN)
-  viewToken      String?         @unique @default(uuid()) /// Public viewing token for clients
-  scope          String? /// Project scope and objectives
-  startDate      DateTime? /// Project start date
-  endDate        DateTime? /// Project end date / deadline
-  riskNotes      String? /// Risk management notes
-  createdAt      DateTime        @default(now())
-  payments       Payment[]
-  proposals      Proposal[]
-  booking        Booking?        @relation(fields: [bookingId], references: [id])
-  finder         User            @relation("Finder", fields: [finderId], references: [id])
-  members        ProjectMember[]
-  milestones     Milestone[]
-  activityLogs   ActivityLog[]
-  changeRequests ChangeRequest[]
+  id              String          @id @default(cuid())
+  title           String
+  bookingId       String?         @unique
+  finderId        String /// The user who brought in the project
+  status          ProjectStatus   @default(ACTIVE)
+  health          ProjectHealth   @default(GREEN)
+  viewToken       String?         @unique @default(uuid()) /// Public viewing token for clients
+  scope           String? /// Project scope and objectives
+  startDate       DateTime? /// Project start date
+  endDate         DateTime? /// Project end date / deadline
+  riskNotes       String? /// Risk management notes
+  workspaceUrl    String? /// Internal/External workspace link (e.g. Notion, Slack, or internal)
+  workspaceStatus String?         @default("PENDING") /// PENDING | ACTIVE | ARCHIVED
+  createdAt       DateTime        @default(now())
+  payments        Payment[]
+  proposals       Proposal[]
+  booking         Booking?        @relation(fields: [bookingId], references: [id])
+  finder          User            @relation("Finder", fields: [finderId], references: [id])
+  members         ProjectMember[]
+  milestones      Milestone[]
+  activityLogs    ActivityLog[]
+  changeRequests  ChangeRequest[]
 }
 
 /// Contractors assigned to a project with their respective execution share (percentage).
@@ -189,6 +191,7 @@ model Proposal {
   status            ProposalStatus   @default(DRAFT) /// DRAFT -> SENT -> APPROVED | REJECTED
   approved          Boolean          @default(false)
   approvedAt        DateTime?
+  signedAt          DateTime? /// When the client signed & paid
   paymentTerms      String? /// Payment terms and schedules
   contractText      String?          @db.Text /// Full contract text or additional legal terms
   notes             String?          @db.Text /// Additional notes for the proposal
@@ -322,10 +325,11 @@ enum ProposalStatus {
 }
 
 enum BookingStatus {
-  PENDING
-  REVIEWED
-  CONVERTED
-  REJECTED
+  NEW
+  QUALIFIED
+  PROPOSAL_SENT
+  CLOSED_WON
+  CLOSED_LOST
 }
 
 enum ProjectStatus {

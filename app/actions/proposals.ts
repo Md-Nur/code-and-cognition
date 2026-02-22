@@ -124,8 +124,6 @@ export const sendProposal = withProxyValidation(
 
 export const approveProposal = withProxyValidation(
   async (input: z.infer<typeof proposalIdSchema>) => {
-    // Both CLIENT and FOUNDER can approve conceptually, but handled by proxy validation loosely here
-    // since we do a session check inside. Wait, withProxyValidation ensures a session exists.
     const session = await auth();
     if (!session) {
       return { ok: false, error: "Unauthorized" } as const;
@@ -156,38 +154,67 @@ export const approveProposal = withProxyValidation(
 
     const projectTitle = `${proposal.booking.service?.title || "Consultation Project"} - ${proposal.booking.clientName}`;
 
-    const project = await prisma.project.create({
-      data: {
-        title: projectTitle,
-        bookingId: proposal.booking.id,
-        finderId,
-        scope: proposal.scopeSummary,
-        milestones: {
-          create: proposal.milestones.map((milestoneTitle, index) => ({
-            title: milestoneTitle,
-            order: index,
-            status: "PENDING",
-          })),
+    // Perform inside a transaction to ensure atomicity
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Create the Project
+      const project = await tx.project.create({
+        data: {
+          title: projectTitle,
+          bookingId: proposal.booking.id,
+          finderId,
+          scope: proposal.scopeSummary,
+          workspaceUrl: `/dashboard/projects/workspace-pending`, // Placeholder URL
+          workspaceStatus: "PENDING",
+          milestones: {
+            create: proposal.milestones.map((milestoneTitle, index) => ({
+              title: milestoneTitle,
+              order: index,
+              status: "PENDING",
+            })),
+          },
         },
-      },
+      });
+
+      // 2. Assign Team (Finder as initial member)
+      await tx.projectMember.create({
+        data: {
+          projectId: project.id,
+          userId: finderId,
+          share: 100, // Initial 100% share for the finder
+        },
+      });
+
+      // 3. Update Proposal
+      const updatedProposal = await tx.proposal.update({
+        where: { id: proposal.id },
+        data: {
+          status: "APPROVED",
+          approved: true,
+          approvedAt: new Date(),
+          signedAt: new Date(), // Client signed & paid
+          projectId: project.id,
+        },
+      });
+
+      // 4. Update Booking
+      await tx.booking.update({
+        where: { id: proposal.booking.id },
+        data: { status: "CONVERTED" },
+      });
+
+      // 5. Log Activity
+      await tx.activityLog.create({
+        data: {
+          projectId: project.id,
+          userId: session.user.id,
+          action: "PROJECT_STARTED",
+        },
+      });
+
+      return { proposal: updatedProposal, project };
     });
 
-    const updatedProposal = await prisma.proposal.update({
-      where: { id: proposal.id },
-      data: {
-        status: "APPROVED",
-        approved: true,
-        approvedAt: new Date(),
-        projectId: project.id,
-      },
-    });
-
-    await prisma.booking.update({
-      where: { id: proposal.booking.id },
-      data: { status: "CONVERTED" },
-    });
-
-    return { ok: true, proposal: updatedProposal, project } as const;
+    return { ok: true, ...result } as const;
   },
   { requiredRole: [Role.CLIENT, Role.FOUNDER] }
 );
