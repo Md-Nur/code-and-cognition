@@ -10,7 +10,7 @@ type ProjectWithRelations = Project & {
     _count: { members: number; payments: number };
 };
 
-export default function AdminProjectsPage() {
+export default function DashboardProjectsPage() {
     const [projects, setProjects] = useState<ProjectWithRelations[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,7 @@ export default function AdminProjectsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold">Projects Management</h1>
-                <Link href="/admin/projects/new" className="btn-brand w-full sm:w-auto text-center">
+                <Link href="/dashboard/projects/new" className="btn-brand w-full sm:w-auto text-center">
                     + New Project
                 </Link>
             </div>
@@ -58,7 +58,7 @@ export default function AdminProjectsPage() {
                         ) : projects.map((project) => (
                             <tr key={project.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                 <td className="p-4 font-medium">
-                                    <Link href={`/admin/projects/${project.id}`} className="hover:text-agency-accent hover:underline">
+                                    <Link href={`/dashboard/projects/${project.id}`} className="hover:text-agency-accent hover:underline">
                                         {project.title}
                                     </Link>
                                     <div className="text-xs text-gray-500">{project.booking ? "From Booking" : "Manual Entry"}</div>
@@ -75,7 +75,7 @@ export default function AdminProjectsPage() {
                                 <td className="p-4">{project._count.members} Members</td>
                                 <td className="p-4">{project._count.payments} Payments</td>
                                 <td className="text-right p-4">
-                                    <Link href={`/admin/projects/${project.id}`} className="text-agency-accent hover:text-white mr-3 transition-colors">
+                                    <Link href={`/dashboard/projects/${project.id}`} className="text-agency-accent hover:text-white mr-3 transition-colors">
                                         Manage
                                     </Link>
                                 </td>
