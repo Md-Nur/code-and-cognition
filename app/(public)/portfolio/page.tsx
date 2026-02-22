@@ -1,9 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import Navbar from "../components/public/Navbar";
-import Footer from "../components/public/Footer";
-import ProjectList from "../components/public/ProjectList";
+import ProjectList from "@/app/components/public/ProjectList";
 import type { Metadata } from "next";
-import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
     title: "Portfolio | Code & Cognition",
@@ -11,7 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-    const session = await auth();
     const [projects, services] = await Promise.all([
         prisma.portfolioItem.findMany({
             include: {
@@ -34,10 +30,8 @@ export default async function ProjectsPage() {
     ]);
 
     return (
-        <main className="min-h-screen bg-agency-black selection:bg-agency-accent selection:text-white pt-32">
-            <Navbar user={session?.user} />
+        <main className="pt-32">
             <ProjectList initialProjects={projects as any} services={services} />
-            <Footer />
         </main>
     );
 }

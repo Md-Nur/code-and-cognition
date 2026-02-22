@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import Navbar from "./components/public/Navbar";
-import HeroSection from "./components/public/HeroSection";
-import CorePillars from "./components/public/CorePillars";
-import HowWeWork from "./components/public/HowWeWork";
-import CaseStudies from "./components/public/CaseStudies";
-import Testimonials from "./components/public/Testimonials";
-import KnowledgeSection from "./components/public/KnowledgeSection";
-import Footer from "./components/public/Footer";
-import BookingForm from "./components/public/BookingForm";
-import Clients from "./components/public/Clients";
+import HeroSection from "@/app/components/public/HeroSection";
+import CorePillars from "@/app/components/public/CorePillars";
+import HowWeWork from "@/app/components/public/HowWeWork";
+import CaseStudies from "@/app/components/public/CaseStudies";
+import Testimonials from "@/app/components/public/Testimonials";
+import KnowledgeSection from "@/app/components/public/KnowledgeSection";
+import BookingForm from "@/app/components/public/BookingForm";
+import Clients from "@/app/components/public/Clients";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Premium AI Digital Agency | Code & Cognition",
@@ -21,17 +18,13 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function LandingPage() {
-  const session = await auth();
-
   // Fetch Clients for the marquee
   const clients = await prisma.client.findMany({
     orderBy: { order: "asc" },
   });
 
   return (
-    <main className="min-h-screen bg-agency-black selection:bg-agency-accent selection:text-white relative">
-      <Navbar user={session?.user} />
-
+    <main>
       {/* Hero Section */}
       <HeroSection />
 
@@ -73,9 +66,6 @@ export default async function LandingPage() {
           <BookingForm />
         </div>
       </section>
-
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }
