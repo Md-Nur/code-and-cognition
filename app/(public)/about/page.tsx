@@ -48,10 +48,47 @@ export default function AboutPage() {
                             </div>
                         </div>
 
-                        <div className="relative aspect-square rounded-[60px] overflow-hidden border border-white/10">
-                            <div className="absolute inset-0 bg-gradient-to-br from-agency-accent/20 to-transparent z-10" />
-                            <div className="w-full h-full bg-agency-black flex items-center justify-center p-20">
-                                <span className="text-white/5 font-bold uppercase tracking-[2em] text-4xl -rotate-45 whitespace-nowrap">Excellence</span>
+                        <div className="relative aspect-square rounded-[60px] overflow-hidden border border-white/10 bg-agency-black">
+                            {/* Ambient glow */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-agency-accent/20 via-transparent to-purple-900/10" />
+
+                            {/* Content */}
+                            <div className="relative z-10 w-full h-full flex flex-col justify-between p-10">
+                                {/* Header */}
+                                <div>
+                                    <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] block mb-3">Our Standard</span>
+                                    <h3 className="text-white text-3xl font-bold leading-tight">Built on <br />Uncompromising<br />Excellence</h3>
+                                </div>
+
+                                {/* Principles */}
+                                <div className="space-y-4">
+                                    {[
+                                        { icon: "⬡", label: "Precision Engineering", desc: "Every system built to last" },
+                                        { icon: "◈", label: "Relentless Velocity", desc: "Speed without sacrificing craft" },
+                                        { icon: "◉", label: "Radical Integrity", desc: "Transparent in every decision" },
+                                    ].map((item) => (
+                                        <div key={item.label} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm">
+                                            <span className="text-agency-accent text-2xl leading-none w-8 flex-shrink-0 text-center">{item.icon}</span>
+                                            <div>
+                                                <p className="text-white text-sm font-semibold">{item.label}</p>
+                                                <p className="text-gray-500 text-xs">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Stat */}
+                                <div className="flex items-end gap-3 pt-2 border-t border-white/5">
+                                    <span className="text-5xl font-bold text-white leading-none">5.0</span>
+                                    <div>
+                                        <div className="flex gap-0.5 mb-1">
+                                            {[...Array(5)].map((_, i) => (
+                                                <svg key={i} className="w-3.5 h-3.5 text-agency-accent fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" /></svg>
+                                            ))}
+                                        </div>
+                                        <p className="text-gray-500 text-xs">Average client satisfaction</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

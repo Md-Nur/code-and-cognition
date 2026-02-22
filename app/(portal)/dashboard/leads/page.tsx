@@ -174,7 +174,7 @@ export default function LeadsDatabasePage() {
                             <span className="text-[10px] text-gray-500">{new Date(booking.createdAt).toLocaleDateString()}</span>
                         </div>
 
-                        <h3 className="font-bold text-lg mb-1">{booking.service.title}</h3>
+                        <h3 className="font-bold text-lg mb-1">{booking?.service?.title || "Unknown Service"}</h3>
                         <p className="text-sm text-gray-400 mb-4">Budget: ${booking.budgetUSD?.toLocaleString()}</p>
 
                         <div className="flex items-center gap-3 mb-4 p-3 bg-white/5 rounded-lg">
@@ -270,7 +270,8 @@ export default function LeadsDatabasePage() {
 
                             {/* Fast Status Change for Admin */}
                             <select
-                                className="w-full bg-white/5 border border-white/10 rounded-lg text-[10px] py-1 px-2 focus:outline-none focus:border-agency-accent/50"
+                                className="select-field w-full text-[10px] py-1.5"
+                                style={{ backgroundColor: "#0f1117", color: "#e2e8f0" }}
                                 value={booking.status}
                                 onChange={(e) => updateStatus(booking.id, e.target.value)}
                             >
