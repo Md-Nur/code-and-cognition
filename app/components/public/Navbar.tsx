@@ -150,7 +150,7 @@ export default function Navbar({ user }: NavbarProps) {
                   </Link>
                 )}
 
-                {user && <NotificationBell />}
+                {user && <span className="hidden md:block"><NotificationBell /></span>}
 
                 {user ? (
                   <Link
