@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Code & Cognition — Digital Agency",
+  title: "Code & Cognition — Strategic Digital Execution",
   description:
-    "We build digital products that think. Web development, UI/UX design, video production, and growth marketing for ambitious brands.",
-  keywords: "digital agency, web development, UI/UX design, Bangladesh, Code and Cognition",
+    "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering for enterprise growth.",
+  keywords: "strategic digital execution, industrial-grade platforms, autonomous operations, result engineering, Code & Cognition",
   metadataBase: new URL("https://codeandcognition.com"),
   openGraph: {
-    title: "Code & Cognition — Digital Product Studio",
-    description: "We build digital products that think. Strategic web development, UI/UX design, and scalable products.",
+    title: "Code & Cognition — Strategic Digital Execution",
+    description: "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering for enterprise growth.",
     url: "https://codencognition.com",
     siteName: "Code & Cognition",
     images: [

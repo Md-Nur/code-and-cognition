@@ -36,7 +36,7 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-1">Email</span>
-                                            <a href="mailto:hello@codeandcognition.com" className="text-white font-medium hover:text-agency-accent transition-colors">hello@codeandcognition.com</a>
+                                            <a href="mailto:codencognition.bd@gmail.com" className="text-white font-medium hover:text-agency-accent transition-colors">codencognition.bd@gmail.com</a>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-6 group">
@@ -45,7 +45,7 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-1">WhatsApp</span>
-                                            <a href="#" className="text-white font-medium hover:text-agency-accent transition-colors">+880 1XXX XXXXXX</a>
+                                            <a href="#" className="text-white font-medium hover:text-agency-accent transition-colors">+880 1603012448</a>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-6 group">

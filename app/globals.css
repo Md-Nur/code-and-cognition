@@ -1,17 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @plugin "daisyui";
 
 :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #f8fafc;
+    --accent: #3b82f6;
+    --accent-dark: #1d4ed8;
 }
 
 @theme {
-    --color-agency-black: #050505;
-    --color-agency-gray: #1a1a1a;
+    --color-agency-black: #000000;
+    --color-agency-gray: #0a0a0a;
     --color-agency-accent: #3b82f6;
-    --font-display: "Space Grotesk", sans-serif;
+    --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
     --font-body: "Inter", sans-serif;
 }
 
@@ -19,29 +21,41 @@ body {
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    font-weight: 700;
 }
 
-/* Custom Utilities */
+/* ─── Premium Architectural Utilities ────────────────────────────────────── */
+
+.strategic-heading {
+    @apply leading-[1.1] tracking-[-0.04em];
+}
+
+.premium-card {
+    @apply bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl transition-all duration-500 hover:bg-white/[0.04] hover:border-white/[0.1] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)];
+}
+
 .glass-panel {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10;
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl;
 }
 
 .text-gradient {
-    @apply bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-purple-500;
+    @apply bg-clip-text text-transparent bg-linear-to-b from-white via-white to-white/40;
+}
+
+.accent-glow {
+    @apply absolute w-[500px] h-[500px] bg-agency-accent/10 rounded-full blur-[120px] pointer-events-none;
 }
 
 /* Layout Utilities */
 .section-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-6 sm:px-8 lg:px-12;
 }
 
 .custom-scrollbar {
@@ -63,133 +77,44 @@ h6 {
     border-radius: 10px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.table-container {
-    @apply w-full overflow-x-auto;
-}
-
-/* Add scrollbar styles to table-container directly */
-.table-container {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-}
-
-.table-container::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.table-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
 .section-tag {
-    @apply inline-block text-sm font-medium text-agency-accent bg-agency-accent/10 px-3 py-1 rounded-full border border-agency-accent/20;
+    @apply inline-block text-[10px] font-bold text-agency-accent uppercase tracking-[0.3em] bg-agency-accent/5 px-4 py-1.5 rounded-full border border-agency-accent/20 mb-6;
 }
 
 /* Component Utilities */
 .btn-brand {
-    @apply btn bg-agency-accent hover:bg-agency-accent/90 text-white border-none shadow-lg shadow-agency-accent/20 hover:shadow-agency-accent/40 transition-all duration-300;
+    @apply inline-flex items-center justify-center px-8 py-4 rounded-full bg-white text-black font-bold text-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] active:scale-[0.98];
 }
 
-.input-label {
-    @apply block text-sm font-medium text-gray-400 mb-1;
+.btn-outline {
+    @apply inline-flex items-center justify-center px-8 py-4 rounded-full border border-white/10 text-white font-bold text-sm transition-all duration-300 hover:bg-white/5 hover:border-white/30;
 }
 
 .input-field {
-    @apply input w-full bg-white/5 border-white/10 focus:border-agency-accent focus:outline-none text-white placeholder-gray-500 transition-colors;
-}
-
-.select-field {
-    @apply select w-full bg-white/5 border-white/10 focus:border-agency-accent focus:outline-none text-white transition-colors;
-}
-
-.select-field option {
-    @apply bg-agency-black text-white;
-}
-
-.data-table {
-    @apply w-full text-sm text-left;
-}
-
-.data-table th {
-    @apply font-semibold text-gray-400 border-b border-white/10 bg-white/5;
-}
-
-.data-table td {
-    @apply py-3 border-b border-white/5;
+    @apply w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 focus:border-agency-accent focus:outline-none text-white placeholder-gray-600 transition-all duration-300;
 }
 
 /* ─── Animations ─────────────────────────────────────────────────────────── */
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-12px);
-    }
-}
-
-@keyframes pulse-glow {
-
-    0%,
-    100% {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-    }
-
-    50% {
-        box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
-    }
-}
-
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes flowHorizontal {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(100%); }
+@keyframes reveal {
+    from { clip-path: inset(100% 0 0 0); }
+    to { clip-path: inset(0 0 0 0); }
 }
 
-.animate-float {
-    animation: float 4s ease-in-out infinite;
-}
+.animate-fade-in { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-up { animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-reveal { animation: reveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-.animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.animate-fade-in {
-    animation: fadeIn 1s ease-out forwards;
-}
-
-.animate-slide-up {
-    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-flow-horizontal {
-    animation: flowHorizontal 3s linear infinite;
-}
-
+.animation-delay-100 { animation-delay: 100ms; }
 .animation-delay-200 { animation-delay: 200ms; }
 .animation-delay-300 { animation-delay: 300ms; }
 .animation-delay-500 { animation-delay: 500ms; }
-.animation-delay-1000 { animation-delay: 1000ms; }
-.animation-delay-2000 { animation-delay: 2000ms; }

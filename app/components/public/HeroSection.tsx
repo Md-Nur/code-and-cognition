@@ -5,78 +5,77 @@ import { MoveRight } from "lucide-react";
 
 export default function HeroSection() {
     return (
-        <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden bg-agency-black">
-            {/* Background Ambience */}
+        <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-black">
+            {/* Architectural Ambience */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-agency-accent/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[100px]" />
+                <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-agency-accent/5 rounded-full blur-[140px]" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-white/[0.02] rounded-full blur-[120px]" />
             </div>
 
-            <div className="section-container relative z-10 text-center lg:text-left flex flex-col lg:flex-row items-center gap-16">
-                <div className="flex-1 max-w-3xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-[0.2em] text-agency-accent mb-8 animate-fade-in">
-                        <span className="h-1.5 w-1.5 rounded-full bg-agency-accent animate-pulse" />
-                        AI-Driven Digital Excellence
+            <div className="section-container relative z-10">
+                <div className="flex flex-col lg:flex-row items-center gap-20">
+                    <div className="flex-1 text-center lg:text-left">
+                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-[10px] font-bold uppercase tracking-[0.4em] text-agency-accent mb-10 animate-fade-in">
+                            <span className="h-1 w-1 rounded-full bg-agency-accent shadow-[0_0_8px_#3b82f6]" />
+                            Strategic Intelligence & Execution
+                        </div>
+
+                        <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold strategic-heading text-white mb-8 animate-slide-up">
+                            Architecting the <br />
+                            <span className="text-gradient">Future of Execution</span>
+                        </h1>
+
+                        <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl mb-14 animate-slide-up animation-delay-200">
+                            We build high-performance digital ecosystems for growth-focused enterprises, transforming technical complexity into sustainable competitive advantage.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-6 animate-slide-up animation-delay-300">
+                            <Link href="/schedule" className="btn-brand group w-full sm:w-auto">
+                                <span className="flex items-center gap-3">
+                                    Start Strategic Consultation
+                                    <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </span>
+                            </Link>
+                            <Link href="/portfolio" className="btn-outline w-full sm:w-auto">
+                                View Engagements
+                            </Link>
+                        </div>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-8 animate-slide-up">
-                        Structured Digital Execution for <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/40">Growth-Focused</span> Companies
-                    </h1>
+                    <div className="flex-1 relative w-full aspect-square max-w-[550px] animate-fade-in animation-delay-500">
+                        {/* High-End Architectural Visual */}
+                        <div className="relative w-full h-full premium-card overflow-hidden flex items-center justify-center group">
+                            <div className="absolute inset-0 bg-linear-to-br from-agency-accent/10 via-transparent to-white/[0.02]" />
 
-                    <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl mb-12 animate-slide-up animation-delay-200">
-                        We architect platform, automation, and performance systems that transform enterprise complexity into measurable growth and sustainable competitive advantage.
-                    </p>
+                            {/* Neural/Geometric Mesh (Simplified but Powerful) */}
+                            <div className="relative w-64 h-64">
+                                <div className="absolute inset-0 border-[0.5px] border-white/20 rounded-full animate-[spin_20s_linear_infinite]" />
+                                <div className="absolute inset-4 border-[0.5px] border-white/10 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                                <div className="absolute inset-8 border-[0.5px] border-agency-accent/30 rounded-full animate-[spin_10s_linear_infinite]" />
 
-                    <div className="flex flex-col sm:flex-row items-center gap-6 animate-slide-up animation-delay-300">
-                        <Link
-                            href="/schedule"
-                            className="btn-brand px-10 py-5 rounded-full text-base font-bold shadow-2xl shadow-agency-accent/20 group w-full sm:w-auto"
-                        >
-                            <span className="flex items-center justify-center gap-3">
-                                Schedule Strategic Consultation
-                                <MoveRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </span>
-                        </Link>
-                        <Link
-                            href="/portfolio"
-                            className="px-10 py-5 rounded-full text-base font-bold text-white/70 hover:text-white border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all w-full sm:w-auto"
-                        >
-                            Explore Our Work
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="flex-1 relative w-full aspect-square max-w-[600px] animate-fade-in animation-delay-500">
-                    <div className="absolute inset-0 bg-gradient-to-br from-agency-accent/20 to-transparent rounded-[60px] blur-3xl opacity-20" />
-                    <div className="relative w-full h-full rounded-[60px] border border-white/10 bg-white/[0.02] backdrop-blur-sm overflow-hidden p-8 flex items-center justify-center">
-                        {/* Abstract Visual Representing AI/Tech */}
-                        <div className="relative w-full h-full">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-agency-accent rounded-full opacity-20 blur-2xl animate-pulse" />
-                            <div className="grid grid-cols-5 gap-4 h-full opacity-20">
-                                {[...Array(25)].map((_, i) => (
-                                    <div key={i} className="border border-white/10 rounded-lg flex items-center justify-center">
-                                        <div className="w-1 h-1 bg-white/20 rounded-full" />
-                                    </div>
-                                ))}
+                                {/* Core Glow */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-agency-accent rounded-full blur-2xl opacity-40 group-hover:opacity-60 transition-opacity" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_15px_#3b82f6]" />
                             </div>
-                            {/* Simulated Data Lines */}
-                            <div className="absolute inset-0 overflow-hidden">
-                                <div className="absolute top-[20%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-agency-accent/30 to-transparent -translate-x-full animate-flow-horizontal" />
-                                <div className="absolute top-[50%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-agency-accent/50 to-transparent -translate-x-full animate-flow-horizontal animation-delay-1000" />
-                                <div className="absolute top-[80%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-agency-accent/20 to-transparent -translate-x-full animate-flow-horizontal animation-delay-2000" />
+
+                            {/* Floating Metadata Indicators */}
+                            <div className="absolute top-12 left-12 glass-panel px-4 py-2 rounded-xl animate-float">
+                                <div className="text-[8px] text-agency-accent font-black uppercase tracking-widest opacity-60">System Entropy</div>
+                                <div className="text-sm font-bold text-white tracking-tight">0.042%</div>
+                            </div>
+
+                            <div className="absolute bottom-16 right-12 glass-panel px-4 py-2 rounded-xl animate-float animation-delay-500">
+                                <div className="text-[8px] text-agency-accent font-black uppercase tracking-widest opacity-60">Yield Velocity</div>
+                                <div className="text-sm font-bold text-white tracking-tight">3.4x / YoY</div>
                             </div>
                         </div>
-                        <div className="absolute bottom-10 left-10 p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-                            <div className="text-xs text-agency-accent font-bold uppercase tracking-widest mb-1">Efficiency Gain</div>
-                            <div className="text-3xl font-bold text-white">+142%</div>
-                        </div>
-                        <div className="absolute top-10 right-10 p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-                            <div className="text-xs text-agency-accent font-bold uppercase tracking-widest mb-1">Revenue Growth</div>
-                            <div className="text-3xl font-bold text-white">3.4x</div>
-                        </div>
+
+                        {/* External Accents */}
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-agency-accent/10 rounded-full blur-3xl" />
                     </div>
                 </div>
             </div>
         </section>
     );
 }
+

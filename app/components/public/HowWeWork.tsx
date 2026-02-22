@@ -1,79 +1,76 @@
 "use client";
 
-import { CheckCircle2, Search, Target, Rocket, ShieldCheck, Zap } from "lucide-react";
+import { Target, Zap, ShieldCheck, Cpu, Code2, LineChart } from "lucide-react";
 
-const STEPS = [
+const STRATEGIC_STEPS = [
     {
-        title: "Discovery",
-        icon: Search,
-        description: "In-depth extraction of business objectives, market dynamics, and operational bottlenecks.",
-    },
-    {
-        title: "Strategy",
+        title: "Strategic Extraction",
         icon: Target,
-        description: "Architecting a tailored roadmap focused on high-leverage outcomes and technical feasibility.",
+        description: "In-depth identification of high-leverage business objectives and operational bottlenecks.",
     },
     {
-        title: "Development",
-        icon: Zap,
-        description: "Agile execution of modular platforms and intelligent systems with enterprise-grade quality.",
+        title: "Architectural Planning",
+        icon: Cpu,
+        description: "Designing scalable digital roadmaps focused on technical feasibility and business yield.",
     },
     {
-        title: "Testing",
+        title: "Modular Execution",
+        icon: Code2,
+        description: "Agile development of robust platforms and automated systems with surgical precision.",
+    },
+    {
+        title: "Performance Validation",
         icon: ShieldCheck,
-        description: "Rigorous performance validation, security audits, and user acceptance testing.",
+        description: "Rigorous testing and security audits to ensure enterprise-grade stability and security.",
     },
     {
-        title: "Deployment",
-        icon: Rocket,
-        description: "Seamless orchestration of production rollouts with zero-downtime protocols.",
+        title: "Deployment Orchestration",
+        icon: Zap,
+        description: "Seamless integration and transition into production with zero-downtime protocols.",
     },
     {
-        title: "Optimization",
-        icon: CheckCircle2,
-        description: "Continuous data-driven refinement to ensure sustained growth and peak operational ROI.",
+        title: "Yield Optimization",
+        icon: LineChart,
+        description: "Continuous data-driven refinement to maximize ROI and operational competence.",
     },
 ];
 
 export default function HowWeWork() {
     return (
-        <section className="py-32 bg-agency-black relative overflow-hidden">
+        <section className="py-40 bg-black relative overflow-hidden">
             <div className="section-container">
-                <div className="max-w-3xl mb-24">
-                    <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">
+                <div className="max-w-3xl mb-32">
+                    <span className="section-tag">
                         Methodology
                     </span>
-                    <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
-                        A Proven System for <br /> Predictable Outcomes
+                    <h2 className="text-5xl md:text-7xl font-extrabold strategic-heading text-white mb-8">
+                        The Physics of <br />
+                        <span className="text-gradient">Predictable Yield</span>
                     </h2>
-                    <p className="text-gray-400 text-lg md:text-xl leading-relaxed">
-                        Our operating model ensures transparency, speed, and precision at every stage of the engagement.
+                    <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl">
+                        Our operating model is designed for transparency and speed, ensuring every engagement translates into measurable business momentum.
                     </p>
                 </div>
 
-                <div className="relative">
-                    {/* Connector Line */}
-                    <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-agency-accent/50 via-white/10 to-transparent hidden lg:block -translate-y-1/2" />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 relative z-10">
-                        {STEPS.map((step, index) => (
-                            <div key={step.title} className="group flex flex-col items-center lg:items-start text-center lg:text-left">
-                                <div className="w-16 h-16 rounded-full bg-agency-black border border-white/10 flex items-center justify-center mb-8 group-hover:border-agency-accent/50 group-hover:bg-agency-accent/5 transition-all duration-500 relative">
-                                    <step.icon className="w-6 h-6 text-gray-400 group-hover:text-agency-accent transition-colors" />
-                                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold text-white/40">
-                                        {index + 1}
-                                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {STRATEGIC_STEPS.map((step, index) => (
+                        <div key={step.title} className="group premium-card p-10 flex flex-col items-start hover:bg-white/[0.05] transition-all">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-agency-accent group-hover:bg-agency-accent group-hover:text-white transition-all duration-500">
+                                    <step.icon className="w-4 h-4" />
                                 </div>
-
-                                <h3 className="text-xl font-bold mb-4 text-white">{step.title}</h3>
-                                <p className="text-gray-400 text-sm leading-relaxed">
-                                    {step.description}
-                                </p>
+                                <span className="text-[10px] font-black text-white/20 tracking-[0.2em]">PHASE 0{index + 1}</span>
                             </div>
-                        ))}
-                    </div>
+
+                            <h3 className="text-xl font-bold mb-4 text-white group-hover:text-white transition-colors">{step.title}</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed">
+                                {step.description}
+                            </p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
     );
 }
+

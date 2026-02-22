@@ -11,8 +11,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Premium AI Digital Agency | Code & Cognition",
-  description: "Structured digital execution for growth-focused companies. We architect platform, automation, and performance systems that drive measurable business results.",
+  title: "Architecting the Future of High-Ticket Execution | Code & Cognition",
+  description: "High-performance digital systems for global enterprise leaders. We transform technical complexity into sustainable competitive advantage through strategic execution.",
 };
 
 export const dynamic = 'force-dynamic';

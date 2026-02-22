@@ -75,37 +75,36 @@ export default function Navbar({ user }: NavbarProps) {
       />
       <div className="drawer-content flex flex-col">
         <nav
-          className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-out ${isScrolled || isMenuOpen
-            ? "bg-agency-black/85 backdrop-blur-xl shadow-sm border-b border-white/5 py-3"
-            : "bg-transparent py-5 lg:py-6"
+          className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled || isMenuOpen
+            ? "bg-black/90 backdrop-blur-2xl border-b border-white/[0.05] py-4"
+            : "bg-transparent py-6 lg:py-8"
             }`}
           aria-label="Primary"
         >
-          <div className="max-w-7xl mx-auto px-5 lg:px-8">
+          <div className="section-container">
             <div className="flex items-center justify-between">
               {/* Logo - Left */}
               <div className="flex-1 flex items-center justify-start">
                 <Link
                   href="/"
-                  className="flex items-center gap-2 lg:gap-3 shrink-0 group"
+                  className="flex items-center gap-3 lg:gap-4 shrink-0 group"
                 >
                   <Image
                     src="/Main-Logo.png"
                     alt="Code & Cognition Logo"
-                    width={40}
-                    height={40}
-                    className="w-auto h-7 sm:h-8 transition-transform duration-500 group-hover:scale-105"
+                    width={32}
+                    height={32}
+                    className="w-auto h-8 transition-transform duration-500 group-hover:scale-105"
                     priority
                   />
-                  <span className="text-[15px] sm:text-lg font-display font-medium tracking-tight whitespace-nowrap text-white">
-                    Code <span className="text-agency-accent font-semibold">&</span>{" "}
-                    Cognition
+                  <span className="text-lg font-bold tracking-tight text-white">
+                    Code<span className="text-agency-accent font-black">&</span>Cognition
                   </span>
                 </Link>
               </div>
 
               {/* Main Navigation - Center */}
-              <div className="hidden lg:flex flex-[2] items-center justify-center gap-7">
+              <div className="hidden lg:flex flex-[2] items-center justify-center gap-10">
                 {navLinks.map((link) => (
                   <NavLink
                     key={link.name}
@@ -115,17 +114,19 @@ export default function Navbar({ user }: NavbarProps) {
                       (pathname.startsWith(link.href) && link.href !== "/")
                     }
                   >
-                    {link.name}
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">
+                      {link.name}
+                    </span>
                   </NavLink>
                 ))}
               </div>
 
               {/* CTA & Profile - Right */}
-              <div className="flex-1 flex items-center justify-end gap-x-3 lg:gap-x-5">
+              <div className="flex-1 flex items-center justify-end gap-x-4 lg:gap-x-6">
                 {user && (
                   <Link
                     href="/messages"
-                    className="relative hidden md:inline-flex p-2 text-white/80 hover:text-white transition-colors group"
+                    className="relative hidden md:inline-flex p-2 text-white/50 hover:text-white transition-colors group"
                     aria-label="Messages"
                   >
                     <svg
@@ -134,7 +135,7 @@ export default function Navbar({ user }: NavbarProps) {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="2"
+                      strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       className="transition-transform duration-300 group-hover:-translate-y-0.5"
@@ -142,7 +143,7 @@ export default function Navbar({ user }: NavbarProps) {
                       <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
                     </svg>
                     {unreadMessages > 0 && (
-                      <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white ring-2 ring-agency-black shadow-sm">
+                      <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[9px] font-black text-white ring-2 ring-black">
                         {unreadMessages}
                       </span>
                     )}
@@ -154,24 +155,24 @@ export default function Navbar({ user }: NavbarProps) {
                 {user ? (
                   <Link
                     href="/dashboard/profile"
-                    className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
+                    className="hidden lg:inline-flex text-[11px] font-black uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors"
                   >
-                    Profile
+                    Account
                   </Link>
                 ) : (
                   <Link
                     href="/login"
-                    className="hidden md:inline-flex text-sm font-medium text-white/80 hover:text-white transition-colors"
+                    className="hidden lg:inline-flex text-[11px] font-black uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors"
                   >
-                    Login
+                    Access
                   </Link>
                 )}
 
                 <Link
                   href="/schedule"
-                  className="hidden md:inline-flex items-center justify-center rounded-lg bg-white text-agency-black px-5 py-2 lg:py-2.5 text-sm font-medium shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:bg-white/90 hover:shadow-[0_6px_20px_rgba(255,255,255,0.15)] hover:-translate-y-0.5 whitespace-nowrap"
+                  className="hidden md:inline-flex btn-brand scale-90 lg:scale-100"
                 >
-                  Book Consultation
+                  Apply Now
                 </Link>
 
                 <label
@@ -210,3 +211,4 @@ export default function Navbar({ user }: NavbarProps) {
     </div>
   );
 }
+

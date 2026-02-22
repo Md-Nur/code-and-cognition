@@ -10,8 +10,8 @@ export const transporter = nodemailer.createTransport({
     },
 });
 
-export const DEFAULT_FROM_EMAIL = process.env.SMTP_FROM || '"Code & Cognition" <hello@codeandcognition.com>';
-export const FOUNDER_EMAIL = process.env.FOUNDER_EMAIL || "hello@codeandcognition.com";
+export const DEFAULT_FROM_EMAIL = process.env.SMTP_FROM || '"Code & Cognition" <codencognition.bd@gmail.com>';
+export const FOUNDER_EMAIL = process.env.FOUNDER_EMAIL || "codencognition.bd@gmail.com";
 
 export async function sendMail(to: string, subject: string, html: string) {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
