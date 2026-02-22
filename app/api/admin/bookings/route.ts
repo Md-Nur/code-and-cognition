@@ -60,6 +60,19 @@ export const PATCH = withAuth(async (req) => {
             });
         }
 
+        // 3. Email Automation
+        const service = await prisma.service.findUnique({
+            where: { id: booking.serviceId || "" }
+        });
+
+        const { triggerStatusEmail } = await import("@/lib/automation");
+        await triggerStatusEmail(
+            status,
+            booking.clientEmail,
+            booking.clientName,
+            service?.title || "Requested Service"
+        );
+
         return ApiResponse.success(booking);
     } catch (error) {
         return ApiResponse.error("Internal Server Error", 500);

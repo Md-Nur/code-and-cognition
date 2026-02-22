@@ -21,10 +21,33 @@ export default function AdminBookingsPage() {
         message: "",
     });
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState<"date" | "budget">("date");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
     useEffect(() => {
         fetchBookings();
         fetchServices();
     }, []);
+
+    const filteredBookings = bookings
+        .filter(b => filterStatus === "ALL" || b.status === filterStatus)
+        .filter(b =>
+            b.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            b.clientEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            b.service.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+            if (sortBy === "date") {
+                const dateA = new Date(a.createdAt).getTime();
+                const dateB = new Date(b.createdAt).getTime();
+                return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+            } else {
+                const budgetA = a.budgetUSD || 0;
+                const budgetB = b.budgetUSD || 0;
+                return sortOrder === "desc" ? budgetB - budgetA : budgetA - budgetB;
+            }
+        });
 
     async function fetchBookings() {
         const res = await fetch("/api/admin/bookings");
@@ -89,6 +112,34 @@ export default function AdminBookingsPage() {
                 </button>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2">
+                    <input
+                        type="text"
+                        placeholder="Search by client name, email, or service..."
+                        className="input-field w-full"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="flex gap-2">
+                    <select
+                        className="select-field flex-1"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value as any)}
+                    >
+                        <option value="date">Sort by Date</option>
+                        <option value="budget">Sort by Budget</option>
+                    </select>
+                    <button
+                        onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                        className="btn-outline px-3"
+                    >
+                        {sortOrder === "asc" ? "↑" : "↓"}
+                    </button>
+                </div>
+            </div>
+
             <div className="flex flex-wrap gap-2 pb-2">
                 {["ALL", "NEW", "QUALIFIED", "PROPOSAL_SENT", "CLOSED_WON", "CLOSED_LOST"].map((status) => (
                     <button
@@ -107,9 +158,9 @@ export default function AdminBookingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
                     <p className="text-gray-500 col-span-3 text-center py-10">Loading leads...</p>
-                ) : bookings.filter(b => filterStatus === "ALL" || b.status === filterStatus).length === 0 ? (
+                ) : filteredBookings.length === 0 ? (
                     <p className="text-gray-500 col-span-3 text-center py-10">No leads found.</p>
-                ) : bookings.filter(b => filterStatus === "ALL" || b.status === filterStatus).map((booking) => (
+                ) : filteredBookings.map((booking) => (
                     <div key={booking.id} className="glass-panel p-6 rounded-xl flex flex-col hover:border-white/20 transition-colors">
                         <div className="flex justify-between items-start mb-4">
                             <span className={`text-[10px] px-2 py-0.5 rounded border uppercase font-bold tracking-wider ${(booking.status as string) === "NEW" ? "border-amber-500/30 text-amber-400 bg-amber-500/10" :

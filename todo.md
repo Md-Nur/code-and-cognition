@@ -1,8 +1,6 @@
-Website must have
-Lead database
-Admin dashboard
-CRM pipeline
-Email automation
-
-----
-
+Website must look extremely premium
+Copy must sound strategic
+No clutter
+No cheap elements
+Strong typography
+Minimal but powerful
