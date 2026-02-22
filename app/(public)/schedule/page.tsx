@@ -254,7 +254,7 @@ export default function SchedulePage() {
                                     <label className="text-sm font-medium text-gray-400">What is the primary technical or business problem you are trying to solve? *</label>
                                     <textarea
                                         {...register("discovery.problemStatement")}
-                                        className="textarea w-full"
+                                        className="input-field min-h-[120px] resize-y"
                                         placeholder="Describe your current bottlenecks, challenges, or goals..."
                                     />
                                     {errors.discovery?.problemStatement && <p className="text-error text-xs">{errors.discovery.problemStatement.message}</p>}
@@ -277,7 +277,7 @@ export default function SchedulePage() {
                                     <label className="text-sm font-medium text-gray-400">Anything else we should know? (Optional)</label>
                                     <textarea
                                         {...register("discovery.additionalNotes")}
-                                        className="textarea w-full"
+                                        className="input-field min-h-[100px] resize-y"
                                         placeholder="Specific technologies in mind, constraints, etc."
                                     />
                                 </div>
