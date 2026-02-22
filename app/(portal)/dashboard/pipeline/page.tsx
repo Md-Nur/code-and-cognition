@@ -24,7 +24,7 @@ export default function CRMPipelinePage() {
     }, []);
 
     async function fetchBookings() {
-        const res = await fetch("/api/admin/bookings");
+        const res = await fetch("/api/admin/leads");
         if (res.ok) setBookings(await res.json());
         setLoading(false);
     }
@@ -33,7 +33,7 @@ export default function CRMPipelinePage() {
         // Optimistic update
         setBookings(prev => prev.map(b => b.id === id ? { ...b, status: status as any } : b));
 
-        await fetch("/api/admin/bookings", {
+        await fetch("/api/admin/leads", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id, status }),
@@ -49,7 +49,7 @@ export default function CRMPipelinePage() {
                     <h1 className="text-2xl font-bold">CRM Pipeline</h1>
                     <p className="text-sm text-gray-500">Visual sales funnel and lead progression</p>
                 </div>
-                <Link href="/dashboard/bookings" className="btn-brand flex items-center gap-2">
+                <Link href="/dashboard/leads" className="btn-brand flex items-center gap-2">
                     <Plus className="w-4 h-4" /> Add Lead
                 </Link>
             </div>

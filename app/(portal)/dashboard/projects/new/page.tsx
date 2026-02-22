@@ -10,7 +10,7 @@ function CreateProjectForm() {
     const bookingId = searchParams.get("bookingId");
 
     const [founders, setFounders] = useState<User[]>([]);
-    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [leads, setLeads] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
@@ -26,7 +26,7 @@ function CreateProjectForm() {
             try {
                 const [usersRes, bookingsRes] = await Promise.all([
                     fetch("/api/admin/users"),
-                    fetch("/api/admin/bookings"),
+                    fetch("/api/admin/leads"),
                 ]);
 
                 if (usersRes.ok) {
@@ -35,7 +35,7 @@ function CreateProjectForm() {
                 }
                 if (bookingsRes.ok) {
                     const allBookings: (Booking & { service: Service })[] = await bookingsRes.json();
-                    setBookings(allBookings);
+                    setLeads(allBookings);
 
                     // If bookingId is provided, pre-fill title
                     if (bookingId) {
@@ -138,20 +138,20 @@ function CreateProjectForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="input-label">Link to Booking (Optional)</label>
+                    <label className="input-label">Link to Lead (Optional)</label>
                     <select
                         className="select-field"
                         value={formData.bookingId}
                         onChange={(e) => setFormData(prev => ({ ...prev, bookingId: e.target.value }))}
                     >
                         <option value="">No booking link</option>
-                        {bookings.map(b => (
+                        {leads.map(b => (
                             <option key={b.id} value={b.id}>
                                 {b.clientName} - {(b as any).service.title} ({new Date(b.createdAt).toLocaleDateString()})
                             </option>
                         ))}
                     </select>
-                    <p className="text-[10px] text-gray-500 italic">Linking a booking helps track the project source.</p>
+                    <p className="text-[10px] text-gray-500 italic">Linking a lead helps track the project source.</p>
                 </div>
 
                 <div className="flex gap-4 pt-4 border-t border-white/5">

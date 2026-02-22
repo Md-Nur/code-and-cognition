@@ -7,23 +7,23 @@ import { createProposalForBooking } from "@/app/actions/proposals";
 import { useRouter } from "next/navigation";
 
 interface ProposalFormProps {
-    booking: Booking & { service: Service | null };
+    lead: Booking & { service: Service | null };
 }
 
-export default function ProposalForm({ booking }: ProposalFormProps) {
+export default function ProposalForm({ lead }: ProposalFormProps) {
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        scopeSummary: booking.message || "",
+        scopeSummary: lead.message || "",
         deliverables: ["Initial consultation", "Project roadmap"],
         milestones: ["Project Kickoff", "Final Delivery"],
-        budgetBDT: booking.budgetBDT || 0,
-        budgetUSD: booking.budgetUSD || 0,
-        currency: (booking.budgetUSD ? "USD" : "BDT") as "USD" | "BDT",
+        budgetBDT: lead.budgetBDT || 0,
+        budgetUSD: lead.budgetUSD || 0,
+        currency: (lead.budgetUSD ? "USD" : "BDT") as "USD" | "BDT",
         estimatedDays: 30,
         paymentTerms: "50% upfront, 50% on completion",
-        contractText: `This agreement is made between Code & Cognition and ${booking.clientName}.`,
+        contractText: `This agreement is made between Code & Cognition and ${lead.clientName}.`,
         notes: "",
     });
 
@@ -53,7 +53,7 @@ export default function ProposalForm({ booking }: ProposalFormProps) {
         setLoading(true);
         try {
             const res = await createProposalForBooking({
-                bookingId: booking.id,
+                bookingId: lead.id,
                 scopeSummary: formData.scopeSummary,
                 deliverables: formData.deliverables.filter(d => d.trim() !== ""),
                 milestones: formData.milestones.filter(m => m.trim() !== ""),

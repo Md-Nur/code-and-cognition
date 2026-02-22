@@ -6,7 +6,7 @@ import Link from "next/link";
 
 type BookingWithRelations = Booking & { service: Service; project: { id: string } | null };
 
-export default function AdminBookingsPage() {
+export default function LeadsDatabasePage() {
     const [bookings, setBookings] = useState<BookingWithRelations[]>([]);
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ export default function AdminBookingsPage() {
         });
 
     async function fetchBookings() {
-        const res = await fetch("/api/admin/bookings");
+        const res = await fetch("/api/admin/leads");
         if (res.ok) setBookings(await res.json());
         setLoading(false);
     }
@@ -62,7 +62,7 @@ export default function AdminBookingsPage() {
 
     async function updateStatus(id: string, status: string) {
         setBookings(bookings.map(b => b.id === id ? { ...b, status: status as any } : b));
-        await fetch("/api/admin/bookings", {
+        await fetch("/api/admin/leads", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id, status }),
@@ -72,7 +72,7 @@ export default function AdminBookingsPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         try {
-            const res = await fetch("/api/admin/bookings", {
+            const res = await fetch("/api/admin/leads", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

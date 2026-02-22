@@ -20,9 +20,9 @@ export default async function NewProposalPage({
     if (!bookingId) {
         return (
             <div className="flex flex-col items-center justify-center p-20 glass-panel rounded-3xl border border-dashed border-white/10 text-center">
-                <p className="text-gray-500 mb-6">No booking selected. Proposals must be created from a booking request.</p>
-                <Link href="/dashboard/bookings" className="btn-brand px-8 py-3">
-                    Go to Bookings
+                <p className="text-gray-500 mb-6">No lead selected. Proposals must be created from a lead in the database.</p>
+                <Link href="/dashboard/leads" className="btn-brand px-8 py-3">
+                    Go to Lead Database
                 </Link>
             </div>
         );
@@ -36,9 +36,9 @@ export default async function NewProposalPage({
     if (!booking) {
         return (
             <div className="flex flex-col items-center justify-center p-20 glass-panel rounded-3xl border border-dashed border-white/10 text-center">
-                <p className="text-gray-500 mb-6">Booking not found.</p>
-                <Link href="/dashboard/bookings" className="btn-brand px-8 py-3">
-                    Go to Bookings
+                <p className="text-gray-500 mb-6">Lead not found.</p>
+                <Link href="/dashboard/leads" className="btn-brand px-8 py-3">
+                    Go to Lead Database
                 </Link>
             </div>
         );
@@ -47,7 +47,7 @@ export default async function NewProposalPage({
     return (
         <div className="space-y-8">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/bookings" className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <Link href="/dashboard/leads" className="p-2 hover:bg-white/5 rounded-full transition-colors">
                     <ChevronLeft className="w-5 h-5 text-gray-500" />
                 </Link>
                 <div>
@@ -56,7 +56,7 @@ export default async function NewProposalPage({
                 </div>
             </div>
 
-            <ProposalForm booking={booking as any} />
+            <ProposalForm lead={booking as any} />
         </div>
     );
 }

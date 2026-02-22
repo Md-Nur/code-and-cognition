@@ -62,7 +62,7 @@ export default function DashboardProjectsPage() {
                                         <Link href={`/dashboard/projects/${project.id}`} className="hover:text-agency-accent hover:underline">
                                             {project.title}
                                         </Link>
-                                        <div className="text-xs text-gray-500">{project.booking ? "From Booking" : "Manual Entry"}</div>
+                                        <div className="text-xs text-gray-500">{project.booking ? "From Lead" : "Manual Entry"}</div>
                                     </td>
                                     <td className="p-4">{project.finder?.name || "Unknown"}</td>
                                     <td className="p-4">

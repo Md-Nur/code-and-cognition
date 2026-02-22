@@ -48,14 +48,17 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
 
         if (role === Role.FOUNDER) {
             return [
-                ...common,
-                { name: "Leads", href: "/dashboard/bookings", icon: Target },
+                { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+                { name: "Lead Database", href: "/dashboard/leads", icon: Target },
                 { name: "Proposals", href: "/dashboard/proposals", icon: FileText },
+                { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
+                { name: "Messages", href: "/dashboard/messages", icon: MessageSquare },
                 { name: "Clients", href: "/dashboard/clients", icon: Briefcase },
                 { name: "Services", href: "/dashboard/services", icon: Wrench },
                 { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },
                 { name: "Payments", href: "/dashboard/payments", icon: CreditCard },
                 { name: "Users", href: "/dashboard/users", icon: Users },
+                { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
             ];
         }
 
