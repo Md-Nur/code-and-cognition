@@ -75,7 +75,7 @@ export default function AboutPage() {
                             { step: "03", title: "Precision Execution", desc: "Founder-led implementation focusing on clean code, performant interfaces, and scalable infrastructure." }
                         ].map((item) => (
                             <div key={item.step} className="p-12 rounded-[40px] border border-white/5 bg-agency-black relative group text-left">
-                                <span className="text-5xl font-bold text-white/5 mb-8 block group-hover:text-agency-accent/20 transition-colors">{item.step}</span>
+                                <span className="text-5xl font-bold text-white/2 mb-8 block group-hover:text-agency-accent/10 transition-colors">{item.step}</span>
                                 <h3 className="text-2xl font-bold text-white mb-6 underline decoration-agency-accent decoration-2 underline-offset-8">{item.title}</h3>
                                 <p className="text-gray-400 leading-relaxed">{item.desc}</p>
                             </div>
