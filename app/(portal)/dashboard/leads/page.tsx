@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Booking, Service } from "@prisma/client";
 import Link from "next/link";
 
-type BookingWithRelations = Booking & { service: Service; project: { id: string } | null };
+type BookingWithRelations = Booking & { service: Service | null; project: { id: string } | null; discovery: any };
 
 export default function LeadsDatabasePage() {
     const [bookings, setBookings] = useState<BookingWithRelations[]>([]);
@@ -35,7 +35,8 @@ export default function LeadsDatabasePage() {
         .filter(b =>
             b.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             b.clientEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            b.service.title.toLowerCase().includes(searchTerm.toLowerCase())
+            b.service?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            b.discovery?.companyName?.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .sort((a, b) => {
             if (sortBy === "date") {
@@ -175,21 +176,34 @@ export default function LeadsDatabasePage() {
                             <span className="text-[10px] text-gray-500">{new Date(booking.createdAt).toLocaleDateString()}</span>
                         </div>
 
-                        <h3 className="font-bold text-lg mb-1">{booking?.service?.title || "Unknown Service"}</h3>
-                        <p className="text-sm text-gray-400 mb-4">Budget: ${booking.budgetUSD?.toLocaleString()}</p>
+                        <h3 className="font-bold text-lg mb-1">
+                            {booking.discovery?.companyName || booking?.service?.title || "New Lead"}
+                        </h3>
+                        <p className="text-sm text-gray-400 mb-4">
+                            Budget: {booking.discovery?.budgetRange || (booking.budgetUSD ? `$${booking.budgetUSD.toLocaleString()}` : "Not specified")}
+                        </p>
 
                         <div className="flex items-center gap-3 mb-4 p-3 bg-white/5 rounded-lg">
-                            <div className="w-8 h-8 rounded-full bg-agency-accent/20 flex items-center justify-center font-bold text-xs">
-                                {booking.clientName.charAt(0)}
+                            <div className="w-8 h-8 rounded-full bg-agency-accent/20 flex items-center justify-center font-bold text-xs uppercase">
+                                {booking.clientName?.charAt(0) || "?"}
                             </div>
                             <div>
                                 <p className="text-sm font-medium">{booking.clientName}</p>
                                 <p className="text-xs text-gray-500">{booking.clientEmail}</p>
+                                {booking.clientPhone && <p className="text-xs text-gray-500">{booking.clientPhone}</p>}
                             </div>
                         </div>
 
-                        {booking.message && (
-                            <p className="text-sm text-gray-400 italic mb-6 flex-grow">"{booking.message}"</p>
+                        {booking.discovery?.problemStatement ? (
+                            <div className="text-sm text-gray-400 mb-6 flex-grow space-y-1">
+                                <p className="line-clamp-3"><strong>Challenge:</strong> {booking.discovery.problemStatement}</p>
+                                {booking.discovery.industry && <p><strong>Industry:</strong> {booking.discovery.industry}</p>}
+                                {booking.discovery.timeline && <p><strong>Timeline:</strong> {booking.discovery.timeline}</p>}
+                            </div>
+                        ) : booking.message ? (
+                            <p className="text-sm text-gray-400 italic mb-6 flex-grow line-clamp-3">"{booking.message}"</p>
+                        ) : (
+                            <div className="mb-6 flex-grow"></div>
                         )}
 
                         <div className="mt-auto pt-4 border-t border-white/5 space-y-3">
