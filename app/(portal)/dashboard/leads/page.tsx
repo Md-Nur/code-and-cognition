@@ -197,7 +197,9 @@ export default function LeadsDatabasePage() {
                             <div className="text-sm text-gray-400 mb-6 flex-grow space-y-1">
                                 <p className="line-clamp-3"><strong>Challenge:</strong> {booking.discovery.problemStatement}</p>
                                 {booking.discovery.industry && <p><strong>Industry:</strong> {booking.discovery.industry}</p>}
+                                {booking.discovery.revenueRange && <p><strong>Annual Revenue:</strong> {booking.discovery.revenueRange}</p>}
                                 {booking.discovery.timeline && <p><strong>Timeline:</strong> {booking.discovery.timeline}</p>}
+                                {booking.discovery.additionalNotes && <p className="mt-1 line-clamp-3"><strong>Additional Notes:</strong> {booking.discovery.additionalNotes}</p>}
                             </div>
                         ) : booking.message ? (
                             <p className="text-sm text-gray-400 italic mb-6 flex-grow line-clamp-3">"{booking.message}"</p>
