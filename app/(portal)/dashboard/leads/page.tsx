@@ -229,7 +229,7 @@ export default function LeadsDatabasePage() {
                                     <>
                                         <button
                                             onClick={() => updateStatus(booking.id, "CLOSED_LOST")}
-                                            className="btn-outline text-[10px] py-2"
+                                            className="btn-outline text-[10px] py-2 btn-sm"
                                         >
                                             Lose Lead
                                         </button>
@@ -283,19 +283,6 @@ export default function LeadsDatabasePage() {
                                     </button>
                                 )}
                             </div>
-
-                            {/* Fast Status Change for Admin */}
-                            <select
-                                className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2 text-[10px] focus:border-agency-accent focus:outline-none text-white transition-all duration-300 appearance-none"
-                                value={booking.status}
-                                onChange={(e) => updateStatus(booking.id, e.target.value)}
-                            >
-                                <option value="NEW" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: NEW</option>
-                                <option value="QUALIFIED" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: QUALIFIED</option>
-                                <option value="PROPOSAL_SENT" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: PROPOSAL SENT</option>
-                                <option value="CLOSED_WON" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: CLOSED WON</option>
-                                <option value="CLOSED_LOST" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: CLOSED LOST</option>
-                            </select>
                         </div>
                     </div>
                 ))}

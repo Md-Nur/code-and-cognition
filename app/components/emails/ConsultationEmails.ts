@@ -89,3 +89,40 @@ export const founderNotificationEmailHtml = (
 </body>
 </html>
 `;
+
+export const proposalEmailHtml = (clientName: string, proposalUrl: string) => `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .container { border: 1px solid #eaeaea; border-radius: 8px; padding: 32px; background-color: #ffffff; text-align: center; }
+        .header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #eaeaea; }
+        h1 { font-size: 24px; font-weight: 700; color: #111; margin: 0; }
+        .content { font-size: 16px; color: #444; text-align: left; }
+        .button { display: inline-block; background-color: #000; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; margin-top: 24px; }
+        .footer { margin-top: 32px; padding-top: 24px; border-top: 1px solid #eaeaea; font-size: 14px; color: #666; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Proposal is Ready</h1>
+        </div>
+        <div class="content">
+            <p>Hi ${clientName},</p>
+            <p>We've prepared a comprehensive proposal outlining our recommended approach, timeline, and investment for your project.</p>
+            <p>Please review the details at your earliest convenience.</p>
+            <div style="text-align: center;">
+                <a href="${proposalUrl}" class="button">Review Proposal</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Best regards,</p>
+            <strong>The Code & Cognition Team</strong><br>
+            <a href="https://codencognition.com" style="color: #666;">codencognition.com</a>
+        </div>
+    </div>
+</body>
+</html>
+`;

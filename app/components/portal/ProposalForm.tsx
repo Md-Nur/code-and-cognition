@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Booking, Service } from "@prisma/client";
 import { Plus, Trash2, ChevronRight, ChevronLeft, FileText, CheckCircle2 } from "lucide-react";
-import { createProposalForBooking } from "@/app/actions/proposals";
+import { createProposalForBooking, sendProposal } from "@/app/actions/proposals";
 import { useRouter } from "next/navigation";
 
 interface ProposalFormProps {
@@ -26,6 +26,14 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
         contractText: `This agreement is made between Code & Cognition and ${lead.clientName}.`,
         notes: "",
     });
+
+    const [toastMsg, setToastMsg] = useState<string | null>(null);
+    const [ignoreWarning, setIgnoreWarning] = useState(false);
+
+    const showToast = (msg: string) => {
+        setToastMsg(msg);
+        setTimeout(() => setToastMsg(null), 3000);
+    };
 
     const addDeliverable = () => setFormData({ ...formData, deliverables: [...formData.deliverables, ""] });
     const removeDeliverable = (index: number) => setFormData({
@@ -50,6 +58,13 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
     };
 
     const handleSubmit = async () => {
+        const currentBudget = formData.currency === "USD" ? formData.budgetUSD : formData.budgetBDT;
+        if ((currentBudget === 0 || currentBudget < 5) && !ignoreWarning) {
+            showToast("Warning: Budget is zero or under 5. Press submit again to confirm.");
+            setIgnoreWarning(true);
+            return;
+        }
+
         setLoading(true);
         try {
             const res = await createProposalForBooking({
@@ -66,15 +81,21 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
                 notes: formData.notes,
             });
 
-            if (res.ok) {
+            if (res.ok && res.proposal) {
+                // Instantly send it as well, since the button says "Create & Send"
+                const sendRes = await sendProposal({ proposalId: res.proposal.id });
+                if (!sendRes.ok) {
+                    console.error("Failed to send proposal email", sendRes.error);
+                }
+
                 router.push("/dashboard/proposals");
                 router.refresh();
             } else {
-                alert("Failed to create proposal");
+                showToast("Failed to create proposal");
             }
         } catch (error) {
             console.error(error);
-            alert("An error occurred");
+            showToast("An error occurred");
         } finally {
             setLoading(false);
         }
@@ -292,6 +313,14 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
                     )}
                 </div>
             </div>
+
+            {/* Toast rendering */}
+            {toastMsg && (
+                <div className="fixed bottom-4 right-4 bg-black/80 text-white px-6 py-3 rounded-xl border border-white/10 shadow-2xl z-50 animate-fade-in flex items-center gap-3">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                    <span className="text-sm font-medium">{toastMsg}</span>
+                </div>
+            )}
         </div>
     );
 }

@@ -6,16 +6,18 @@ import { auth } from "@/lib/auth";
 import { createNotification } from "@/lib/notifications";
 import { Role } from "@prisma/client";
 import { withProxyValidation } from "@/lib/api-handler";
+import { sendMail } from "@/lib/mailer";
+import { proposalEmailHtml } from "@/app/components/emails/ConsultationEmails";
 
 const proposalCreateSchema = z.object({
   bookingId: z.string().min(1),
   scopeSummary: z.string().min(1),
   milestones: z.array(z.string().min(1)).min(1),
   deliverables: z.array(z.string().min(1)).optional().default([]),
-  budgetBDT: z.number().positive().optional().nullable(),
-  budgetUSD: z.number().positive().optional().nullable(),
+  budgetBDT: z.number().nonnegative().optional().nullable(),
+  budgetUSD: z.number().nonnegative().optional().nullable(),
   currency: z.enum(["BDT", "USD"]).optional(),
-  estimatedDays: z.number().int().positive().optional().nullable(),
+  estimatedDays: z.number().int().nonnegative().optional().nullable(),
   paymentTerms: z.string().optional().nullable(),
   contractText: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
@@ -120,6 +122,16 @@ export const sendProposal = withProxyValidation(
         where: { id: proposal.booking.id },
         data: { status: "PROPOSAL_SENT" },
       });
+
+      try {
+        await sendMail(
+          proposal.booking.clientEmail,
+          "Proposal Ready for Review - Code & Cognition",
+          proposalEmailHtml(proposal.booking.clientName, `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/client/proposals/${proposal.id}`)
+        );
+      } catch (error) {
+        console.error("Failed to send proposal email:", error);
+      }
     }
 
     return { ok: true, proposal } as const;

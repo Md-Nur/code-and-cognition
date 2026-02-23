@@ -6,4 +6,4 @@ Request Received: Strategic Consultation mail that sends to the user there tell 
 
 there also set a notificcation option in the dashboard navbar like the main website navbar.
 
-improve the /dashboard/leads page's sort dropdown's design
+improve the /dashboard/leads page's sort dropdown's design and the create proposal button's text is in 2 lines make it in 1 line
