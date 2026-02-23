@@ -196,6 +196,7 @@ model Proposal {
   contractText      String?          @db.Text /// Full contract text or additional legal terms
   notes             String?          @db.Text /// Additional notes for the proposal
   version           Int              @default(1) /// For proposal versioning
+  viewToken         String?          @unique @default(uuid()) /// Public viewing token for clients
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
