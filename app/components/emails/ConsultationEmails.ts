@@ -3,29 +3,50 @@ export const clientConfirmationEmailHtml = (clientName: string) => `
 <html>
 <head>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-w-xl; margin: 0 auto; padding: 20px; }
-        .container { border: 1px solid #eaeaea; border-radius: 8px; padding: 32px; background-color: #ffffff; }
-        .header { margin-bottom: 24px; border-bottom: 1px solid #eaeaea; padding-bottom: 16px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .container { border: 1px solid #eaeaea; border-radius: 12px; padding: 40px; background-color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { margin-bottom: 32px; border-bottom: 1px solid #eaeaea; padding-bottom: 24px; }
+        .logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: #000; margin-bottom: 8px; }
+        .logo-accent { color: #0070f3; }
         h1 { font-size: 24px; font-weight: 700; color: #111; margin: 0; }
-        .content { font-size: 16px; color: #444; }
-        .footer { margin-top: 32px; padding-top: 24px; border-top: 1px solid #eaeaea; font-size: 14px; color: #666; }
+        .content { font-size: 16px; color: #444; margin-bottom: 32px; }
+        .cta-container { text-align: center; margin: 32px 0; }
+        .button { background-color: #000; color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; display: inline-block; transition: all 0.2s ease; }
+        .steps { background-color: #f9f9f9; border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .step-item { margin-bottom: 12px; font-size: 14px; display: flex; align-items: flex-start; }
+        .step-number { background: #000; color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-block; text-align: center; font-size: 12px; margin-right: 12px; flex-shrink: 0; line-height: 20px; }
+        .footer { margin-top: 40px; padding-top: 24px; border-top: 1px solid #eaeaea; font-size: 14px; color: #666; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Request Received: Strategic Consultation</h1>
+            <div class="logo-text">Code<span class="logo-accent">&</span>Cognition</div>
+            <h1>Strategic Consultation Request</h1>
         </div>
         <div class="content">
             <p>Hi ${clientName},</p>
-            <p>Thank you for requesting a strategic consultation with Code & Cognition.</p>
-            <p>We have successfully received your qualification details. If you haven't already selected a time on our calendar, please do so via the booking page. Our founding team will review your core challenges to ensure we provide maximum value during our call.</p>
-            <p>We look forward to speaking with you and exploring how we can accelerate your digital objectives.</p>
+            <p>We've successfully received your qualification details. To ensure we provide maximum strategic value during our session, the founding team will review your core challenges before we speak.</p>
+            
+            <p><strong>Action Required:</strong> If you haven't already done so, please finalize your consultation time on our secure booking page to lock in your session.</p>
+
+            <div class="cta-container">
+                <a href="https://codencognition.com/schedule" class="button">Confirm Consultation Time</a>
+            </div>
+
+            <div class="steps">
+                <h4 style="margin-top: 0; margin-bottom: 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #888;">Next Steps</h4>
+                <div class="step-item"><span class="step-number">1</span> <div>Select a dedicated time on our executive calendar.</div></div>
+                <div class="step-item"><span class="step-number">2</span> <div>Our team reviews your submission for vertical alignment.</div></div>
+                <div class="step-item"><span class="step-number">3</span> <div>Receive a tailored agenda via a calendar invitation.</div></div>
+            </div>
+
+            <p>We look forward to engineering your digital objectives.</p>
         </div>
         <div class="footer">
-            <p>Best regards,</p>
+            <p>Regards,</p>
             <strong>The Code & Cognition Team</strong><br>
-            <a href="https://codencognition.com" style="color: #666;">codencognition.com</a>
+            <a href="https://codencognition.com" style="color: #666; text-decoration: none;">codencognition.com</a>
         </div>
     </div>
 </body>
