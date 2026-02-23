@@ -125,13 +125,12 @@ export default function LeadsDatabasePage() {
                 </div>
                 <div className="flex gap-2">
                     <select
-                        className="select-field flex-1"
-                        style={{ backgroundColor: "#0f1117", color: "#e2e8f0" }}
+                        className="input-field flex-1"
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as any)}
                     >
-                        <option value="date">Sort by Date</option>
-                        <option value="budget">Sort by Budget</option>
+                        <option value="date" className="bg-[#0f1117] text-[#e2e8f0]">Sort by Date</option>
+                        <option value="budget" className="bg-[#0f1117] text-[#e2e8f0]">Sort by Budget</option>
                     </select>
                     <button
                         onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
@@ -285,16 +284,15 @@ export default function LeadsDatabasePage() {
 
                             {/* Fast Status Change for Admin */}
                             <select
-                                className="select-field w-full text-[10px] py-1.5"
-                                style={{ backgroundColor: "#0f1117", color: "#e2e8f0" }}
+                                className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2 text-[10px] focus:border-agency-accent focus:outline-none text-white transition-all duration-300 appearance-none"
                                 value={booking.status}
                                 onChange={(e) => updateStatus(booking.id, e.target.value)}
                             >
-                                <option value="NEW">Change Status: NEW</option>
-                                <option value="QUALIFIED">Change Status: QUALIFIED</option>
-                                <option value="PROPOSAL_SENT">Change Status: PROPOSAL SENT</option>
-                                <option value="CLOSED_WON">Change Status: CLOSED WON</option>
-                                <option value="CLOSED_LOST">Change Status: CLOSED LOST</option>
+                                <option value="NEW" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: NEW</option>
+                                <option value="QUALIFIED" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: QUALIFIED</option>
+                                <option value="PROPOSAL_SENT" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: PROPOSAL SENT</option>
+                                <option value="CLOSED_WON" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: CLOSED WON</option>
+                                <option value="CLOSED_LOST" className="bg-[#0f1117] text-[#e2e8f0]">Change Status: CLOSED LOST</option>
                             </select>
                         </div>
                     </div>
@@ -333,14 +331,13 @@ export default function LeadsDatabasePage() {
                                 <label className="input-label">Select Service</label>
                                 <select
                                     required
-                                    className="select-field w-full"
-                                    style={{ backgroundColor: "#0f1117", color: "#e2e8f0" }}
+                                    className="input-field appearance-none"
                                     value={formData.serviceId}
                                     onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
                                 >
-                                    <option value="">Choose a service...</option>
+                                    <option value="" className="bg-[#0f1117] text-[#e2e8f0]">Choose a service...</option>
                                     {services.map(s => (
-                                        <option key={s.id} value={s.id}>{s.title}</option>
+                                        <option key={s.id} value={s.id} className="bg-[#0f1117] text-[#e2e8f0]">{s.title}</option>
                                     ))}
                                 </select>
                             </div>
