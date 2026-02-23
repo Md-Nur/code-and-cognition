@@ -103,12 +103,12 @@ export default function SchedulePage() {
     }
 
     return (
-        <main className="min-h-screen pt-32 pb-24 bg-agency-black selection:bg-agency-accent/30">
+        <main className="min-h-screen pt-24 lg:pt-32 pb-24 bg-agency-black selection:bg-agency-accent/30">
             <div className="container mx-auto px-6 max-w-6xl">
                 <div className="grid lg:grid-cols-[1fr_1.5fr] gap-12 lg:gap-24 items-start">
 
                     {/* Left Column: Context & Value Prop */}
-                    <div className="space-y-8 sticky top-32">
+                    <div className="space-y-8 lg:sticky lg:top-32">
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
                                 <Target className="w-4 h-4" />
