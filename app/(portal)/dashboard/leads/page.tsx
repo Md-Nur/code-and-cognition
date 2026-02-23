@@ -213,13 +213,13 @@ export default function LeadsDatabasePage() {
                                     <>
                                         <button
                                             onClick={() => updateStatus(booking.id, "CLOSED_LOST")}
-                                            className="btn-outline text-[10px] py-2 hover:bg-red-500/10 hover:text-red-400"
+                                            className="btn-outline text-[10px] py-2 px-2 hover:bg-red-500/10 hover:text-red-400 whitespace-nowrap"
                                         >
                                             Discard
                                         </button>
                                         <button
                                             onClick={() => updateStatus(booking.id, "QUALIFIED")}
-                                            className="btn-brand text-[10px] py-2"
+                                            className="btn-brand text-[10px] py-2 px-2 whitespace-nowrap"
                                         >
                                             Qualify
                                         </button>
@@ -229,13 +229,13 @@ export default function LeadsDatabasePage() {
                                     <>
                                         <button
                                             onClick={() => updateStatus(booking.id, "CLOSED_LOST")}
-                                            className="btn-outline text-[10px] py-2 btn-sm"
+                                            className="btn-outline text-[10px] py-2 px-2 whitespace-nowrap"
                                         >
                                             Lose Lead
                                         </button>
                                         <Link
                                             href={`/dashboard/proposals/new?bookingId=${booking.id}`}
-                                            className="btn-brand text-[10px] py-2 text-center"
+                                            className="btn-brand text-[10px] py-2 px-2 text-center whitespace-nowrap"
                                         >
                                             Create Proposal
                                         </Link>
@@ -245,13 +245,13 @@ export default function LeadsDatabasePage() {
                                     <>
                                         <button
                                             onClick={() => updateStatus(booking.id, "CLOSED_LOST")}
-                                            className="btn-outline text-[10px] py-2"
+                                            className="btn-outline text-[10px] py-2 px-2 whitespace-nowrap"
                                         >
                                             Closed Lost
                                         </button>
                                         <button
                                             onClick={() => updateStatus(booking.id, "CLOSED_WON")}
-                                            className="btn-brand text-[10px] py-2"
+                                            className="btn-brand text-[10px] py-2 px-2 whitespace-nowrap"
                                         >
                                             Closed Won
                                         </button>

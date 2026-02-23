@@ -1,1 +1,0 @@
-in narrow mobile (like z fold) navbar the hamburger icon cuts off to the right. make sure the action button does overlap with other component if necessary hide the action button in narrow mobile view.
