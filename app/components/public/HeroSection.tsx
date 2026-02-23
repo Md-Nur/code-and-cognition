@@ -36,7 +36,7 @@ export default function HeroSection() {
                                     <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </span>
                             </Link>
-                            <Link href="/portfolio" className="btn-outline w-full sm:w-auto">
+                            <Link href="/case-studies" className="btn-outline w-full sm:w-auto">
                                 View Engagements
                             </Link>
                         </div>

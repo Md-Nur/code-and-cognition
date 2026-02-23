@@ -25,7 +25,7 @@ export const clientConfirmationEmailHtml = (clientName: string) => `
         <div class="footer">
             <p>Best regards,</p>
             <strong>The Code & Cognition Team</strong><br>
-            <a href="https://codeandcognition.com" style="color: #666;">codeandcognition.com</a>
+            <a href="https://codencognition.com" style="color: #666;">codencognition.com</a>
         </div>
     </div>
 </body>

@@ -27,7 +27,7 @@ export default async function CaseStudies() {
                         </p>
                     </div>
                     <Link
-                        href="/portfolio"
+                        href="/case-studies"
                         className="group flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-white/60 hover:text-white transition-colors"
                     >
                         See All Case Studies
@@ -74,7 +74,7 @@ export default async function CaseStudies() {
                                         <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Growth Performance</span>
                                     </div>
                                     <Link
-                                        href={`/portfolio/${item.id}`}
+                                        href={`/case-studies/${item.id}`}
                                         className="text-xs font-bold uppercase tracking-widest text-agency-accent hover:text-white transition-colors"
                                     >
                                         View Case

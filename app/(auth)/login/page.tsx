@@ -58,7 +58,7 @@ export default function LoginPage() {
                         type="email"
                         required
                         className="input-field"
-                        placeholder="admin@codeandcognition.com"
+                        placeholder="admin@codencognition.com"
                     />
                 </div>
 

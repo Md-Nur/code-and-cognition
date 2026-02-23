@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering for enterprise growth.",
   keywords: "strategic digital execution, industrial-grade platforms, autonomous operations, result engineering, Code & Cognition",
-  metadataBase: new URL("https://codeandcognition.com"),
+  metadataBase: new URL("https://codencognition.com"),
   openGraph: {
     title: "Code & Cognition — Strategic Digital Execution",
     description: "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering for enterprise growth.",

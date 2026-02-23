@@ -45,7 +45,7 @@ export default function Footer() {
                     <div>
                         <h4 className="text-white font-black text-[10px] uppercase tracking-[0.3em] mb-10">Intelligence</h4>
                         <ul className="space-y-5">
-                            <li><Link href="/portfolio" className="text-gray-500 hover:text-white transition-all text-xs font-semibold">Engagements</Link></li>
+                            <li><Link href="/case-studies" className="text-gray-500 hover:text-white transition-all text-xs font-semibold">Engagements</Link></li>
                             <li><Link href="/insights" className="text-gray-500 hover:text-white transition-all text-xs font-semibold">Deep Dives</Link></li>
                             <li><Link href="/about" className="text-gray-500 hover:text-white transition-all text-xs font-semibold">Our DNA</Link></li>
                         </ul>
