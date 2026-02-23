@@ -125,6 +125,7 @@ export default function LeadsDatabasePage() {
                 <div className="flex gap-2">
                     <select
                         className="select-field flex-1"
+                        style={{ backgroundColor: "#0f1117", color: "#e2e8f0" }}
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as any)}
                     >
@@ -318,7 +319,8 @@ export default function LeadsDatabasePage() {
                                 <label className="input-label">Select Service</label>
                                 <select
                                     required
-                                    className="select-field"
+                                    className="select-field w-full"
+                                    style={{ backgroundColor: "#0f1117", color: "#e2e8f0" }}
                                     value={formData.serviceId}
                                     onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
                                 >
