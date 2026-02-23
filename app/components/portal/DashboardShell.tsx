@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import NotificationBell from "@/app/components/NotificationBell";
 import { Role } from "@prisma/client";
 import {
     LayoutDashboard,
@@ -91,12 +92,15 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                         Code <span className="text-agency-accent font-semibold">&</span> Cognition
                     </span>
                 </Link>
-                <button
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="p-2 text-gray-400 hover:text-white transition-colors"
-                >
-                    {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                </button>
+                <div className="flex items-center gap-2">
+                    <NotificationBell />
+                    <button
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        className="p-2 text-gray-400 hover:text-white transition-colors"
+                    >
+                        {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+                </div>
             </header>
 
             {/* Sidebar Overlay */}
@@ -112,7 +116,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 className={`fixed top-0 left-0 w-64 h-full bg-agency-black border-r border-white/5 p-6 flex flex-col z-[70] lg:z-40 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:translate-x-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
-                <div className="hidden lg:block mb-10">
+                <div className="hidden lg:flex mb-10 items-center justify-between">
                     <Link href="/dashboard" className="flex items-center gap-2">
                         <Image
                             src="/Main-Logo.png"
@@ -126,6 +130,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                             Code <span className="text-agency-accent font-semibold">&</span> Cognition
                         </span>
                     </Link>
+                    <NotificationBell />
                 </div>
 
                 <div className="mb-4">

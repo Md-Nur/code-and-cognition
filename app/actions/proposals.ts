@@ -130,7 +130,7 @@ export const sendProposal = withProxyValidation(
           "Proposal Ready for Review - Code & Cognition",
           proposalEmailHtml(
             proposal.booking.clientName,
-            `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/proposal/view/${proposal.viewToken}`
+            `${process.env.NEXT_PUBLIC_APP_URL || "https://www.codencognition.com"}/proposal/view/${proposal.viewToken}`
           )
         );
       } catch (error) {
