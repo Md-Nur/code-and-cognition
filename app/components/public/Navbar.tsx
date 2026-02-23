@@ -97,7 +97,7 @@ export default function Navbar({ user }: NavbarProps) {
                     className="w-auto h-7 sm:h-8 transition-transform duration-500 group-hover:scale-105"
                     priority
                   />
-                  <span className="text-base sm:text-lg font-bold tracking-tight text-white">
+                  <span className="text-base sm:text-lg font-bold tracking-tight text-white hidden xs:block">
                     Code<span className="text-agency-accent font-black">&</span>Cognition
                   </span>
                 </Link>
@@ -177,7 +177,7 @@ export default function Navbar({ user }: NavbarProps) {
 
                 <label
                   htmlFor="mobile-drawer"
-                  className="inline-flex items-center justify-center p-2 pt-2.5 text-white/80 hover:text-white transition-colors lg:hidden z-[100] relative focus:outline-none cursor-pointer"
+                  className="inline-flex items-center justify-center p-2 pt-2.5 text-white/80 hover:text-white transition-colors lg:hidden z-[100] relative focus:outline-none cursor-pointer flex-shrink-0"
                   aria-label="Toggle menu"
                 >
                   <div className="relative w-6 h-[16px] flex flex-col justify-between overflow-hidden">
