@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createBookingAction } from "@/app/actions/bookings";
+import { getUserCountry } from "@/app/actions/geo";
 import CalendlyEmbed from "@/app/components/public/CalendlyEmbed";
 import { ArrowRight, Building2, CheckCircle2, ChevronRight, Mail, Phone, Target, User } from "lucide-react";
 import Link from "next/link";
@@ -26,7 +27,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const REVENUE_RANGES = [
+const REVENUE_RANGES_USD = [
     "Pre-revenue / Seed",
     "$0 - $500k",
     "$500k - $2M",
@@ -35,12 +36,30 @@ const REVENUE_RANGES = [
     "$20M+",
 ];
 
-const BUDGET_RANGES = [
+const REVENUE_RANGES_BDT = [
+    "Pre-revenue / Seed",
+    "৳0 - ৳5L",
+    "৳5L - ৳20L",
+    "৳20L - ৳50L",
+    "৳50L - ৳2Cr",
+    "৳2Cr+",
+];
+
+const BUDGET_RANGES_USD = [
     "Under $5k",
     "$5k - $15k",
     "$15k - $50k",
     "$50k - $100k",
     "$100k+",
+    "To be determined",
+];
+
+const BUDGET_RANGES_BDT = [
+    "Under ৳50k",
+    "৳50k - ৳1.5L",
+    "৳1.5L - ৳5L",
+    "৳5L - ৳10L",
+    "৳10L+",
     "To be determined",
 ];
 
@@ -55,6 +74,24 @@ const TIMELINES = [
 export default function SchedulePage() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
+    const [currency, setCurrency] = useState<'USD' | 'BDT'>('USD');
+
+    useEffect(() => {
+        const detectCountry = async () => {
+            try {
+                const country = await getUserCountry();
+                if (country === 'BD') {
+                    setCurrency('BDT');
+                }
+            } catch (error) {
+                console.error("Failed to detect country:", error);
+            }
+        };
+        detectCountry();
+    }, []);
+
+    const revenueRanges = currency === 'BDT' ? REVENUE_RANGES_BDT : REVENUE_RANGES_USD;
+    const budgetRanges = currency === 'BDT' ? BUDGET_RANGES_BDT : BUDGET_RANGES_USD;
 
     const {
         register,
@@ -188,7 +225,7 @@ export default function SchedulePage() {
                                         {...register("clientPhone")}
                                         type="tel"
                                         className="input-field"
-                                        placeholder="+1 (555) 000-0000"
+                                        placeholder={currency === 'BDT' ? "+880 1XXX-XXXXXX" : "+1 (555) 000-0000"}
                                     />
                                 </div>
                             </div>
@@ -232,7 +269,7 @@ export default function SchedulePage() {
                                             defaultValue=""
                                         >
                                             <option value="" disabled className="bg-agency-black">Select range</option>
-                                            {REVENUE_RANGES.map(r => <option key={r} value={r} className="bg-agency-black">{r}</option>)}
+                                            {revenueRanges.map(r => <option key={r} value={r} className="bg-agency-black">{r}</option>)}
                                         </select>
                                         {errors.discovery?.revenueRange && <p className="text-error text-xs">{errors.discovery.revenueRange.message}</p>}
                                     </div>
@@ -244,7 +281,7 @@ export default function SchedulePage() {
                                             defaultValue=""
                                         >
                                             <option value="" disabled className="bg-agency-black">Select budget</option>
-                                            {BUDGET_RANGES.map(r => <option key={r} value={r} className="bg-agency-black">{r}</option>)}
+                                            {budgetRanges.map(r => <option key={r} value={r} className="bg-agency-black">{r}</option>)}
                                         </select>
                                         {errors.discovery?.budgetRange && <p className="text-error text-xs">{errors.discovery.budgetRange.message}</p>}
                                     </div>

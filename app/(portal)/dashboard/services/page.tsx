@@ -228,9 +228,6 @@ export default function AdminServicesPage() {
                                 onChange={(url) => setServiceForm({ ...serviceForm, thumbnailUrl: url })}
                                 description="This image will represent the service category."
                             />
-                            <p className="text-xs text-gray-500 bg-white/5 rounded-lg px-4 py-3">
-                                💡 Pricing tiers (Basic / Plus / Pro) are set individually on each sub-service below.
-                            </p>
                         </form>
                         <div className="p-4 sm:p-8 pt-0 flex gap-4">
                             <button type="button" onClick={() => { setIsServiceModalOpen(false); setEditingService(null); }} className="btn-outline flex-1">Cancel</button>
