@@ -84,20 +84,20 @@ export default function Navbar({ user }: NavbarProps) {
           <div className="section-container">
             <div className="flex items-center justify-between">
               {/* Logo - Left */}
-              <div className="flex-1 flex items-center justify-start">
+              <div className="flex-shrink-0 lg:flex-1 flex items-center justify-start">
                 <Link
                   href="/"
-                  className="flex items-center gap-3 lg:gap-4 shrink-0 group"
+                  className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0 group"
                 >
                   <Image
                     src="/Main-Logo.png"
                     alt="Code & Cognition Logo"
                     width={32}
                     height={32}
-                    className="w-auto h-8 transition-transform duration-500 group-hover:scale-105"
+                    className="w-auto h-7 sm:h-8 transition-transform duration-500 group-hover:scale-105"
                     priority
                   />
-                  <span className="text-lg font-bold tracking-tight text-white">
+                  <span className="text-base sm:text-lg font-bold tracking-tight text-white">
                     Code<span className="text-agency-accent font-black">&</span>Cognition
                   </span>
                 </Link>
@@ -122,7 +122,7 @@ export default function Navbar({ user }: NavbarProps) {
               </div>
 
               {/* CTA & Profile - Right */}
-              <div className="flex-1 flex items-center justify-end gap-x-4 lg:gap-x-6">
+              <div className="flex-shrink-0 lg:flex-1 flex items-center justify-end gap-x-3 sm:gap-x-4 lg:gap-x-6">
                 {user && (
                   <Link
                     href="/dashboard/messages"
@@ -170,14 +170,14 @@ export default function Navbar({ user }: NavbarProps) {
 
                 <Link
                   href="/schedule"
-                  className="hidden md:inline-flex btn-brand scale-90 lg:scale-100 whitespace-nowrap"
+                  className="hidden lg:inline-flex btn-brand scale-90 xxl:scale-100 whitespace-nowrap"
                 >
                   Apply Now
                 </Link>
 
                 <label
                   htmlFor="mobile-drawer"
-                  className="inline-flex items-center justify-center p-2 text-white/80 hover:text-white transition-colors lg:hidden z-[100] relative focus:outline-none cursor-pointer"
+                  className="inline-flex items-center justify-center p-2 pt-2.5 text-white/80 hover:text-white transition-colors lg:hidden z-[100] relative focus:outline-none cursor-pointer"
                   aria-label="Toggle menu"
                 >
                   <div className="relative w-6 h-[16px] flex flex-col justify-between overflow-hidden">

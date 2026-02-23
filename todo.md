@@ -1,3 +1,3 @@
-the navbar is not responsive apply now button is overlap with the logo in mobile view
+the dropdown of the manual lead form has no appropriate background and style.
 
-in the hero section first button rederiect to /portfolio page which is not exists
+/dashboard/leads pagge dropdown for sorting have an issue with its background
