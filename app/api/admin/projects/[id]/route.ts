@@ -150,7 +150,7 @@ export async function PATCH(
           title,
           message,
           type: "PROJECT_STATUS_CHANGE",
-          link: `/admin/projects/${id}`,
+          link: `/dashboard/projects/${id}`,
         });
       }
     }
