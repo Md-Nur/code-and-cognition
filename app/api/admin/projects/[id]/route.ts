@@ -108,13 +108,13 @@ export async function PATCH(
           where: { title: project.title },
         });
 
-        if (!existing) {
+        if (!existing && project.booking?.serviceId) {
           await prisma.portfolioItem.create({
             data: {
               title: project.title,
               description:
                 project.booking?.message || "Successfully completed project.",
-              serviceId: project.booking?.serviceId || "unassigned",
+              serviceId: project.booking.serviceId,
               technologies: [],
               isFeatured: false,
             },

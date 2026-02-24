@@ -104,12 +104,12 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
             }
         } catch (error) {
             console.error("Error sending proposal email:", error);
+        } finally {
+            // Always redirect after successful proposal creation
+            router.push("/dashboard/proposals");
+            router.refresh();
+            setLoading(false);
         }
-
-        // Always redirect after successful proposal creation
-        router.push("/dashboard/proposals");
-        router.refresh();
-        setLoading(false);
     };
 
     return (
