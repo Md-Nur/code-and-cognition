@@ -21,17 +21,20 @@ export const clientConfirmationEmailHtml = (clientName: string) => `
 <body>
     <div class="container">
         <div class="header">
+            <div style="margin-bottom: 24px;">
+                <img src="https://www.codencognition.com/Main-Logo.png" alt="Code & Cognition Logo" width="40" height="40" style="display: block;">
+            </div>
             <div class="logo-text">Code<span class="logo-accent">&</span>Cognition</div>
             <h1>Strategic Consultation Request</h1>
         </div>
         <div class="content">
             <p>Hi ${clientName},</p>
-            <p>We've successfully received your qualification details. To ensure we provide maximum strategic value during our session, the founding team will review your core challenges before we speak.</p>
+            <p>We've successfully received your qualification details. To ensure we provide maximum strategic value during our session, our founding team will review your core challenges before we connect.</p>
             
-            <p><strong>Action Required:</strong> If you haven't already done so, please finalize your consultation time on our secure booking page to lock in your session.</p>
+            <p><strong>Next Step:</strong> To finalize our session, please select a convenient time on our secure booking page. This ensures your slot is reserved on our executive calendar.</p>
 
             <div class="cta-container">
-                <a href="https://codencognition.com/schedule" class="button">Confirm Consultation Time</a>
+                <a href="https://calendly.com/codencognition-bd/cosultation-of-code-cognition" class="button">Confirm Consultation Time</a>
             </div>
 
             <div class="steps">
@@ -41,7 +44,7 @@ export const clientConfirmationEmailHtml = (clientName: string) => `
                 <div class="step-item"><span class="step-number">3</span> <div>Receive a tailored agenda via a calendar invitation.</div></div>
             </div>
 
-            <p>We look forward to engineering your digital objectives.</p>
+            <p>We look forward to discussing your digital objectives and how we can best support your growth.</p>
         </div>
         <div class="footer">
             <p>Regards,</p>
@@ -128,7 +131,10 @@ export const proposalEmailHtml = (clientName: string, proposalUrl: string) => `
 <body>
     <div class="container">
         <div class="header">
-            <h1>Your Proposal is Ready</h1>
+            <div style="margin-bottom: 20px; text-align: center;">
+                <img src="https://www.codencognition.com/Main-Logo.png" alt="Code & Cognition Logo" width="40" height="40" style="display: inline-block;">
+            </div>
+            <h1>Your Project Proposal</h1>
         </div>
         <div class="content">
             <p>Hi ${clientName},</p>

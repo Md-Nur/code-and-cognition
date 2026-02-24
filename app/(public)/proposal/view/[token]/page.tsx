@@ -18,7 +18,7 @@ export default async function PublicProposalPage({ params }: PageProps) {
     }
 
     return (
-        <div className="container mx-auto px-4 py-12 my-12">
+        <div className="container mx-auto px-4 py-12 my-20">
             <PublicProposalReview proposal={proposal} />
         </div>
     );
