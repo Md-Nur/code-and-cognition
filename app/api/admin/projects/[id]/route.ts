@@ -5,6 +5,14 @@ import { Role } from "@prisma/client";
 import { canAccessProject } from "@/lib/rbac";
 import { createNotification } from "@/lib/notifications";
 import { getNextAction } from "@/lib/next-action";
+import { z } from "zod";
+
+const projectUpdateSchema = z.object({
+  status: z.enum(["ACTIVE", "COMPLETED", "DELIVERED", "CANCELLED"]).optional(),
+  health: z.enum(["GREEN", "YELLOW", "RED"]).optional(),
+}).refine((d) => d.status !== undefined || d.health !== undefined, {
+  message: "At least one of status or health must be provided",
+});
 
 export async function GET(
   req: Request,
@@ -77,14 +85,16 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await req.json();
-  const { status, health } = body;
 
-  if (!status && !health) {
+  const validation = projectUpdateSchema.safeParse(body);
+  if (!validation.success) {
     return NextResponse.json(
-      { error: "No update data provided" },
+      { error: validation.error.issues[0]?.message || "Invalid update data" },
       { status: 400 },
     );
   }
+
+  const { status, health } = validation.data;
 
   try {
     const project = await prisma.project.update({
