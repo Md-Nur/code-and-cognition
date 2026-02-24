@@ -66,6 +66,7 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
         }
 
         setLoading(true);
+        let proposalId: string | null = null;
         try {
             const res = await createProposalForBooking({
                 bookingId: lead.id,
@@ -82,23 +83,33 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
             });
 
             if (res.ok && res.proposal) {
-                // Instantly send it as well, since the button says "Create & Send"
-                const sendRes = await sendProposal({ proposalId: res.proposal.id });
-                if (!sendRes.ok) {
-                    console.error("Failed to send proposal email", sendRes.error);
-                }
-
-                router.push("/dashboard/proposals");
-                router.refresh();
+                proposalId = res.proposal.id;
             } else {
                 showToast("Failed to create proposal");
+                setLoading(false);
+                return;
             }
         } catch (error) {
-            console.error(error);
-            showToast("An error occurred");
-        } finally {
+            console.error("Error creating proposal:", error);
+            showToast("An error occurred while creating the proposal");
             setLoading(false);
+            return;
         }
+
+        // Send the proposal email — don't block the redirect on send failure
+        try {
+            const sendRes = await sendProposal({ proposalId: proposalId! });
+            if (!sendRes.ok) {
+                console.error("Failed to send proposal email", sendRes.error);
+            }
+        } catch (error) {
+            console.error("Error sending proposal email:", error);
+        }
+
+        // Always redirect after successful proposal creation
+        router.push("/dashboard/proposals");
+        router.refresh();
+        setLoading(false);
     };
 
     return (
