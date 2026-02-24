@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { createNotification } from "@/lib/notifications";
-import { Role } from "@prisma/client";
+import { Role, Prisma } from "@prisma/client";
 import { withProxyValidation } from "@/lib/api-handler";
 import { sendMail } from "@/lib/mailer";
 import { proposalEmailHtml } from "@/app/components/emails/ConsultationEmails";
@@ -16,7 +16,7 @@ const proposalCreateSchema = z.object({
   deliverables: z.array(z.string().min(1)).optional().default([]),
   budgetBDT: z.number().nonnegative().optional().nullable(),
   budgetUSD: z.number().nonnegative().optional().nullable(),
-  currency: z.enum(["BDT", "USD"]).optional(),
+  currency: z.enum(["BDT", "USD"]),
   estimatedDays: z.number().int().nonnegative().optional().nullable(),
   paymentTerms: z.string().optional().nullable(),
   contractText: z.string().optional().nullable(),
@@ -178,7 +178,7 @@ export const approveProposal = withProxyValidation(
     const projectTitle = `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
 
     // Perform inside a transaction to ensure atomicity
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Create the Project
       const project = await tx.project.create({
         data: {
@@ -189,7 +189,7 @@ export const approveProposal = withProxyValidation(
           workspaceUrl: `/dashboard/projects/workspace-pending`, // Placeholder URL
           workspaceStatus: "PENDING",
           milestones: {
-            create: proposal.milestones.map((milestoneTitle, index) => ({
+            create: proposal.milestones.map((milestoneTitle: string, index: number) => ({
               title: milestoneTitle,
               order: index,
               status: "PENDING",
@@ -283,26 +283,104 @@ export const getProposalByToken = async (token: string) => {
 };
 
 export const approveProposalByToken = async (token: string, email: string) => {
+  // Verify the proposal by token
   const proposal = await prisma.proposal.findUnique({
     where: { viewToken: token },
-    include: { booking: true }
+    include: { booking: { include: { service: true } } }
   });
 
   if (!proposal || !proposal.booking) {
     return { ok: false, error: "Proposal not found" } as const;
   }
 
+  // Verify identity by email (double verification: token in URL + email)
   if (proposal.booking.clientEmail.toLowerCase() !== email.toLowerCase()) {
     return { ok: false, error: "Email verification failed. Please use the email associated with this proposal." } as const;
   }
 
-  // Reuse the logic from approveProposal but without strict Role check since we verify by token + email
-  // We need to bypass the withProxyValidation or create a specialized version
-  // For now, let's call a private internal function or just re-implement the core logic securely
+  if (proposal.status === "APPROVED") {
+    return { ok: false, error: "This proposal has already been approved." } as const;
+  }
 
-  // For simplicity in this demo/fix, I'll update approveProposal to be slightly more flexible or call its core logic
-  // but let's stick to the plan: enterprise verification.
+  const booking = proposal.booking;
 
-  return approveProposal({ proposalId: proposal.id });
+  // Find the founder to assign as the project finder
+  const founder = await prisma.user.findFirst({ where: { role: Role.FOUNDER } });
+  if (!founder) {
+    return { ok: false, error: "No founder available to start the project." } as const;
+  }
+
+  const projectTitle = `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
+
+  // Perform inside a transaction to ensure atomicity
+  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    // 1. Create the Project
+    const project = await tx.project.create({
+      data: {
+        title: projectTitle,
+        bookingId: booking.id,
+        finderId: founder.id,
+        scope: proposal.scopeSummary,
+        workspaceUrl: `/dashboard/projects/workspace-pending`,
+        workspaceStatus: "PENDING",
+        milestones: {
+          create: proposal.milestones.map((milestoneTitle: string, index: number) => ({
+            title: milestoneTitle,
+            order: index,
+            status: "PENDING",
+          })),
+        },
+      },
+    });
+
+    // 2. Assign Founder as initial team member
+    await tx.projectMember.create({
+      data: {
+        projectId: project.id,
+        userId: founder.id,
+        share: 100,
+      },
+    });
+
+    // 3. Update Proposal to APPROVED
+    const updatedProposal = await tx.proposal.update({
+      where: { id: proposal.id },
+      data: {
+        status: "APPROVED",
+        approved: true,
+        approvedAt: new Date(),
+        signedAt: new Date(),
+        projectId: project.id,
+      },
+    });
+
+    // 4. Update Booking status
+    await tx.booking.update({
+      where: { id: booking.id },
+      data: { status: "CLOSED_WON" },
+    });
+
+    // 5. Log Activity
+    await tx.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: founder.id,
+        action: "PROJECT_STARTED",
+      },
+    });
+
+    return { proposal: updatedProposal, project };
+  });
+
+  // Notify the founder
+  await createNotification({
+    userId: founder.id,
+    title: "Proposal Approved by Client",
+    message: `${booking.clientName} has signed and approved the proposal for "${booking.service?.title || "your project"}".`,
+    type: "SYSTEM",
+    link: `/dashboard/proposals/${proposal.id}`,
+  });
+
+  return { ok: true, ...result } as const;
 };
 
