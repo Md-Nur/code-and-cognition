@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, CheckCircle2 } from "lucide-react";
 
-export default async function CaseStudyPage({ params }: { params: { slug: string } }) {
+export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     // Note: PortfolioItem doesn't have a slug yet in the schema I see, 
     // but the user's request mentioned /[slug]. I'll use id as slug for now or 
     // find workaround if title-based slug isn't there. 
@@ -12,7 +13,7 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
     // I'll use ID as the identifier.
 
     const project = await prisma.portfolioItem.findUnique({
-        where: { id: params.slug },
+        where: { id: slug },
         include: { service: true }
     });
 
@@ -49,7 +50,7 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
                             </p>
 
                             <div className="flex flex-wrap gap-3 mb-12">
-                                {project.technologies.map((tech) => (
+                                {project.technologies.map((tech: string) => (
                                     <span key={tech} className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white/70">
                                         {tech}
                                     </span>

@@ -19,10 +19,10 @@ import NextActionPanel from "@/app/components/shared/NextActionPanel";
 export default async function ClientPortalPage(props: {
     params: Promise<{ viewToken: string }>;
 }) {
-    const params = await props.params;
+    const { viewToken } = await props.params;
 
     const project = await prisma.project.findUnique({
-        where: { viewToken: params.viewToken },
+        where: { viewToken },
         include: {
             milestones: {
                 orderBy: { order: "asc" },
@@ -103,7 +103,7 @@ export default async function ClientPortalPage(props: {
             {/* Main Content */}
             <main className="max-w-6xl mx-auto px-6 pt-32 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <div className="lg:col-span-12 flex justify-end">
-                    <DownloadBriefButton viewToken={params.viewToken} />
+                    <DownloadBriefButton viewToken={viewToken} />
                 </div>
 
                 {/* Left Column: Overview & Milestones */}
@@ -154,7 +154,7 @@ export default async function ClientPortalPage(props: {
                                 </div>
                             ) : (
                                 <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-gray-300 dark:before:via-gray-700 before:to-transparent">
-                                    {project.milestones.map((milestone) => {
+                                    {project.milestones.map((milestone: any) => {
                                         const isCompleted = milestone.status === "COMPLETED";
                                         const isInProgress = milestone.status === "IN_PROGRESS";
 
@@ -211,7 +211,7 @@ export default async function ClientPortalPage(props: {
                     </section>
 
                     {/* Change Requests Panel */}
-                    <ClientChangeRequestsPanel viewToken={params.viewToken} />
+                    <ClientChangeRequestsPanel viewToken={viewToken} />
                 </div>
 
                 {/* Right Column: Activity Feed */}
@@ -230,7 +230,7 @@ export default async function ClientPortalPage(props: {
                                 </div>
                             ) : (
                                 <div className="space-y-6">
-                                    {project.activityLogs.map((log) => (
+                                    {project.activityLogs.map((log: any) => (
                                         <div key={log.id} className="flex gap-4">
                                             <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0 mt-1">
                                                 <span className="text-xs font-bold">

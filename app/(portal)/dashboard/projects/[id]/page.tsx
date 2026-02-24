@@ -18,12 +18,13 @@ const healthConfig: Record<string, { bg: string; text: string; icon: any; label:
     RED: { bg: "bg-rose-500/10", text: "text-rose-500", icon: AlertCircle, label: "Action Needed" },
 };
 
-export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
+export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) redirect("/login");
 
     const project = await prisma.project.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
             milestones: { orderBy: { order: "asc" } },
             members: { include: { user: { select: { id: true, name: true, email: true } } } },
@@ -40,12 +41,12 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
 
     // RBAC: Contractors can only view their own assigned projects
     if (user.role === Role.CONTRACTOR) {
-        const isMember = project.members.some(m => m.userId === user.id);
+        const isMember = project.members.some((m: any) => m.userId === user.id);
         if (!isMember && project.finderId !== user.id) redirect("/dashboard/projects");
     }
 
-    const pendingCRs = project.changeRequests.filter(c => c.status === "PENDING").length;
-    const completedMilestones = project.milestones.filter(m => m.status === "COMPLETED").length;
+    const pendingCRs = project.changeRequests.filter((c: any) => c.status === "PENDING").length;
+    const completedMilestones = project.milestones.filter((m: any) => m.status === "COMPLETED").length;
     const progress = project.milestones.length > 0 ? Math.round((completedMilestones / project.milestones.length) * 100) : 0;
     const health = healthConfig[project.health] ?? healthConfig.GREEN;
     const HealthIcon = health.icon;
@@ -87,7 +88,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                         <ProgressBar milestones={project.milestones} />
 
                         <div className="mt-8 space-y-4">
-                            {project.milestones.map((milestone) => {
+                            {project.milestones.map((milestone: any) => {
                                 const isCompleted = milestone.status === "COMPLETED";
                                 const isInProgress = milestone.status === "IN_PROGRESS";
                                 return (
@@ -125,7 +126,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                                 <p className="text-gray-500 text-sm text-center py-8">No change requests submitted.</p>
                             ) : (
                                 <div className="space-y-4">
-                                    {project.changeRequests.map(cr => (
+                                    {project.changeRequests.map((cr: any) => (
                                         <div key={cr.id} className={`p-5 rounded-2xl border ${cr.status === "PENDING" ? "border-amber-500/20 bg-amber-500/5" : cr.status === "APPROVED" ? "border-emerald-500/20 bg-emerald-500/5" : "border-white/5 bg-white/[0.02]"}`}>
                                             <div className="flex items-start justify-between gap-4">
                                                 <div>
@@ -193,7 +194,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                             <p className="text-xs text-gray-500 text-center py-6">No activity yet.</p>
                         ) : (
                             <div className="space-y-5 max-h-[400px] overflow-y-auto custom-scrollbar">
-                                {project.activityLogs.map(log => (
+                                {project.activityLogs.map((log: any) => (
                                     <div key={log.id} className="flex gap-3">
                                         <div className="w-6 h-6 rounded-full bg-agency-accent/10 text-agency-accent flex items-center justify-center shrink-0 text-[9px] font-bold mt-0.5">
                                             {log.user?.name ? log.user.name.charAt(0).toUpperCase() : "S"}
