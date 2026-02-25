@@ -21,10 +21,10 @@ export async function processPaymentSplit(paymentId: string) {
     const currency = payment.currency;
     const isBDT = currency === Currency.BDT;
 
-    // Split Ratios
-    const companyFundRatio = 0.20;
-    const finderFeeRatio = 0.10;
-    const executionPoolRatio = 0.70;
+    // Dynamic Split Ratios from Project
+    const companyFundRatio = payment.project.companyFundRatio;
+    const finderFeeRatio = payment.project.finderFeeRatio;
+    const executionPoolRatio = Math.max(0, 1 - companyFundRatio - finderFeeRatio);
 
     // Calculate Amounts
     const companyFundAmount = amount * companyFundRatio;
@@ -102,7 +102,7 @@ export async function processPaymentSplit(paymentId: string) {
         await tx.activityLog.create({
             data: {
                 projectId: payment.projectId,
-                action: `recorded a payment of ${amount} ${currency} and processed 20/10/70 splits.`,
+                action: `recorded a payment of ${amount} ${currency} and processed ${companyFundRatio * 100}/${finderFeeRatio * 100}/${executionPoolRatio * 100} splits.`,
             }
         });
     });

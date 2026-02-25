@@ -29,11 +29,13 @@ model Message {
   id         String   @id @default(cuid())
   content    String
   senderId   String
-  receiverId String
+  receiverId String?
+  projectId  String? /// Links the message to a specific project workspace
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
-  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiver   User?    @relation("ReceivedMessages", fields: [receiverId], references: [id])
   sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  project    Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 /// System notifications for users regarding bookings, projects, and payments.
@@ -139,28 +141,31 @@ model Booking {
 
 /// Active projects managed by the agency, converted from bookings.
 model Project {
-  id              String          @id @default(cuid())
-  title           String
-  bookingId       String?         @unique
-  finderId        String /// The user who brought in the project
-  status          ProjectStatus   @default(ACTIVE)
-  health          ProjectHealth   @default(GREEN)
-  viewToken       String?         @unique @default(uuid()) /// Public viewing token for clients
-  scope           String? /// Project scope and objectives
-  startDate       DateTime? /// Project start date
-  endDate         DateTime? /// Project end date / deadline
-  riskNotes       String? /// Risk management notes
-  workspaceUrl    String? /// Internal/External workspace link (e.g. Notion, Slack, or internal)
-  workspaceStatus String?         @default("PENDING") /// PENDING | ACTIVE | ARCHIVED
-  createdAt       DateTime        @default(now())
-  payments        Payment[]
-  proposals       Proposal[]
-  booking         Booking?        @relation(fields: [bookingId], references: [id])
-  finder          User            @relation("Finder", fields: [finderId], references: [id])
-  members         ProjectMember[]
-  milestones      Milestone[]
-  activityLogs    ActivityLog[]
-  changeRequests  ChangeRequest[]
+  id               String          @id @default(cuid())
+  title            String
+  bookingId        String?         @unique
+  finderId         String /// The user who brought in the project
+  status           ProjectStatus   @default(ACTIVE)
+  health           ProjectHealth   @default(GREEN)
+  viewToken        String?         @unique @default(uuid()) /// Public viewing token for clients
+  scope            String? /// Project scope and objectives
+  startDate        DateTime? /// Project start date
+  endDate          DateTime? /// Project end date / deadline
+  riskNotes        String? /// Risk management notes
+  workspaceUrl     String? /// Internal/External workspace link (e.g. Notion, Slack, or internal)
+  workspaceStatus  String?         @default("PENDING") /// PENDING | ACTIVE | ARCHIVED
+  companyFundRatio Float           @default(0.20) /// Dynamic split for company fund
+  finderFeeRatio   Float           @default(0.10) /// Dynamic split for finder fee
+  createdAt        DateTime        @default(now())
+  payments         Payment[]
+  proposals        Proposal[]
+  messages         Message[]
+  booking          Booking?        @relation(fields: [bookingId], references: [id])
+  finder           User            @relation("Finder", fields: [finderId], references: [id])
+  members          ProjectMember[]
+  milestones       Milestone[]
+  activityLogs     ActivityLog[]
+  changeRequests   ChangeRequest[]
 }
 
 /// Contractors assigned to a project with their respective execution share (percentage).

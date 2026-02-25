@@ -6,11 +6,13 @@ import { Role } from "@prisma/client";
 import { format } from "date-fns";
 import {
     ArrowLeft, CheckCircle2, Clock, AlertCircle, Activity,
-    CircleDashed, Layers, Calendar, GitPullRequest
+    Layers, Calendar, GitPullRequest, MessageSquare
 } from "lucide-react";
-import ProgressBar from "@/app/components/ProgressBar";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
 import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
+import EditableMilestones from "@/app/components/project/EditableMilestones";
+import ProjectMessages from "@/app/components/project/ProjectMessages";
+import RevenueSplitSettings from "@/app/components/project/RevenueSplitSettings";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },
@@ -77,43 +79,27 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Column */}
                 <div className="lg:col-span-8 space-y-8">
-                    {/* Progress Card */}
+                    {/* Progress & Milestones */}
                     <div className="glass-panel p-8 rounded-3xl border border-white/5">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                <Layers className="w-5 h-5 text-agency-accent" /> Milestone Progress
+                                <Layers className="w-5 h-5 text-agency-accent" /> Road to Delivery
                             </h3>
                             <span className="text-3xl font-bold text-white">{progress}%</span>
                         </div>
-                        <ProgressBar milestones={project.milestones} />
-
-                        <div className="mt-8 space-y-4">
-                            {project.milestones.map((milestone: any) => {
-                                const isCompleted = milestone.status === "COMPLETED";
-                                const isInProgress = milestone.status === "IN_PROGRESS";
-                                return (
-                                    <div key={milestone.id} className={`flex items-start gap-4 p-5 rounded-2xl border transition-colors ${isCompleted ? "bg-emerald-500/5 border-emerald-500/20" :
-                                        isInProgress ? "bg-blue-500/5 border-blue-500/20" :
-                                            "bg-white/[0.02] border-white/5"
-                                        }`}>
-                                        <div className={`mt-0.5 shrink-0 ${isCompleted ? "text-emerald-500" : isInProgress ? "text-blue-500" : "text-gray-600"}`}>
-                                            {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isInProgress ? <Clock className="w-5 h-5 animate-pulse" /> : <CircleDashed className="w-5 h-5" />}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-semibold text-white">{milestone.title}</p>
-                                            {milestone.description && <p className="text-xs text-gray-500 mt-1 leading-relaxed">{milestone.description}</p>}
-                                        </div>
-                                        <span className={`text-[10px] font-bold uppercase tracking-widest shrink-0 ${isCompleted ? "text-emerald-500" : isInProgress ? "text-blue-500" : "text-gray-600"}`}>
-                                            {milestone.status.replace("_", " ")}
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                            {project.milestones.length === 0 && (
-                                <div className="text-center py-12 text-gray-500 text-sm">No milestones defined yet.</div>
-                            )}
-                        </div>
+                        {/* Interactive Milestones replaces static ProgressBar and lists */}
+                        <EditableMilestones
+                            projectId={project.id}
+                            initialMilestones={project.milestones}
+                            userRole={user.role}
+                        />
                     </div>
+
+                    {/* Messages */}
+                    <ProjectMessages
+                        projectId={project.id}
+                        currentUserRole={user.role}
+                    />
 
                     {/* Change Requests */}
                     {user.role !== Role.CLIENT && (
@@ -178,11 +164,19 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
                     {/* Admin Actions */}
                     {user.role === Role.FOUNDER && (
-                        <ProjectAdminActions
-                            projectId={project.id}
-                            currentStatus={project.status}
-                            currentHealth={project.health}
-                        />
+                        <>
+                            <RevenueSplitSettings
+                                projectId={project.id}
+                                currentCompanyRatio={project.companyFundRatio}
+                                currentFinderRatio={project.finderFeeRatio}
+                            />
+
+                            <ProjectAdminActions
+                                projectId={project.id}
+                                currentStatus={project.status}
+                                currentHealth={project.health}
+                            />
+                        </>
                     )}
 
                     {/* Activity Feed */}
@@ -196,8 +190,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                             <div className="space-y-5 max-h-[400px] overflow-y-auto custom-scrollbar">
                                 {project.activityLogs.map((log: any) => (
                                     <div key={log.id} className="flex gap-3">
-                                        <div className="w-6 h-6 rounded-full bg-agency-accent/10 text-agency-accent flex items-center justify-center shrink-0 text-[9px] font-bold mt-0.5">
-                                            {log.user?.name ? log.user.name.charAt(0).toUpperCase() : "S"}
+                                        <div className="w-6 h-6 rounded-full bg-agency-accent/10 text-agency-accent flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5 uppercase tracking-tighter">
+                                            {log.user?.name ? log.user.name.substring(0, 2) : "SYS"}
                                         </div>
                                         <div>
                                             <p className="text-xs text-white/80 leading-snug">{log.action}</p>
@@ -213,3 +207,4 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </div>
     );
 }
+
