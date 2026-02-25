@@ -24,6 +24,17 @@ model User {
   changeRequests   ChangeRequest[]
 }
 
+/// Secure, short-lived tokens for passwordless client login.
+model MagicLink {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
 /// Internal message system for communication between users.
 model Message {
   id         String   @id @default(cuid())
