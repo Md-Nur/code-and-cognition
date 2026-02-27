@@ -115,11 +115,17 @@ export default function SchedulePage() {
         }
     };
 
+    useEffect(() => {
+        if (isSuccess) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    }, [isSuccess]);
+
     if (isSuccess) {
         return (
             <main className="min-h-screen pt-32 pb-24 bg-agency-black">
-                <div className="container mx-auto px-6 max-w-4xl">
-                    <div className="premium-card p-8 md:p-12 text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+                    <div className="premium-card p-4 md:p-12 text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                         <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 text-primary mb-4">
                             <CheckCircle2 className="w-10 h-10" />
                         </div>
@@ -130,7 +136,7 @@ export default function SchedulePage() {
                             Thank you for providing your details. Please select a time below to schedule our strategic consultation call.
                         </p>
 
-                        <div className="mt-8 rounded-2xl overflow-hidden border border-base-300 bg-base-100">
+                        <div className="mt-8 rounded-2xl overflow-hidden border border-base-300 bg-transparent">
                             <CalendlyEmbed url="https://calendly.com/codencognition-bd/cosultation-of-code-cognition" />
                         </div>
                     </div>
