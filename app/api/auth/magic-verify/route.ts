@@ -11,6 +11,8 @@ export async function POST(req: Request) {
     try {
         const body = await req.json();
         const { token } = body;
+        const fingerprint = (await import("@/lib/security")).getFingerprint(userAgent, ip);
+        const isSuspicious = await (await import("@/lib/security")).isSuspiciousActivity(ip);
 
         if (!token) {
             return ApiResponse.error("Token is required", 400);
@@ -23,7 +25,7 @@ export async function POST(req: Request) {
 
         if (!magicToken) {
             await prisma.securityLog.create({
-                data: { email: "unknown", action: "MAGIC_LINK_VERIFY", status: "INVALID_TOKEN", ip, userAgent }
+                data: { email: "unknown", action: "MAGIC_LINK_VERIFY", status: "INVALID_TOKEN", ip, userAgent, fingerprint, isSuspicious }
             });
             return ApiResponse.error("Invalid token", 401);
         }
@@ -32,14 +34,14 @@ export async function POST(req: Request) {
 
         if (magicToken.used) {
             await prisma.securityLog.create({
-                data: { email, action: "MAGIC_LINK_VERIFY", status: "ALREADY_USED", ip, userAgent }
+                data: { email, action: "MAGIC_LINK_VERIFY", status: "ALREADY_USED", ip, userAgent, fingerprint, isSuspicious }
             });
             return ApiResponse.error("Token has already been used", 401);
         }
 
         if (new Date() > magicToken.expiresAt) {
             await prisma.securityLog.create({
-                data: { email, action: "MAGIC_LINK_VERIFY", status: "EXPIRED", ip, userAgent }
+                data: { email, action: "MAGIC_LINK_VERIFY", status: "EXPIRED", ip, userAgent, fingerprint, isSuspicious }
             });
             return ApiResponse.error("Token has expired", 401);
         }
@@ -51,7 +53,7 @@ export async function POST(req: Request) {
 
         if (!user || user.role !== "CLIENT") {
             await prisma.securityLog.create({
-                data: { email, action: "MAGIC_LINK_VERIFY", status: "UNAUTHORIZED_ROLE", ip, userAgent }
+                data: { email, action: "MAGIC_LINK_VERIFY", status: "UNAUTHORIZED_ROLE", ip, userAgent, fingerprint, isSuspicious }
             });
             return ApiResponse.error("User not found or unauthorized", 401);
         }
@@ -63,7 +65,7 @@ export async function POST(req: Request) {
         });
 
         await prisma.securityLog.create({
-            data: { email, action: "MAGIC_LINK_VERIFY", status: "SUCCESS", ip, userAgent }
+            data: { email, action: "MAGIC_LINK_VERIFY", status: "SUCCESS", ip, userAgent, fingerprint, isSuspicious }
         });
 
         // 4. Create JWT session
@@ -71,7 +73,7 @@ export async function POST(req: Request) {
             id: user.id,
             email: user.email,
             role: user.role
-        });
+        }, "7d");
 
         // 5. Set cookie
         const cookieStore = await cookies();
@@ -79,7 +81,7 @@ export async function POST(req: Request) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 60 * 60 * 24, // 24 hours
+            maxAge: 60 * 60 * 24 * 7, // 7 days
             path: "/",
         });
 

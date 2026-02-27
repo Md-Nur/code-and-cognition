@@ -35,6 +35,8 @@ export async function POST(req: Request) {
     try {
         const body = await req.json();
         const userAgent = req.headers.get("user-agent") || undefined;
+        const fingerprint = (await import("@/lib/security")).getFingerprint(userAgent, ip);
+        const isSuspicious = await (await import("@/lib/security")).isSuspiciousActivity(ip);
 
         // 1. Initial Email Check + Potential Password Submission
         const email = body.email?.toLowerCase().trim();
@@ -59,13 +61,13 @@ export async function POST(req: Request) {
 
             if (!isValid) {
                 await prisma.securityLog.create({
-                    data: { email, action: "PASSWORD_LOGIN", status: "FAILURE", ip, userAgent }
+                    data: { email, action: "PASSWORD_LOGIN", status: "FAILURE", ip, userAgent, fingerprint, isSuspicious }
                 });
                 return ApiResponse.error("Invalid credentials", 401);
             }
 
             await prisma.securityLog.create({
-                data: { email, action: "PASSWORD_LOGIN", status: "SUCCESS", ip, userAgent }
+                data: { email, action: "PASSWORD_LOGIN", status: "SUCCESS", ip, userAgent, fingerprint, isSuspicious }
             });
 
             // Create JWT
@@ -86,7 +88,14 @@ export async function POST(req: Request) {
 
         // Scenario B: Magic Link Request (No password provided OR user is a client)
         if (!password || isClient) {
+            // Check Cooldown
+            const cooldown = await (await import("@/lib/security")).getMagicLinkCooldown(email);
+            if (cooldown > 0) {
+                return ApiResponse.error(`Please wait ${cooldown} seconds before requesting another link.`, 429);
+            }
+
             // We ALWAYS return a success message to prevent email enumeration
+            // unless it's a cooldown error above.
 
             // Perform background actions if applicable
             if (user) {
@@ -105,7 +114,7 @@ export async function POST(req: Request) {
                     });
 
                     await prisma.securityLog.create({
-                        data: { email, action: "MAGIC_LINK_REQUEST", status: "SUCCESS", ip, userAgent }
+                        data: { email, action: "MAGIC_LINK_REQUEST", status: "SUCCESS", ip, userAgent, fingerprint, isSuspicious }
                     });
 
                     // Send Magic Link
@@ -123,7 +132,7 @@ export async function POST(req: Request) {
                 } else {
                     // Staff requesting magic link - tell them to use password
                     await prisma.securityLog.create({
-                        data: { email, action: "MAGIC_LINK_REQUEST", status: "REJECTED_STAFF", ip, userAgent }
+                        data: { email, action: "MAGIC_LINK_REQUEST", status: "REJECTED_STAFF", ip, userAgent, fingerprint, isSuspicious }
                     });
 
                     await sendMail(
@@ -139,7 +148,7 @@ export async function POST(req: Request) {
             } else {
                 // Non-existent email - log it
                 await prisma.securityLog.create({
-                    data: { email, action: "MAGIC_LINK_REQUEST", status: "NOT_FOUND", ip, userAgent }
+                    data: { email, action: "MAGIC_LINK_REQUEST", status: "NOT_FOUND", ip, userAgent, fingerprint, isSuspicious }
                 });
             }
 
@@ -156,7 +165,7 @@ export async function POST(req: Request) {
         await bcrypt.compare(password, dummyHash); // Timing normalization
 
         await prisma.securityLog.create({
-            data: { email, action: "PASSWORD_LOGIN", status: "FAIL_NOT_FOUND", ip, userAgent }
+            data: { email, action: "PASSWORD_LOGIN", status: "FAIL_NOT_FOUND", ip, userAgent, fingerprint, isSuspicious }
         });
 
         return ApiResponse.error("Invalid credentials", 401);
