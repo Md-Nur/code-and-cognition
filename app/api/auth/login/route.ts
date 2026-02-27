@@ -118,7 +118,7 @@ export async function POST(req: Request) {
                     });
 
                     // Send Magic Link
-                    const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com"}/magic-login?token=${token}`;
+                    const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com"}/magic-login?token=${token}`;
                     console.log(`[AUTH] Attempting to send magic link to ${user.email}`);
                     const mailSent = await sendMail(
                         user.email,
@@ -149,7 +149,7 @@ export async function POST(req: Request) {
                         `<div style="font-family: sans-serif; padding: 20px;">
                             <h2>Secure Sign In Required</h2>
                             <p>Hi ${user.name}, you just tried to request a magic link login. As a staff member, you must sign in using your password for enhanced security.</p>
-                            <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com"}/login" style="display: inline-block; padding: 10px 20px; background-color: #333; color: #fff; text-decoration: none; font-weight: bold; border-radius: 5px;">Go to Login</a>
+                            <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com"}/login" style="display: inline-block; padding: 10px 20px; background-color: #333; color: #fff; text-decoration: none; font-weight: bold; border-radius: 5px;">Go to Login</a>
                           </div>`
                     );
                 }
