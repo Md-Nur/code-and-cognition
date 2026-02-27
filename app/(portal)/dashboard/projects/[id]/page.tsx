@@ -11,7 +11,6 @@ import {
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
 import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
 import EditableMilestones from "@/app/components/project/EditableMilestones";
-import RevenueSplitSettings from "@/app/components/project/RevenueSplitSettings";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },
@@ -166,12 +165,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     {/* Admin Actions */}
                     {user.role === Role.FOUNDER && (
                         <>
-                            <RevenueSplitSettings
-                                projectId={project.id}
-                                currentCompanyRatio={project.companyFundRatio}
-                                currentFinderRatio={project.finderFeeRatio}
-                            />
-
                             <ProjectAdminActions
                                 projectId={project.id}
                                 currentStatus={project.status}
