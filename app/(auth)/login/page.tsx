@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MailCheck, KeyRound, ArrowRight } from "lucide-react";
@@ -9,6 +9,20 @@ export default function LoginPage() {
     const router = useRouter();
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Redirect if already logged in (Ping backend or check cookie if possible)
+    // For simplicity, we'll let the user interact, but if they are a client 
+    // we want to ensure they don't stay here.
+    useEffect(() => {
+        // Quick session check
+        fetch("/api/admin/projects") // This will trigger role check
+            .then(res => {
+                if (res.ok) {
+                    router.push("/dashboard");
+                }
+            })
+            .catch(() => { });
+    }, [router]);
 
     // Auth Flow State
     const [requirePassword, setRequirePassword] = useState(false);

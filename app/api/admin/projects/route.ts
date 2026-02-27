@@ -76,18 +76,9 @@ export const POST = withAuth(async (req) => {
                         }
                     });
 
-                    // 2. Generate Onboarding Magic Token (24 hour expiry for onboarding)
-                    const token = crypto.randomBytes(32).toString("hex");
-                    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-                    await prisma.magicToken.create({
-                        data: { email: booking.clientEmail, token, expiresAt }
-                    });
-
-                    // 3. Send Onboarding Email
+                    // 3. Send Onboarding Email (Token-based Link-only Access)
                     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com";
-                    const magicLinkUrl = `${appUrl}/magic-login?token=${token}`;
-                    const projectOverviewUrl = `${appUrl}/dashboard/projects/${project.id}`;
+                    const directAccessUrl = `${appUrl}/api/auth/token-login/${project.viewToken}`;
 
                     await sendMail(
                         booking.clientEmail,
@@ -98,11 +89,10 @@ export const POST = withAuth(async (req) => {
                             <p>You can track milestones, view deliverables, and message the team directly through our portal.</p>
                             
                             <div style="margin: 30px 0;">
-                                <a href="${magicLinkUrl}" style="display: inline-block; padding: 12px 24px; background-color: #E6FF00; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px; margin-right: 10px;">Login to Portal</a>
-                                <a href="${projectOverviewUrl}" style="display: inline-block; padding: 12px 24px; background-color: #f4f4f4; color: #333; text-decoration: none; font-weight: bold; border-radius: 5px;">View Project Overview</a>
+                                <a href="${directAccessUrl}" style="display: inline-block; padding: 12px 24px; background-color: #E6FF00; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px; margin-right: 10px;">Access Project Dashboard</a>
                             </div>
 
-                            <p style="font-size: 14px; color: #666;">This login link is secure and will expire in 24 hours. Once logged in, your session will stay active for 7 days.</p>
+                            <p style="font-size: 14px; color: #666;">This link is secure and provides direct access to your workspace. Once opened, your session will stay active for 7 days.</p>
                             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
                             <p style="font-size: 12px; color: #999;">If you have any questions, simply reply to this email.</p>
                         </div>`
