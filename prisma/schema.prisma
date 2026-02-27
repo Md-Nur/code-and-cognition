@@ -426,3 +426,17 @@ enum CRStatus {
   APPROVED
   REJECTED
 }
+
+/// Audit trail for authentication and security events.
+model SecurityLog {
+  id        String   @id @default(cuid())
+  email     String
+  action    String /// e.g., "MAGIC_LINK_REQUEST", "MAGIC_LINK_VERIFY", "PASSWORD_LOGIN"
+  status    String /// e.g., "SUCCESS", "FAILURE", "INVALID_ROLE", "REJECTED"
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([action])
+}

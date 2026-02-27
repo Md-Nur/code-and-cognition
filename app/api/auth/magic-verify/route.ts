@@ -5,6 +5,9 @@ import { NextResponse } from "next/server";
 import { ApiResponse } from "@/lib/api-handler";
 
 export async function POST(req: Request) {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "unknown";
+    const userAgent = req.headers.get("user-agent") || undefined;
+
     try {
         const body = await req.json();
         const { token } = body;
@@ -19,23 +22,37 @@ export async function POST(req: Request) {
         });
 
         if (!magicToken) {
+            await prisma.securityLog.create({
+                data: { email: "unknown", action: "MAGIC_LINK_VERIFY", status: "INVALID_TOKEN", ip, userAgent }
+            });
             return ApiResponse.error("Invalid token", 401);
         }
 
+        const email = magicToken.email;
+
         if (magicToken.used) {
+            await prisma.securityLog.create({
+                data: { email, action: "MAGIC_LINK_VERIFY", status: "ALREADY_USED", ip, userAgent }
+            });
             return ApiResponse.error("Token has already been used", 401);
         }
 
         if (new Date() > magicToken.expiresAt) {
+            await prisma.securityLog.create({
+                data: { email, action: "MAGIC_LINK_VERIFY", status: "EXPIRED", ip, userAgent }
+            });
             return ApiResponse.error("Token has expired", 401);
         }
 
         // 2. Find associated user
         const user = await prisma.user.findUnique({
-            where: { email: magicToken.email },
+            where: { email },
         });
 
         if (!user || user.role !== "CLIENT") {
+            await prisma.securityLog.create({
+                data: { email, action: "MAGIC_LINK_VERIFY", status: "UNAUTHORIZED_ROLE", ip, userAgent }
+            });
             return ApiResponse.error("User not found or unauthorized", 401);
         }
 
@@ -43,6 +60,10 @@ export async function POST(req: Request) {
         await prisma.magicToken.update({
             where: { id: magicToken.id },
             data: { used: true },
+        });
+
+        await prisma.securityLog.create({
+            data: { email, action: "MAGIC_LINK_VERIFY", status: "SUCCESS", ip, userAgent }
         });
 
         // 4. Create JWT session

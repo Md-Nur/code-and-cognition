@@ -34,6 +34,7 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
+        const userAgent = req.headers.get("user-agent") || undefined;
 
         // 1. Initial Email Check + Potential Password Submission
         const email = body.email?.toLowerCase().trim();
@@ -49,85 +50,117 @@ export async function POST(req: Request) {
 
         const isClient = user?.role === "CLIENT";
 
-        // --- PASSWORDLESS MAGIC LINK FLOW (CLIENTS) ---
-        if (isClient || (!user && !password)) {
-            // If they are a client, OR if they just submitted an email and we pretend they might be a client (timing mitigation)
-            if (user && isClient) {
-                // Generate Secure Token
-                const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-                    .map((b) => b.toString(16).padStart(2, "0"))
-                    .join("");
+        // --- AUTH FLOW BRANCHING ---
 
-                const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+        // Scenario A: User is internal staff and providing password
+        if (user && !isClient && password) {
+            // Staff password login
+            const isValid = await bcrypt.compare(password, user.passwordHash);
 
-                await prisma.magicToken.create({
-                    data: { email: user.email, token, expiresAt, used: false }
+            if (!isValid) {
+                await prisma.securityLog.create({
+                    data: { email, action: "PASSWORD_LOGIN", status: "FAILURE", ip, userAgent }
                 });
+                return ApiResponse.error("Invalid credentials", 401);
+            }
 
-                // Send Email
-                const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com"}/magic-login?token=${token}`;
+            await prisma.securityLog.create({
+                data: { email, action: "PASSWORD_LOGIN", status: "SUCCESS", ip, userAgent }
+            });
 
-                // Dynamic import to prevent circular dependency issues if mailer relies on auth
+            // Create JWT
+            const token = await signToken({ id: user.id, email: user.email, role: user.role });
+            const cookieStore = await cookies();
+            cookieStore.set("auth_token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 60 * 60 * 24,
+                path: "/",
+            });
+
+            return ApiResponse.success({
+                user: { id: user.id, name: user.name, email: user.email, role: user.role },
+            });
+        }
+
+        // Scenario B: Magic Link Request (No password provided OR user is a client)
+        if (!password || isClient) {
+            // We ALWAYS return a success message to prevent email enumeration
+
+            // Perform background actions if applicable
+            if (user) {
                 const { sendMail } = await import("@/lib/mailer");
-                await sendMail(
-                    user.email,
-                    "Your Login Link - Code & Cognition",
-                    `<div style="font-family: sans-serif; padding: 20px;">
-                        <h2>Login to Your Dashboard</h2>
-                        <p>Click the secure link below to access your project. This link expires in 15 minutes.</p>
-                        <a href="${magicLinkUrl}" style="display: inline-block; padding: 10px 20px; background-color: #E6FF00; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px;">Login Now</a>
-                        <p style="color: #666; font-size: 12px; mt-4">If you did not request this link, please ignore this email.</p>
-                      </div>`
-                );
+
+                if (isClient) {
+                    // Generate Secure Token
+                    const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                        .map((b) => b.toString(16).padStart(2, "0"))
+                        .join("");
+
+                    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
+                    await prisma.magicToken.create({
+                        data: { email: user.email, token, expiresAt, used: false }
+                    });
+
+                    await prisma.securityLog.create({
+                        data: { email, action: "MAGIC_LINK_REQUEST", status: "SUCCESS", ip, userAgent }
+                    });
+
+                    // Send Magic Link
+                    const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com"}/magic-login?token=${token}`;
+                    await sendMail(
+                        user.email,
+                        "Your Login Link - Code & Cognition",
+                        `<div style="font-family: sans-serif; padding: 20px;">
+                            <h2>Login to Your Dashboard</h2>
+                            <p>Click the secure link below to access your project. This link expires in 15 minutes.</p>
+                            <a href="${magicLinkUrl}" style="display: inline-block; padding: 10px 20px; background-color: #E6FF00; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px;">Login Now</a>
+                            <p style="color: #666; font-size: 12px; mt-4">If you did not request this link, please ignore this email.</p>
+                          </div>`
+                    );
+                } else {
+                    // Staff requesting magic link - tell them to use password
+                    await prisma.securityLog.create({
+                        data: { email, action: "MAGIC_LINK_REQUEST", status: "REJECTED_STAFF", ip, userAgent }
+                    });
+
+                    await sendMail(
+                        user.email,
+                        "Security Notice - Code & Cognition",
+                        `<div style="font-family: sans-serif; padding: 20px;">
+                            <h2>Secure Sign In Required</h2>
+                            <p>Hi ${user.name}, you just tried to request a magic link login. As a staff member, you must sign in using your password for enhanced security.</p>
+                            <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com"}/login" style="display: inline-block; padding: 10px 20px; background-color: #333; color: #fff; text-decoration: none; font-weight: bold; border-radius: 5px;">Go to Login</a>
+                          </div>`
+                    );
+                }
+            } else {
+                // Non-existent email - log it
+                await prisma.securityLog.create({
+                    data: { email, action: "MAGIC_LINK_REQUEST", status: "NOT_FOUND", ip, userAgent }
+                });
             }
 
-            // We always return this success message genericly if they don't provide a password and aren't forcing an internal login block
-            if (!password || isClient) {
-                return NextResponse.json({ magicLinkSent: true, message: "Check your email for the login link." });
-            }
+            // Return generic success
+            return NextResponse.json({
+                magicLinkSent: true,
+                message: "If an account exists for this email, you will receive a login link shortly."
+            });
         }
 
-        // --- PASSWORD FLOW (INTERNAL ROLES) ---
-        // If we reach here, they must provide a password because they are internal
-        if (!password) {
-            return NextResponse.json({ requirePassword: true, message: "Internal staff require a password." });
-        }
-
-        // Always compare even if user doesn't exist to prevent timing attacks
+        // Scenario C: Internal Role attempt with password but user not found or wrong password (handled above too)
+        // If we reach here with a password but no valid user found
         const dummyHash = "$2b$10$invalidhashfortimingnormalization00000000000000000";
-        const isValid = user
-            ? await bcrypt.compare(password, user.passwordHash)
-            : await bcrypt.compare(password, dummyHash).then(() => false);
+        await bcrypt.compare(password, dummyHash); // Timing normalization
 
-        if (!user || !isValid || user.role === "CLIENT") {
-            return ApiResponse.error("Invalid credentials", 401);
-        }
-
-        // Create JWT
-        const token = await signToken({
-            id: user.id,
-            email: user.email,
-            role: user.role
+        await prisma.securityLog.create({
+            data: { email, action: "PASSWORD_LOGIN", status: "FAIL_NOT_FOUND", ip, userAgent }
         });
 
-        // Set cookie
-        const cookieStore = await cookies();
-        cookieStore.set("auth_token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 60 * 60 * 24, // 24 hours
-            path: "/",
-        });
+        return ApiResponse.error("Invalid credentials", 401);
 
-        return ApiResponse.success({
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-            },
-        });
     } catch (error) {
         console.error("Login Error:", error);
         return ApiResponse.error("Internal Server Error", 500);
