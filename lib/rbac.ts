@@ -1,7 +1,7 @@
 import { Role } from "@prisma/client";
 
 type ProjectAccessShape = {
-  finderId: string;
+  finderId: string | null;
   members?: Array<{ userId: string }>;
   booking?: { clientEmail?: string | null } | null;
 };

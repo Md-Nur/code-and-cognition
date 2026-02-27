@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const addMemberSchema = z.object({
     userId: z.string().min(1),
+    role: z.enum(["FINDER", "EXECUTION"]).default("EXECUTION"),
     share: z.number().min(0).max(100),
 });
 
@@ -18,19 +19,21 @@ export const POST = withAuth(async (req, { params }) => {
             return ApiResponse.error("Invalid input");
         }
 
-        const { userId, share } = validation.data;
+        const { userId, role, share } = validation.data;
 
         const member = await prisma.projectMember.upsert({
             where: {
-                projectId_userId: {
+                projectId_userId_role: {
                     projectId,
                     userId,
+                    role,
                 },
             },
             update: { share },
             create: {
                 projectId,
                 userId,
+                role,
                 share,
             },
         });
@@ -47,14 +50,17 @@ export const DELETE = withAuth(async (req, { params }) => {
         const { id: projectId } = await params;
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get("userId");
+        const roleStr = searchParams.get("role") || "EXECUTION";
+        const role = roleStr as any; // Cast to bypass simple check, zod would be better but keeping it simple here
 
         if (!userId) return ApiResponse.error("User ID required");
 
         await prisma.projectMember.delete({
             where: {
-                projectId_userId: {
+                projectId_userId_role: {
                     projectId,
                     userId,
+                    role,
                 },
             },
         });

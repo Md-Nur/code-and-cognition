@@ -30,8 +30,8 @@ export default function RevenueSplitsControl({
     initialMembers,
     allUsers
 }: RevenueSplitsControlProps) {
-    const [companyFundRatio, setCompanyFundRatio] = useState(initialCompanyFundRatio * 100);
-    const [finderFeeRatio, setFinderFeeRatio] = useState(initialFinderFeeRatio * 100);
+    const companyFundRatio = 20;
+    const finderFeeRatio = 10;
     const [members, setMembers] = useState<Member[]>(initialMembers);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -56,12 +56,29 @@ export default function RevenueSplitsControl({
         setLoading(true);
         setSuccess(false);
         try {
+            const hasEmptyUser = members.some(m => !m.userId);
+            if (hasEmptyUser) {
+                alert("All members must have a user selected");
+                setLoading(false);
+                return;
+            }
+
+            // Check for duplicates within each role
+            const finderIds = members.filter(m => m.role === "FINDER").map(m => m.userId);
+            const executionIds = members.filter(m => m.role === "EXECUTION").map(m => m.userId);
+
+            if (new Set(finderIds).size !== finderIds.length || new Set(executionIds).size !== executionIds.length) {
+                alert("The same user cannot be added multiple times to the same role category");
+                setLoading(false);
+                return;
+            }
+
             const res = await fetch(`/api/admin/projects/${projectId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    companyFundRatio: companyFundRatio / 100,
-                    finderFeeRatio: finderFeeRatio / 100,
+                    companyFundRatio: 0.2,
+                    finderFeeRatio: 0.1,
                     members: members.map(m => ({
                         userId: m.userId,
                         role: m.role,
@@ -112,23 +129,17 @@ export default function RevenueSplitsControl({
                     <label className="text-[10px] uppercase font-bold tracking-widest text-gray-500 flex items-center gap-2">
                         Company Fund % <Info className="w-3 h-3" />
                     </label>
-                    <input
-                        type="number"
-                        value={companyFundRatio}
-                        onChange={(e) => setCompanyFundRatio(Number(e.target.value))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-agency-accent/50 transition-colors"
-                    />
+                    <div className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-gray-400 font-medium">
+                        20%
+                    </div>
                 </div>
                 <div className="space-y-2">
                     <label className="text-[10px] uppercase font-bold tracking-widest text-gray-500 flex items-center gap-2">
                         Finder Pool % <Info className="w-3 h-3" />
                     </label>
-                    <input
-                        type="number"
-                        value={finderFeeRatio}
-                        onChange={(e) => setFinderFeeRatio(Number(e.target.value))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-agency-accent/50 transition-colors"
-                    />
+                    <div className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-gray-400 font-medium">
+                        10%
+                    </div>
                 </div>
                 <div className="space-y-2">
                     <label className="text-[10px] uppercase font-bold tracking-widest text-gray-500 flex items-center gap-2">
@@ -160,19 +171,23 @@ export default function RevenueSplitsControl({
                             <select
                                 value={member.userId}
                                 onChange={(e) => updateMember(members.indexOf(member), { userId: e.target.value })}
-                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-agency-accent/50"
+                                className="flex-1 select-field px-4 py-2 text-sm"
                             >
                                 <option value="">Select User</option>
-                                {allUsers.map(u => (
-                                    <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
-                                ))}
+                                {allUsers.map(u => {
+                                    const isAlreadySelected = finders.some(f => f.userId === u.id && f.userId !== member.userId);
+                                    if (isAlreadySelected) return null;
+                                    return (
+                                        <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                                    );
+                                })}
                             </select>
                             <div className="w-32 flex items-center gap-2">
                                 <input
                                     type="number"
                                     value={member.share}
                                     onChange={(e) => updateMember(members.indexOf(member), { share: Number(e.target.value) })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm"
+                                    className="w-full input-field px-3 py-2 text-sm"
                                     placeholder="Weight"
                                 />
                                 <span className="text-[10px] text-gray-500 font-mono">
@@ -213,19 +228,23 @@ export default function RevenueSplitsControl({
                             <select
                                 value={member.userId}
                                 onChange={(e) => updateMember(members.indexOf(member), { userId: e.target.value })}
-                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-agency-accent/50"
+                                className="flex-1 select-field px-4 py-2 text-sm"
                             >
                                 <option value="">Select User</option>
-                                {allUsers.map(u => (
-                                    <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
-                                ))}
+                                {allUsers.map(u => {
+                                    const isAlreadySelected = executionTeam.some(et => et.userId === u.id && et.userId !== member.userId);
+                                    if (isAlreadySelected) return null;
+                                    return (
+                                        <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                                    );
+                                })}
                             </select>
                             <div className="w-32 flex items-center gap-2">
                                 <input
                                     type="number"
                                     value={member.share}
                                     onChange={(e) => updateMember(members.indexOf(member), { share: Number(e.target.value) })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm"
+                                    className="w-full input-field px-3 py-2 text-sm"
                                     placeholder="Weight"
                                 />
                                 <span className="text-[10px] text-gray-500 font-mono">

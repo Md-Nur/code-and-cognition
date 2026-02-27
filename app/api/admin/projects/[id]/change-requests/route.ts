@@ -102,3 +102,44 @@ export async function POST(req: Request, { params }: Params) {
   return NextResponse.json(cr, { status: 201 });
 }
 
+
+/** PATCH /api/admin/projects/:id/change-requests  — approve/reject a CR (founders only) */
+export async function PATCH(req: Request, { params }: Params) {
+  const session = await auth();
+  if (!session?.user)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id: projectId } = await params;
+
+  // Only FOUNDER or CO_FOUNDER can approve/reject
+  if (session.user.role !== Role.FOUNDER && session.user.role !== Role.CO_FOUNDER) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const body = await req.json();
+  const { crId, status } = body;
+
+  if (!crId || !status) {
+    return NextResponse.json({ error: "crId and status are required" }, { status: 400 });
+  }
+
+  const cr = await prisma.changeRequest.update({
+    where: { id: crId, projectId },
+    data: {
+      status,
+      clientApprovalAt: new Date(), // Using this generic field for admin design too for now
+    },
+    include: { requestedBy: { select: { name: true } } },
+  });
+
+  // Log to project activity
+  await prisma.activityLog.create({
+    data: {
+      projectId,
+      userId: session.user.id,
+      action: `${status === "APPROVED" ? "approved" : "rejected"} the change request: "${cr.title}"`,
+    },
+  });
+
+  return NextResponse.json(cr);
+}

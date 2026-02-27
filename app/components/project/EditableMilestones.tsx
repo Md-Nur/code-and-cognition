@@ -20,7 +20,7 @@ export default function EditableMilestones({ projectId, initialMilestones, userR
         if (!newTitle.trim() || isSaving) return;
         setIsSaving(true);
         try {
-            const res = await fetch(`/api/project/${projectId}/milestones`, {
+            const res = await fetch(`/api/admin/projects/${projectId}/milestones`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title: newTitle, description: newDesc }),
@@ -42,8 +42,8 @@ export default function EditableMilestones({ projectId, initialMilestones, userR
     const handleStatusUpdate = async (id: string, newStatus: string) => {
         if (!canEdit) return;
         try {
-            const res = await fetch(`/api/project/${projectId}/milestones`, {
-                method: "PUT",
+            const res = await fetch(`/api/admin/projects/${projectId}/milestones`, {
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id, status: newStatus }),
             });
@@ -59,8 +59,8 @@ export default function EditableMilestones({ projectId, initialMilestones, userR
     const handleSaveEdit = async (id: string) => {
         if (!editTitle.trim()) return;
         try {
-            const res = await fetch(`/api/project/${projectId}/milestones`, {
-                method: "PUT",
+            const res = await fetch(`/api/admin/projects/${projectId}/milestones`, {
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id, title: editTitle, description: editDesc }),
             });

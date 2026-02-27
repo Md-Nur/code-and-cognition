@@ -138,8 +138,8 @@ model Project {
   riskNotes        String? /// Risk management notes
   workspaceUrl     String? /// Internal/External workspace link (e.g. Notion, Slack, or internal)
   workspaceStatus  String?         @default("PENDING") /// PENDING | ACTIVE | ARCHIVED
-  companyFundRatio Float           @default(0.20) /// Dynamic split for company fund
-  finderFeeRatio   Float           @default(0.10) /// Dynamic split for finder fee
+  companyFundRatio Float           @default(0.10) /// Dynamic split for company fund
+  finderFeeRatio   Float           @default(0.20) /// Dynamic split for finder fee
   createdAt        DateTime        @default(now())
   payments         Payment[]
   proposals        Proposal[]

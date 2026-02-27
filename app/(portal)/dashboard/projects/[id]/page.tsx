@@ -6,12 +6,13 @@ import { Role } from "@prisma/client";
 import { format } from "date-fns";
 import {
     ArrowLeft, CheckCircle2, Clock, AlertCircle, Activity,
-    Layers, Calendar, GitPullRequest, MessageSquare
+    Layers, Calendar
 } from "lucide-react";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
 import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
 import RevenueSplitsControl from "@/app/components/admin/RevenueSplitsControl";
 import EditableMilestones from "@/app/components/project/EditableMilestones";
+import ChangeRequestsPanel from "@/app/components/admin/ChangeRequestsPanel";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },
@@ -30,7 +31,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             milestones: { orderBy: { order: "asc" } },
             members: { include: { user: { select: { id: true, name: true, email: true } } } },
             activityLogs: { orderBy: { createdAt: "desc" }, take: 30, include: { user: { select: { name: true } } } },
-            changeRequests: { orderBy: { createdAt: "desc" } },
+            changeRequests: { orderBy: { createdAt: "desc" }, include: { requestedBy: { select: { name: true, role: true } } } },
             booking: true,
             payments: { orderBy: { paidAt: "desc" } },
         },
@@ -69,38 +70,65 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     return (
         <div className="space-y-8">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <Link href="/dashboard/projects" className="inline-flex items-center gap-2 text-xs text-gray-500 hover:text-white transition-colors group mb-3">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-8">
+                <div className="space-y-4">
+                    <Link href="/dashboard/projects" className="inline-flex items-center gap-2 text-xs text-gray-500 hover:text-white transition-colors group">
                         <ArrowLeft className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform" /> All Projects
                     </Link>
-                    <h1 className="text-2xl md:text-3xl font-display font-medium tracking-tight text-white">{project.title}</h1>
+                    <div className="space-y-2">
+                        <h1 className="text-3xl md:text-4xl font-display font-medium tracking-tight text-white">{project.title}</h1>
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+                            {project.startDate && (
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
+                                    <Calendar className="w-3.5 h-3.5 text-agency-accent" />
+                                    <span>Started <span className="text-white font-medium">{format(new Date(project.startDate), "MMM d, yyyy")}</span></span>
+                                </div>
+                            )}
+                            {project.endDate && (
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
+                                    <Calendar className="w-3.5 h-3.5 text-rose-400" />
+                                    <span>Deadline <span className="text-white font-medium">{format(new Date(project.endDate), "MMM d, yyyy")}</span></span>
+                                </div>
+                            )}
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
+                                <Layers className="w-3.5 h-3.5 text-blue-400" />
+                                <span><span className="text-white font-medium">{completedMilestones}/{project.milestones.length}</span> Milestones</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${health.bg} ${health.text}`}>
+                <div className="flex flex-row md:flex-col items-center md:items-end gap-3">
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${health.bg} ${health.text} border ${health.text.replace('text-', 'border-').replace('500', '500/20')}`}>
                         <HealthIcon className="w-4 h-4" /> {health.label}
                     </div>
-                    <div className="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-xs text-gray-400">
-                        {project.status}
+                    <div className="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-xs text-gray-400 uppercase tracking-widest font-semibold">
+                        {project.status.replace('_', ' ')}
                     </div>
                 </div>
             </div>
 
             {/* Next Action */}
-            <NextActionPanel project={project} pendingChangeRequests={pendingCRs} userRole={user.role} />
+            <div className="relative">
+                <NextActionPanel project={project} pendingChangeRequests={pendingCRs} userRole={user.role} />
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Column */}
+                {/* Left Column - Main Content */}
                 <div className="lg:col-span-8 space-y-8">
                     {/* Progress & Milestones */}
                     <div className="glass-panel p-8 rounded-3xl border border-white/5">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                <Layers className="w-5 h-5 text-agency-accent" /> Road to Delivery
-                            </h3>
-                            <span className="text-3xl font-bold text-white">{progress}%</span>
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 className="text-xl font-semibold text-white flex items-center gap-3">
+                                    <Layers className="w-6 h-6 text-agency-accent" /> Road to Delivery
+                                </h3>
+                                <p className="text-sm text-gray-500 mt-1">Track and manage project milestones</p>
+                            </div>
+                            <div className="text-right">
+                                <span className="text-4xl font-bold text-white tracking-tighter">{progress}%</span>
+                                <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1">Complete</div>
+                            </div>
                         </div>
-                        {/* Interactive Milestones replaces static ProgressBar and lists */}
                         <EditableMilestones
                             projectId={project.id}
                             initialMilestones={project.milestones}
@@ -108,75 +136,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                         />
                     </div>
 
-                    {/* Change Requests */}
-                    {user.role !== Role.CLIENT && (
-                        <div className="glass-panel p-8 rounded-3xl border border-white/5">
-                            <h3 className="text-lg font-semibold text-white flex items-center gap-2 mb-6">
-                                <GitPullRequest className="w-5 h-5 text-agency-accent" /> Change Requests
-                                {pendingCRs > 0 && <span className="ml-auto px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-bold">{pendingCRs} Pending</span>}
-                            </h3>
-                            {project.changeRequests.length === 0 ? (
-                                <p className="text-gray-500 text-sm text-center py-8">No change requests submitted.</p>
-                            ) : (
-                                <div className="space-y-4">
-                                    {project.changeRequests.map((cr: any) => (
-                                        <div key={cr.id} className={`p-5 rounded-2xl border ${cr.status === "PENDING" ? "border-amber-500/20 bg-amber-500/5" : cr.status === "APPROVED" ? "border-emerald-500/20 bg-emerald-500/5" : "border-white/5 bg-white/[0.02]"}`}>
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div>
-                                                    <p className="text-sm font-semibold text-white mb-1">{cr.title}</p>
-                                                    <p className="text-xs text-gray-500">{cr.description}</p>
-                                                </div>
-                                                <span className={`text-[10px] font-bold uppercase tracking-widest shrink-0 px-3 py-1 rounded-full ${cr.status === "PENDING" ? "bg-amber-500/10 text-amber-500" :
-                                                    cr.status === "APPROVED" ? "bg-emerald-500/10 text-emerald-500" :
-                                                        "bg-red-500/10 text-red-400"}`}>
-                                                    {cr.status}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
-
-                {/* Right Column */}
-                <div className="lg:col-span-4 space-y-6">
-                    {/* Project Meta */}
-                    <div className="glass-panel p-8 rounded-3xl border border-white/5 space-y-5">
-                        <h3 className="text-sm font-semibold text-white">Details</h3>
-                        {project.startDate && (
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-500 flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Started</span>
-                                <span className="text-xs font-medium text-white">{format(new Date(project.startDate), "MMM d, yyyy")}</span>
-                            </div>
-                        )}
-                        {project.endDate && (
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-500 flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Deadline</span>
-                                <span className="text-xs font-medium text-white">{format(new Date(project.endDate), "MMM d, yyyy")}</span>
-                            </div>
-                        )}
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs text-gray-500">Milestones</span>
-                            <span className="text-xs font-medium text-white">{completedMilestones}/{project.milestones.length} completed</span>
-                        </div>
-                        {user.role !== Role.CLIENT && (
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-500">Team Members</span>
-                                <span className="text-xs font-medium text-white">{project.members.length}</span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Admin Actions */}
+                    {/* Revenue Splits - Moved here for more space */}
                     {user.role === Role.FOUNDER && (
-                        <>
-                            <ProjectAdminActions
-                                projectId={project.id}
-                                currentStatus={project.status}
-                                currentHealth={project.health}
-                            />
+                        <div className="glass-panel p-8 rounded-3xl border border-white/5">
+                            <div className="mb-6">
+                                <h3 className="text-xl font-semibold text-white flex items-center gap-3">
+                                    <Activity className="w-6 h-6 text-emerald-400" /> Revenue & Resources
+                                </h3>
+                                <p className="text-sm text-gray-500 mt-1">Manage project splits and team assignments</p>
+                            </div>
                             <RevenueSplitsControl
                                 projectId={project.id}
                                 initialCompanyFundRatio={project.companyFundRatio}
@@ -184,26 +152,76 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                                 initialMembers={project.members}
                                 allUsers={allUsers}
                             />
-                        </>
+                        </div>
+                    )}
+
+                    {/* Change Requests */}
+                    {user.role !== Role.CLIENT && (
+                        <ChangeRequestsPanel
+                            projectId={project.id}
+                            initialCRs={project.changeRequests as any}
+                            userRole={user.role}
+                        />
+                    )}
+                </div>
+
+                {/* Right Column - Sidebar */}
+                <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8 lg:self-start">
+                    {/* Quick Stats for Clients */}
+                    {user.role === Role.CLIENT && (
+                        <div className="glass-panel p-6 rounded-3xl border border-white/5 space-y-4">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Quick Stats</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                                    <div className="text-[10px] text-gray-500 uppercase mb-1">Payments</div>
+                                    <div className="text-lg font-bold text-white">{project.payments.length}</div>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                                    <div className="text-[10px] text-gray-500 uppercase mb-1">Requests</div>
+                                    <div className="text-lg font-bold text-white">{project.changeRequests.length}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Admin Tools */}
+                    {user.role === Role.FOUNDER && (
+                        <div className="space-y-6">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 px-2 lg:px-4">Project Controls</h3>
+                            <ProjectAdminActions
+                                projectId={project.id}
+                                currentStatus={project.status}
+                                currentHealth={project.health}
+                            />
+                        </div>
                     )}
 
                     {/* Activity Feed */}
-                    <div className="glass-panel p-8 rounded-3xl border border-white/5">
-                        <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-6">
-                            <Activity className="w-4 h-4 text-agency-accent" /> Activity
+                    <div className="glass-panel p-6 rounded-3xl border border-white/5">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center justify-between mb-6">
+                            Activity Feed
+                            <Activity className="w-3.5 h-3.5" />
                         </h3>
                         {project.activityLogs.length === 0 ? (
-                            <p className="text-xs text-gray-500 text-center py-6">No activity yet.</p>
+                            <div className="text-center py-12 border border-dashed border-white/5 rounded-2xl">
+                                <Activity className="w-8 h-8 text-white/10 mx-auto mb-3" />
+                                <p className="text-xs text-gray-500 italic">No activity yet.</p>
+                            </div>
                         ) : (
-                            <div className="space-y-5 max-h-[400px] overflow-y-auto custom-scrollbar">
+                            <div className="space-y-1">
                                 {project.activityLogs.map((log: any) => (
-                                    <div key={log.id} className="flex gap-3">
-                                        <div className="w-6 h-6 rounded-full bg-agency-accent/10 text-agency-accent flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5 uppercase tracking-tighter">
-                                            {log.user?.name ? log.user.name.substring(0, 2) : "SYS"}
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-white/80 leading-snug">{log.action}</p>
-                                            <p className="text-[10px] text-gray-600 mt-1">{format(new Date(log.createdAt), "MMM d, h:mm a")}</p>
+                                    <div key={log.id} className="group relative pl-7 py-3 border-l-2 border-white/5 hover:border-agency-accent/40 transition-colors rounded-r-lg hover:bg-white/[0.02]">
+                                        <div className="absolute left-[-5px] top-[14px] w-2 h-2 rounded-full bg-agency-accent/30 border border-agency-accent/50 group-hover:bg-agency-accent/60 transition-colors shrink-0" />
+                                        <div className="space-y-0.5">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className="text-[10px] font-bold text-agency-accent uppercase tracking-tighter">
+                                                    {log.user?.name ?? "System"}
+                                                </span>
+                                                <span className="text-[10px] text-gray-600 tabular-nums">
+                                                    {format(new Date(log.createdAt), "MMM d, h:mma")}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-white/70 leading-relaxed">{log.action}</p>
                                         </div>
                                     </div>
                                 ))}

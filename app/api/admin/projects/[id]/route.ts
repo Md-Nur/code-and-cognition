@@ -9,8 +9,15 @@ import { z } from "zod";
 const projectUpdateSchema = z.object({
   status: z.enum(["ACTIVE", "COMPLETED", "DELIVERED", "CANCELLED"]).optional(),
   health: z.enum(["GREEN", "YELLOW", "RED"]).optional(),
-}).refine((d) => d.status !== undefined || d.health !== undefined, {
-  message: "At least one of status or health must be provided",
+  companyFundRatio: z.number().min(0).max(1).optional(),
+  finderFeeRatio: z.number().min(0).max(1).optional(),
+  members: z.array(z.object({
+    userId: z.string(),
+    role: z.enum(["FINDER", "EXECUTION"]),
+    share: z.number().min(0)
+  })).optional(),
+}).refine((d) => d.status !== undefined || d.health !== undefined || d.companyFundRatio !== undefined || d.finderFeeRatio !== undefined || d.members !== undefined, {
+  message: "At least one update property must be provided",
 });
 
 export async function GET(
@@ -103,8 +110,8 @@ export async function PATCH(
         data: {
           ...(status && { status }),
           ...(health && { health }),
-          ...(companyFundRatio !== undefined && { companyFundRatio }),
-          ...(finderFeeRatio !== undefined && { finderFeeRatio }),
+          companyFundRatio: 0.1,
+          finderFeeRatio: 0.2,
         },
         include: {
           booking: true,

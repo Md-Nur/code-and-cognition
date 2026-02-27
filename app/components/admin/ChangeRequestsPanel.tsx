@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { ChangeRequest, CRStatus } from "@prisma/client";
 
 type CRWithUser = ChangeRequest & {
@@ -47,6 +48,9 @@ export default function ChangeRequestsPanel({
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const isFounder = userRole === "FOUNDER";
   const canCreate = userRole === "FOUNDER" || userRole === "CONTRACTOR";
@@ -84,6 +88,18 @@ export default function ChangeRequestsPanel({
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function handleDecision(crId: string, status: "APPROVED" | "REJECTED") {
+    const label = status === "APPROVED" ? "approve" : "reject";
+    if (!confirm(`Are you sure you want to ${label} this change request?`))
+      return;
+    const res = await fetch(`/api/admin/projects/${projectId}/change-requests`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ crId, status }),
+    });
+    if (res.ok) await refreshCRs();
   }
 
 
@@ -171,6 +187,23 @@ export default function ChangeRequestsPanel({
                   </div>
                 </div>
 
+                {/* Approve / Reject Actions - ONLY For Founders and Pending State */}
+                {isFounder && cr.status === "PENDING" && (
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => handleDecision(cr.id, "REJECTED")}
+                      className="text-[10px] px-2 py-1 rounded-lg bg-white/5 text-gray-400 hover:bg-rose-500 hover:text-white transition-colors font-bold uppercase tracking-wider"
+                    >
+                      Reject
+                    </button>
+                    <button
+                      onClick={() => handleDecision(cr.id, "APPROVED")}
+                      className="text-[10px] px-2 py-1 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors font-bold uppercase tracking-wider shadow-lg shadow-emerald-600/20"
+                    >
+                      Approve
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -178,9 +211,9 @@ export default function ChangeRequestsPanel({
       )}
 
       {/* Create CR Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="glass-panel w-full max-w-lg p-6 rounded-xl animate-fade-in-up">
+      {mounted && showModal && createPortal(
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg p-6 rounded-2xl bg-gray-900 border border-white/10 shadow-2xl animate-slide-up">
             <h3 className="text-lg font-bold mb-1">Request a Change</h3>
             <p className="text-xs text-gray-500 mb-5">
               Describe the scope change. A Founder will review and approve or
@@ -275,7 +308,8 @@ export default function ChangeRequestsPanel({
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
