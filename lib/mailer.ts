@@ -26,10 +26,10 @@ export async function sendMail(to: string, subject: string, html: string) {
             subject,
             html,
         });
-        console.log("Message sent: %s", info.messageId);
+        console.log(`[MAILER] Message sent successfully to ${to}. ID: ${info.messageId}`);
         return true;
     } catch (error) {
-        console.error("Error sending email:", error);
+        console.error(`[MAILER] CRITICAL: Failed to send email to ${to}:`, error);
         return false;
     }
 }

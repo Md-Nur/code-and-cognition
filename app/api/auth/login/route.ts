@@ -119,7 +119,8 @@ export async function POST(req: Request) {
 
                     // Send Magic Link
                     const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com"}/magic-login?token=${token}`;
-                    await sendMail(
+                    console.log(`[AUTH] Attempting to send magic link to ${user.email}`);
+                    const mailSent = await sendMail(
                         user.email,
                         "Your Login Link - Code & Cognition",
                         `<div style="font-family: sans-serif; padding: 20px;">
@@ -129,8 +130,15 @@ export async function POST(req: Request) {
                             <p style="color: #666; font-size: 12px; mt-4">If you did not request this link, please ignore this email.</p>
                           </div>`
                     );
+
+                    if (!mailSent) {
+                        console.error(`[AUTH] FAILED to send magic link to ${user.email}`);
+                    } else {
+                        console.log(`[AUTH] Magic link sent successfully to ${user.email}`);
+                    }
                 } else {
                     // Staff requesting magic link - tell them to use password
+                    console.log(`[AUTH] Staff user ${user.email} requested magic link. Redirecting to password login.`);
                     await prisma.securityLog.create({
                         data: { email, action: "MAGIC_LINK_REQUEST", status: "REJECTED_STAFF", ip, userAgent, fingerprint, isSuspicious }
                     });
@@ -147,6 +155,7 @@ export async function POST(req: Request) {
                 }
             } else {
                 // Non-existent email - log it
+                console.log(`[AUTH] Magic link requested for NON-EXISTENT email: ${email}`);
                 await prisma.securityLog.create({
                     data: { email, action: "MAGIC_LINK_REQUEST", status: "NOT_FOUND", ip, userAgent, fingerprint, isSuspicious }
                 });
