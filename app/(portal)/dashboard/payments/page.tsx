@@ -21,7 +21,20 @@ export default function AdminPaymentsPage() {
     const [editingPaymentId, setEditingPaymentId] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
+    const [session, setSession] = useState<any>(null);
+
     useEffect(() => {
+        async function getSession() {
+            const res = await fetch("/api/auth/profile");
+            if (res.ok) {
+                const s = await res.json();
+                if (s.user.role === "CLIENT") {
+                    window.location.href = "/dashboard";
+                }
+                setSession(s);
+            }
+        }
+        getSession();
         fetchPayments();
         fetchProjects();
     }, []);

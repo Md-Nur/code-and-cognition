@@ -47,6 +47,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         if (!isMember && project.finderId !== user.id) redirect("/dashboard/projects");
     }
 
+    // RBAC: Clients can only view their own projects based on email
+    if (user.role === Role.CLIENT) {
+        const clientEmail = project.booking?.clientEmail;
+        if (!clientEmail || clientEmail.toLowerCase() !== user.email.toLowerCase()) {
+            redirect("/dashboard/projects");
+        }
+    }
+
     const pendingCRs = project.changeRequests.filter((c: any) => c.status === "PENDING").length;
     const completedMilestones = project.milestones.filter((m: any) => m.status === "COMPLETED").length;
     const progress = project.milestones.length > 0 ? Math.round((completedMilestones / project.milestones.length) * 100) : 0;

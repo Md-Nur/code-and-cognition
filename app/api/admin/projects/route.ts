@@ -3,8 +3,30 @@ import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
 import { projectSchema } from "@/lib/validations/admin";
 
-export const GET = withAuth(async () => {
+export const GET = withAuth(async (req: any, context: any, session: any) => {
+    const { user } = session;
+    let where: any = {};
+
+    if (user.role === Role.CONTRACTOR) {
+        where = {
+            OR: [
+                { finderId: user.id },
+                { members: { some: { userId: user.id } } }
+            ]
+        };
+    } else if (user.role === Role.CLIENT) {
+        where = {
+            booking: {
+                clientEmail: {
+                    equals: user.email,
+                    mode: 'insensitive'
+                }
+            }
+        };
+    }
+
     const projects = await prisma.project.findMany({
+        where,
         include: {
             finder: true,
             booking: true,
@@ -13,7 +35,7 @@ export const GET = withAuth(async () => {
         orderBy: { createdAt: "desc" },
     });
     return ApiResponse.success(projects);
-}, Role.FOUNDER);
+}, [Role.FOUNDER, Role.CONTRACTOR, Role.CLIENT]);
 
 export const POST = withAuth(async (req) => {
     try {

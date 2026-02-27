@@ -16,6 +16,8 @@ export default function AdminLedgerPage() {
     const [payoutAmount, setPayoutAmount] = useState("");
     const [currency, setCurrency] = useState<"BDT" | "USD">("BDT");
 
+    const [session, setSession] = useState<any>(null);
+
     async function fetchData() {
         const res = await fetch("/api/admin/ledger");
         if (res.ok) setData(await res.json());
@@ -23,6 +25,17 @@ export default function AdminLedgerPage() {
     }
 
     useEffect(() => {
+        async function getSession() {
+            const res = await fetch("/api/auth/profile");
+            if (res.ok) {
+                const s = await res.json();
+                if (s.user.role === "CLIENT") {
+                    window.location.href = "/dashboard";
+                }
+                setSession(s);
+            }
+        }
+        getSession();
         fetchData();
     }, []);
 

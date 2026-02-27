@@ -101,6 +101,22 @@ export default function LeadsDatabasePage() {
         }
     }
 
+    const [session, setSession] = useState<any>(null);
+
+    useEffect(() => {
+        async function getSession() {
+            const res = await fetch("/api/auth/profile");
+            if (res.ok) {
+                const s = await res.json();
+                if (s.user.role === "CLIENT") {
+                    window.location.href = "/dashboard";
+                }
+                setSession(s);
+            }
+        }
+        getSession();
+    }, []);
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

@@ -40,7 +40,20 @@ export default function AdminServicesPage() {
     const [subModalFor, setSubModalFor] = useState<string | null>(null); // serviceId
     const [subForm, setSubForm] = useState(emptySubForm);
 
+    const [session, setSession] = useState<any>(null);
+
     useEffect(() => {
+        async function getSession() {
+            const res = await fetch("/api/auth/profile");
+            if (res.ok) {
+                const s = await res.json();
+                if (s.user.role === "CLIENT") {
+                    window.location.href = "/dashboard";
+                }
+                setSession(s);
+            }
+        }
+        getSession();
         fetchServices();
     }, []);
 
