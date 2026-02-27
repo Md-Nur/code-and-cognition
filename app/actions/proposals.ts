@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
@@ -63,6 +65,8 @@ export const createProposalForBooking = withProxyValidation(
         viewToken: crypto.randomUUID(),
       },
     });
+
+    revalidatePath("/dashboard/proposals");
 
     await prisma.booking.update({
       where: { id: booking.id },
@@ -138,6 +142,7 @@ export const sendProposal = withProxyValidation(
       }
     }
 
+    revalidatePath("/dashboard/proposals");
     return { ok: true, proposal } as const;
   },
   { requiredRole: Role.FOUNDER }
