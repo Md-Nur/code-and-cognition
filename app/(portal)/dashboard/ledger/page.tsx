@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { LedgerEntry, LedgerBalance, User } from "@prisma/client";
+import { CircleDollarSign, Wallet, X, CheckCircle2 } from "lucide-react";
 
 type LedgerData = {
     companyFundEntries: (LedgerEntry & { payment: { project: { title: string } } })[];
@@ -156,11 +157,24 @@ export default function AdminLedgerPage() {
 
             {/* Payout Modal */}
             {showPayoutModal && selectedUser && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="glass-panel w-full max-w-sm p-6 rounded-xl animate-fade-in-up">
-                        <h3 className="text-lg font-bold mb-4">Record Payout for {selectedUser.name}</h3>
-                        <form onSubmit={handlePayout} className="space-y-4">
-                            <div>
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div className="glass-panel w-full max-w-sm p-0 rounded-3xl overflow-hidden animate-fade-in-up border-white/10 shadow-brand/20">
+                        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <Wallet className="w-5 h-5 text-agency-accent" />
+                                Record Payout
+                            </h3>
+                            <button onClick={() => setShowPayoutModal(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors text-gray-500 hover:text-white">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handlePayout} className="p-8 space-y-6">
+                            <div className="space-y-2">
+                                <p className="text-sm text-gray-400">Recording payout for <span className="text-white font-medium">{selectedUser.name}</span></p>
+                            </div>
+
+                            <div className="space-y-2">
                                 <label className="input-label">Currency</label>
                                 <select
                                     className="select-field"
@@ -171,8 +185,11 @@ export default function AdminLedgerPage() {
                                     <option value="USD">USD ($)</option>
                                 </select>
                             </div>
-                            <div>
-                                <label className="input-label">Payout Amount</label>
+                            <div className="space-y-2">
+                                <label className="input-label flex items-center gap-2">
+                                    <CircleDollarSign className="w-4 h-4 text-gray-500" />
+                                    Payout Amount
+                                </label>
                                 <input
                                     type="number"
                                     required
@@ -182,11 +199,12 @@ export default function AdminLedgerPage() {
                                     onChange={(e) => setPayoutAmount(e.target.value)}
                                 />
                             </div>
-                            <div className="flex gap-4 pt-2">
-                                <button type="button" onClick={() => setShowPayoutModal(false)} className="btn-outline flex-1">
+                            <div className="flex gap-4 pt-4 border-t border-white/5">
+                                <button type="button" onClick={() => setShowPayoutModal(false)} className="btn-outline flex-1 rounded-2xl py-3">
                                     Cancel
                                 </button>
-                                <button type="submit" className="btn-brand flex-1">
+                                <button type="submit" className="btn-brand flex-1 rounded-2xl py-3 gap-2">
+                                    <CheckCircle2 className="w-4 h-4" />
                                     Confirm Payout
                                 </button>
                             </div>

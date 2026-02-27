@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Payment, Project } from "@prisma/client";
+import { Briefcase, CircleDollarSign, StickyNote, X, Plus, Trash2, Edit2, CheckCircle2 } from "lucide-react";
 
 type PaymentWithProject = Payment & { project: Project };
 
@@ -125,8 +126,9 @@ export default function AdminPaymentsPage() {
                     setEditingPaymentId(null);
                     setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
                     setShowModal(true);
-                }} className="btn-brand">
-                    + Record Payment
+                }} className="btn-brand gap-2">
+                    <Plus className="w-4 h-4" />
+                    Record Payment
                 </button>
             </div>
 
@@ -165,16 +167,22 @@ export default function AdminPaymentsPage() {
                                     <td className="p-4 text-right">
                                         <button
                                             onClick={() => handleEdit(payment)}
-                                            className="text-blue-400 hover:text-blue-300 text-sm mr-4"
+                                            className="text-blue-400 hover:text-blue-300 transition-colors p-2"
+                                            title="Edit"
                                         >
-                                            Edit
+                                            <Edit2 className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(payment.id)}
-                                            className="text-red-400 hover:text-red-300 text-sm"
+                                            className="text-red-400 hover:text-red-300 transition-colors p-2"
                                             disabled={isDeleting === payment.id}
+                                            title="Delete"
                                         >
-                                            {isDeleting === payment.id ? "Deleting..." : "Delete"}
+                                            {isDeleting === payment.id ? (
+                                                <div className="w-4 h-4 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                                            ) : (
+                                                <Trash2 className="w-4 h-4" />
+                                            )}
                                         </button>
                                     </td>
                                 </tr>
@@ -186,13 +194,24 @@ export default function AdminPaymentsPage() {
 
             {/* Modal Overlay */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="glass-panel w-full max-w-md p-6 rounded-xl animate-fade-in-up">
-                        <h2 className="text-xl font-bold mb-4">{editingPaymentId ? "Edit Payment" : "Record New Payment"}</h2>
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div className="glass-panel w-full max-w-lg p-0 rounded-3xl overflow-hidden animate-fade-in-up border-white/10 shadow-brand/20">
+                        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                {editingPaymentId ? <Edit2 className="w-5 h-5 text-agency-accent" /> : <Plus className="w-5 h-5 text-agency-accent" />}
+                                {editingPaymentId ? "Edit Payment" : "Record New Payment"}
+                            </h2>
+                            <button onClick={handleCloseModal} className="p-2 hover:bg-white/5 rounded-full transition-colors text-gray-500 hover:text-white">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="input-label">Project</label>
+                        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                            <div className="space-y-2">
+                                <label className="input-label flex items-center gap-2">
+                                    <Briefcase className="w-4 h-4 text-gray-500" />
+                                    Project
+                                </label>
                                 <select
                                     required
                                     className="select-field"
@@ -206,19 +225,24 @@ export default function AdminPaymentsPage() {
                                 </select>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="input-label">Amount</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        className="input-field"
-                                        placeholder="0.00"
-                                        value={formData.amount}
-                                        onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                                    />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="input-label flex items-center gap-2">
+                                        <CircleDollarSign className="w-4 h-4 text-gray-500" />
+                                        Amount
+                                    </label>
+                                    <div className="relative group">
+                                        <input
+                                            type="number"
+                                            required
+                                            className="input-field"
+                                            placeholder="0.00"
+                                            value={formData.amount}
+                                            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                                        />
+                                    </div>
                                 </div>
-                                <div>
+                                <div className="space-y-2">
                                     <label className="input-label">Currency</label>
                                     <select
                                         className="select-field"
@@ -231,8 +255,11 @@ export default function AdminPaymentsPage() {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="input-label">Note (Optional)</label>
+                            <div className="space-y-2">
+                                <label className="input-label flex items-center gap-2">
+                                    <StickyNote className="w-4 h-4 text-gray-500" />
+                                    Note (Optional)
+                                </label>
                                 <input
                                     type="text"
                                     className="input-field"
@@ -242,11 +269,12 @@ export default function AdminPaymentsPage() {
                                 />
                             </div>
 
-                            <div className="flex gap-4 pt-2">
-                                <button type="button" onClick={handleCloseModal} className="btn-outline flex-1">
+                            <div className="flex gap-4 pt-4 border-t border-white/5">
+                                <button type="button" onClick={handleCloseModal} className="btn-outline flex-1 rounded-2xl py-3">
                                     Cancel
                                 </button>
-                                <button type="submit" className="btn-brand flex-1">
+                                <button type="submit" className="btn-brand flex-1 rounded-2xl py-3 gap-2">
+                                    <CheckCircle2 className="w-4 h-4" />
                                     {editingPaymentId ? "Update Payment Info" : "Process Split"}
                                 </button>
                             </div>
