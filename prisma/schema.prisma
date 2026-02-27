@@ -320,8 +320,19 @@ enum NotificationType {
 
 enum Role {
   FOUNDER
+  CO_FOUNDER
   CONTRACTOR
   CLIENT
+}
+
+model Invitation {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      Role
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 enum Status {

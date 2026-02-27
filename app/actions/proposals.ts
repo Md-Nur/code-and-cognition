@@ -386,6 +386,25 @@ export const approveProposalByToken = async (token: string, email: string) => {
     link: `/dashboard/proposals/${proposal.id}`,
   });
 
+  // Send Magic Link to Client for Project Access
+  try {
+    const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://www.codencognition.com"}/project/${result.project.viewToken}`;
+    await sendMail(
+      booking.clientEmail,
+      `Your Project is Active: ${result.project.title}`,
+      `<div style="font-family: sans-serif; padding: 20px;">
+          <h2>Project Successfully Initialized</h2>
+          <p>Hi ${booking.clientName},</p>
+          <p>The proposal for <strong>${booking.service?.title || "your project"}</strong> has been approved. Your project workspace is now ready.</p>
+          <p>Click the secure link below to access your project dashboard:</p>
+          <a href="${magicLinkUrl}" style="display: inline-block; padding: 10px 20px; background-color: #E6FF00; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px;">Access Project Dashboard</a>
+          <p style="color: #666; font-size: 12px; margin-top: 20px;">You can use this link anytime to view project progress, milestones, and messages.</p>
+        </div>`
+    );
+  } catch (error) {
+    console.error("Failed to send project access magic link email:", error);
+  }
+
   return { ok: true, ...result } as const;
 };
 

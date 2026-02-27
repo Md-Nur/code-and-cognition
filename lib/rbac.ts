@@ -13,7 +13,7 @@ type UserAccessShape = {
 };
 
 export function isRoleAllowed(user: UserAccessShape, roles: Role[]) {
-  if (user.role === Role.FOUNDER) return true;
+  if (user.role === Role.FOUNDER || user.role === Role.CO_FOUNDER) return true;
   return roles.includes(user.role);
 }
 
@@ -50,7 +50,7 @@ export function canAccessProject(
   project: ProjectAccessShape,
   options?: { allowClient?: boolean; includeFinder?: boolean },
 ) {
-  if (user.role === Role.FOUNDER) return true;
+  if (user.role === Role.FOUNDER || user.role === Role.CO_FOUNDER) return true;
 
   if (user.role === Role.CONTRACTOR) {
     return isProjectMember(user, project, {
