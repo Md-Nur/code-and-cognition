@@ -25,11 +25,12 @@ model User {
 }
 
 /// Secure, short-lived tokens for passwordless client login.
-model MagicLink {
+model MagicToken {
   id        String   @id @default(cuid())
   email     String
   token     String   @unique
   expiresAt DateTime
+  used      Boolean  @default(false)
   createdAt DateTime @default(now())
 
   @@index([email])

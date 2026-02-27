@@ -60,12 +60,12 @@ export async function POST(req: Request) {
 
                 const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
 
-                await prisma.magicLink.create({
-                    data: { email: user.email, token, expiresAt }
+                await prisma.magicToken.create({
+                    data: { email: user.email, token, expiresAt, used: false }
                 });
 
                 // Send Email
-                const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify?token=${token}`;
+                const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://condencognition.com"}/magic-login?token=${token}`;
 
                 // Dynamic import to prevent circular dependency issues if mailer relies on auth
                 const { sendMail } = await import("@/lib/mailer");
