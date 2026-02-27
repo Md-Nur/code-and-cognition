@@ -15,11 +15,13 @@ model User {
   role           Role            @default(CONTRACTOR)
   createdAt      DateTime        @default(now())
   ledgerBalance  LedgerBalance?
-  finderProjects Project[]       @relation("Finder")
   memberProjects ProjectMember[]
+  finderProjects Project[]       @relation("ProjectFinder")
   activityLogs   ActivityLog[]
   changeRequests ChangeRequest[]
   notifications  Notification[]
+  ledgerEntries  LedgerEntry[]
+  projects       Project[]       @relation("ClientProject")
 }
 
 /// Secure, short-lived tokens for passwordless client login.
@@ -126,7 +128,7 @@ model Project {
   id               String          @id @default(cuid())
   title            String
   bookingId        String?         @unique
-  finderId         String /// The user who brought in the project
+  finderId         String? /// The user who brought in the project (maintained for backward compatibility)
   status           ProjectStatus   @default(ACTIVE)
   health           ProjectHealth   @default(GREEN)
   viewToken        String?         @unique @default(uuid()) /// Public viewing token for clients
@@ -141,24 +143,33 @@ model Project {
   createdAt        DateTime        @default(now())
   payments         Payment[]
   proposals        Proposal[]
-  booking          Booking?        @relation(fields: [bookingId], references: [id])
-  finder           User            @relation("Finder", fields: [finderId], references: [id])
+  booking          Booking?        @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  finder           User?           @relation("ProjectFinder", fields: [finderId], references: [id])
   members          ProjectMember[]
   milestones       Milestone[]
   activityLogs     ActivityLog[]
   changeRequests   ChangeRequest[]
+  ledgerEntries    LedgerEntry[]
+  clientUserId     String? // Renamed from userId to clientUserId to avoid ambiguity
+  clientUser       User?           @relation("ClientProject", fields: [clientUserId], references: [id])
 }
 
-/// Contractors assigned to a project with their respective execution share (percentage).
+enum ProjectMemberRole {
+  FINDER
+  EXECUTION
+}
+
+/// Contractors assigned to a project with their respective role and execution share (percentage).
 model ProjectMember {
-  id        String  @id @default(cuid())
+  id        String            @id @default(cuid())
   projectId String
   userId    String
-  share     Float /// Percentage share of execution earnings
-  project   Project @relation(fields: [projectId], references: [id])
-  user      User    @relation(fields: [userId], references: [id])
+  role      ProjectMemberRole @default(EXECUTION)
+  share     Float /// Percentage share of pool earnings
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([projectId, userId])
+  @@unique([projectId, userId, role])
 }
 
 /// Project proposals with custom scoping, budget, and approval workflow
@@ -195,23 +206,26 @@ model Payment {
   projectId String
   amountBDT Float?
   amountUSD Float?
-  currency  Currency
+  currency  Currency      @default(BDT)
   note      String?
   paidAt    DateTime      @default(now())
   splits    LedgerEntry[] /// Automatic splits generated for founders and project members
-  project   Project       @relation(fields: [projectId], references: [id])
+  project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 /// Detailed ledger entries for each payment split (e.g., Company, Finder Fee, Execution).
 model LedgerEntry {
   id        String    @id @default(cuid())
   paymentId String
+  projectId String?
   userId    String? /// Null for COMPANY_FUND
   type      SplitType
   amountBDT Float?
   amountUSD Float?
   createdAt DateTime  @default(now())
   payment   Payment   @relation(fields: [paymentId], references: [id])
+  project   Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id])
 }
 
 /// Running totals of earnings for each user.

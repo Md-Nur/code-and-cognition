@@ -93,18 +93,44 @@ export async function PATCH(
     );
   }
 
-  const { status, health } = validation.data;
+  const { status, health, companyFundRatio, finderFeeRatio, members } = validation.data;
 
   try {
-    const project = await prisma.project.update({
-      where: { id },
-      data: {
-        ...(status && { status }),
-        ...(health && { health }),
-      },
-      include: {
-        booking: true,
-      },
+    const project = await prisma.$transaction(async (tx) => {
+      // 1. Update project basic info and ratios
+      const updatedProject = await tx.project.update({
+        where: { id },
+        data: {
+          ...(status && { status }),
+          ...(health && { health }),
+          ...(companyFundRatio !== undefined && { companyFundRatio }),
+          ...(finderFeeRatio !== undefined && { finderFeeRatio }),
+        },
+        include: {
+          booking: true,
+        },
+      });
+
+      // 2. Update members if provided
+      if (members) {
+        // Delete existing members and recreate
+        await tx.projectMember.deleteMany({
+          where: { projectId: id },
+        });
+
+        if (members.length > 0) {
+          await tx.projectMember.createMany({
+            data: members.map((m) => ({
+              projectId: id,
+              userId: m.userId,
+              role: m.role,
+              share: m.share,
+            })),
+          });
+        }
+      }
+
+      return updatedProject;
     });
 
     // Automation: If COMPLETED or DELIVERED, notify relevant users

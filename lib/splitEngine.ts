@@ -36,41 +36,67 @@ export async function processPaymentSplit(paymentId: string) {
     // 1. Company Fund Entry
     entries.push({
         paymentId: payment.id,
+        projectId: payment.projectId,
         userId: null, // Company Fund
         type: SplitType.COMPANY_FUND,
         amountBDT: isBDT ? companyFundAmount : null,
         amountUSD: !isBDT ? companyFundAmount : null,
+        note: `Company Fund (${(companyFundRatio * 100).toFixed(0)}%)`,
     });
 
-    // 2. Finder Fee Entry
-    const finderId = payment.project.finderId;
-    entries.push({
-        paymentId: payment.id,
-        userId: finderId,
-        type: SplitType.FINDER_FEE,
-        amountBDT: isBDT ? finderFeeAmount : null,
-        amountUSD: !isBDT ? finderFeeAmount : null,
-    });
+    // 2. Finder Fee Entries (Distributed among role: FINDER)
+    const finderMembers = payment.project.members.filter(m => m.role === "FINDER");
+    const totalFinderShare = finderMembers.reduce((sum, m) => sum + m.share, 0);
 
-    // 3. Execution Pool Entries
-    const members = payment.project.members;
-    const totalShare = members.reduce((sum, m) => sum + m.share, 0);
+    if (finderFeeAmount > 0) {
+        if (finderMembers.length > 0) {
+            for (const member of finderMembers) {
+                const memberShareRatio = totalFinderShare > 0 ? member.share / totalFinderShare : 1 / finderMembers.length;
+                const memberAmount = finderFeeAmount * memberShareRatio;
 
-    for (const member of members) {
-        // If totalShare is 0 (or not set), split equally among members
-        const memberShareRatio = totalShare > 0
-            ? member.share / totalShare
-            : 1 / members.length;
+                entries.push({
+                    paymentId: payment.id,
+                    projectId: payment.projectId,
+                    userId: member.userId,
+                    type: SplitType.FINDER_FEE,
+                    amountBDT: isBDT ? memberAmount : null,
+                    amountUSD: !isBDT ? memberAmount : null,
+                    note: `Finder Fee Share (${(memberShareRatio * 100).toFixed(0)}% of finder pool)`,
+                });
+            }
+        } else if (payment.project.finderId) {
+            // Fallback to legacy finderId if no FINDER members assigned
+            entries.push({
+                paymentId: payment.id,
+                projectId: payment.projectId,
+                userId: payment.project.finderId,
+                type: SplitType.FINDER_FEE,
+                amountBDT: isBDT ? finderFeeAmount : null,
+                amountUSD: !isBDT ? finderFeeAmount : null,
+                note: "Legacy Finder Fee",
+            });
+        }
+    }
 
-        const memberAmount = executionPoolAmount * memberShareRatio;
+    // 3. Execution Pool Entries (Distributed among role: EXECUTION)
+    const executionMembers = payment.project.members.filter(m => m.role === "EXECUTION");
+    const totalExecutionShare = executionMembers.reduce((sum, m) => sum + m.share, 0);
 
-        entries.push({
-            paymentId: payment.id,
-            userId: member.userId,
-            type: SplitType.EXECUTION,
-            amountBDT: isBDT ? memberAmount : null,
-            amountUSD: !isBDT ? memberAmount : null,
-        });
+    if (executionPoolAmount > 0 && executionMembers.length > 0) {
+        for (const member of executionMembers) {
+            const memberShareRatio = totalExecutionShare > 0 ? member.share / totalExecutionShare : 1 / executionMembers.length;
+            const memberAmount = executionPoolAmount * memberShareRatio;
+
+            entries.push({
+                paymentId: payment.id,
+                projectId: payment.projectId,
+                userId: member.userId,
+                type: SplitType.EXECUTION,
+                amountBDT: isBDT ? memberAmount : null,
+                amountUSD: !isBDT ? memberAmount : null,
+                note: `Execution Share (${(memberShareRatio * 100).toFixed(0)}% of execution pool)`,
+            });
+        }
     }
 
     // Database Transaction
@@ -102,7 +128,7 @@ export async function processPaymentSplit(paymentId: string) {
         await tx.activityLog.create({
             data: {
                 projectId: payment.projectId,
-                action: `processed revenue distribution for payment of ${amount} ${currency}: 20% Platform, 10% Finder, and 70% Execution Team.`,
+                action: `processed revenue distribution for payment of ${amount} ${currency}: ${(companyFundRatio * 100).toFixed(0)}% Platform, ${(finderFeeRatio * 100).toFixed(0)}% Finder, and ${(executionPoolRatio * 100).toFixed(0)}% Execution Team.`,
             }
         });
     });

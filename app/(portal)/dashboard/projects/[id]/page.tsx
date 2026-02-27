@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
 import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
+import RevenueSplitsControl from "@/app/components/admin/RevenueSplitsControl";
 import EditableMilestones from "@/app/components/project/EditableMilestones";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
@@ -36,6 +37,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     });
 
     if (!project) notFound();
+
+    // Fetch all founders/contractors for split assignments
+    const allUsers = await prisma.user.findMany({
+        where: { role: { in: [Role.FOUNDER, Role.CO_FOUNDER, Role.CONTRACTOR] } },
+        orderBy: { name: "asc" }
+    });
 
     const { user } = session;
 
@@ -169,6 +176,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                                 projectId={project.id}
                                 currentStatus={project.status}
                                 currentHealth={project.health}
+                            />
+                            <RevenueSplitsControl
+                                projectId={project.id}
+                                initialCompanyFundRatio={project.companyFundRatio}
+                                initialFinderFeeRatio={project.finderFeeRatio}
+                                initialMembers={project.members}
+                                allUsers={allUsers}
                             />
                         </>
                     )}
