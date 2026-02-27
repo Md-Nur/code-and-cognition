@@ -148,20 +148,31 @@ export const sendProposal = withProxyValidation(
   { requiredRole: Role.FOUNDER }
 );
 
+const proposalApproveSchema = z.object({
+  proposalId: z.string().min(1),
+  finderId: z.string().optional(),
+  memberAssignments: z.array(z.object({
+    userId: z.string().min(1),
+    share: z.number().min(0).max(100),
+  })).optional(),
+});
+
 export const approveProposal = withProxyValidation(
-  async (input: z.infer<typeof proposalIdSchema>) => {
+  async (input: z.infer<typeof proposalApproveSchema>) => {
     const session = await auth();
     if (!session) {
       return { ok: false, error: "Unauthorized" } as const;
     }
 
-    const validation = proposalIdSchema.safeParse(input);
+    const validation = proposalApproveSchema.safeParse(input);
     if (!validation.success) {
       return { ok: false, error: validation.error.format() } as const;
     }
 
+    const { proposalId, finderId: providedFinderId, memberAssignments } = validation.data;
+
     const proposal = await prisma.proposal.findUnique({
-      where: { id: validation.data.proposalId },
+      where: { id: proposalId },
       include: { booking: { include: { service: true } } },
     });
 
@@ -171,13 +182,13 @@ export const approveProposal = withProxyValidation(
 
     const booking = proposal.booking;
 
-    const finderId =
-      session.user.role === Role.FOUNDER
+    const finderId = providedFinderId ||
+      (session.user.role === Role.FOUNDER || session.user.role === Role.CO_FOUNDER
         ? session.user.id
-        : (await prisma.user.findFirst({ where: { role: Role.FOUNDER } }))?.id;
+        : (await prisma.user.findFirst({ where: { role: Role.FOUNDER } }))?.id);
 
     if (!finderId) {
-      return { ok: false, error: "No founder available" } as const;
+      return { ok: false, error: "No finder available" } as const;
     }
 
     const projectTitle = `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
@@ -191,8 +202,10 @@ export const approveProposal = withProxyValidation(
           bookingId: booking.id,
           finderId,
           scope: proposal.scopeSummary,
-          workspaceUrl: `/dashboard/projects/workspace-pending`, // Placeholder URL
+          workspaceUrl: `/project/${proposal.viewToken}`, // Use the same token for portal
           workspaceStatus: "PENDING",
+          companyFundRatio: 0.20,
+          finderFeeRatio: 0.10,
           milestones: {
             create: proposal.milestones.map((milestoneTitle: string, index: number) => ({
               title: milestoneTitle,
@@ -203,14 +216,25 @@ export const approveProposal = withProxyValidation(
         },
       });
 
-      // 2. Assign Team (Finder as initial member)
-      await tx.projectMember.create({
-        data: {
-          projectId: project.id,
-          userId: finderId,
-          share: 100, // Initial 100% share for the finder
-        },
-      });
+      // 2. Assign Team
+      if (memberAssignments && memberAssignments.length > 0) {
+        await tx.projectMember.createMany({
+          data: memberAssignments.map(m => ({
+            projectId: project.id,
+            userId: m.userId,
+            share: m.share,
+          })),
+        });
+      } else {
+        // Default: Finder as initial member with 100% share of execution pool
+        await tx.projectMember.create({
+          data: {
+            projectId: project.id,
+            userId: finderId,
+            share: 100,
+          },
+        });
+      }
 
       // 3. Update Proposal
       const updatedProposal = await tx.proposal.update({
@@ -219,7 +243,7 @@ export const approveProposal = withProxyValidation(
           status: "APPROVED",
           approved: true,
           approvedAt: new Date(),
-          signedAt: new Date(), // Client signed & paid
+          signedAt: new Date(),
           projectId: project.id,
         },
       });
@@ -244,7 +268,7 @@ export const approveProposal = withProxyValidation(
 
     return { ok: true, ...result } as const;
   },
-  { requiredRole: [Role.CLIENT, Role.FOUNDER] }
+  { requiredRole: [Role.FOUNDER, Role.CO_FOUNDER] }
 );
 
 export const rejectProposal = withProxyValidation(
@@ -326,8 +350,10 @@ export const approveProposalByToken = async (token: string, email: string) => {
         bookingId: booking.id,
         finderId: founder.id,
         scope: proposal.scopeSummary,
-        workspaceUrl: `/dashboard/projects/workspace-pending`,
+        workspaceUrl: `/project/${proposal.viewToken}`,
         workspaceStatus: "PENDING",
+        companyFundRatio: 0.20,
+        finderFeeRatio: 0.10,
         milestones: {
           create: proposal.milestones.map((milestoneTitle: string, index: number) => ({
             title: milestoneTitle,

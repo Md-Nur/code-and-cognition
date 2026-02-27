@@ -102,7 +102,7 @@ export async function processPaymentSplit(paymentId: string) {
         await tx.activityLog.create({
             data: {
                 projectId: payment.projectId,
-                action: `recorded a payment of ${amount} ${currency} and processed ${companyFundRatio * 100}/${finderFeeRatio * 100}/${executionPoolRatio * 100} splits.`,
+                action: `processed revenue distribution for payment of ${amount} ${currency}: 20% Platform, 10% Finder, and 70% Execution Team.`,
             }
         });
     });
