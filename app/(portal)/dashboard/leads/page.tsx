@@ -18,7 +18,7 @@ export default function LeadsDatabasePage() {
         clientPhone: "",
         serviceId: "",
         budgetUSD: "",
-        message: "",
+        additionalNotes: "",
     });
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -91,7 +91,7 @@ export default function LeadsDatabasePage() {
                     clientPhone: "",
                     serviceId: "",
                     budgetUSD: "",
-                    message: "",
+                    additionalNotes: "",
                 });
             } else {
                 alert("Failed to create booking");
@@ -217,8 +217,6 @@ export default function LeadsDatabasePage() {
                                 {booking.discovery.timeline && <p><strong>Timeline:</strong> {booking.discovery.timeline}</p>}
                                 {booking.discovery.additionalNotes && <p className="mt-1 line-clamp-3"><strong>Additional Notes:</strong> {booking.discovery.additionalNotes}</p>}
                             </div>
-                        ) : booking.message ? (
-                            <p className="text-sm text-gray-400 italic mb-6 flex-grow line-clamp-3">"{booking.message}"</p>
                         ) : (
                             <div className="mb-6 flex-grow"></div>
                         )}
@@ -359,8 +357,8 @@ export default function LeadsDatabasePage() {
                                 <label className="input-label">Project Details</label>
                                 <textarea
                                     className="input-field min-h-[100px]"
-                                    value={formData.message}
-                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                    value={formData.additionalNotes}
+                                    onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
                                 />
                             </div>
                             <div className="flex gap-4 pt-2">

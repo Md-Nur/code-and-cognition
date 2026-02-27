@@ -14,11 +14,12 @@ interface Notification {
 }
 
 export default function NotificationBell() {
+    const [mounted, setMounted] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const unreadCount = notifications.filter((n) => !n.isRead).length;
+    const unreadCount = mounted ? notifications.filter((n) => !n.isRead).length : 0;
 
     const fetchNotifications = async () => {
         try {
@@ -33,6 +34,7 @@ export default function NotificationBell() {
     };
 
     useEffect(() => {
+        setMounted(true);
         fetchNotifications();
         // Simple polling every 30 seconds
         const interval = setInterval(fetchNotifications, 30000);
@@ -129,9 +131,9 @@ export default function NotificationBell() {
                                     </div>
                                     <div className="flex items-center justify-between mt-2">
                                         <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest ${notification.type === 'MESSAGE_NEW' ? 'bg-blue-500/20 text-blue-400' :
-                                                notification.type === 'BOOKING_NEW' ? 'bg-green-500/20 text-green-400' :
-                                                    notification.type === 'PROJECT_STATUS_CHANGE' ? 'bg-purple-500/20 text-purple-400' :
-                                                        'bg-gray-500/20 text-gray-400'
+                                            notification.type === 'BOOKING_NEW' ? 'bg-green-500/20 text-green-400' :
+                                                notification.type === 'PROJECT_STATUS_CHANGE' ? 'bg-purple-500/20 text-purple-400' :
+                                                    'bg-gray-500/20 text-gray-400'
                                             }`}>
                                             {notification.type.replace('_', ' ')}
                                         </span>

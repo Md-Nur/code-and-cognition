@@ -58,7 +58,6 @@ export async function createBookingAction(
       clientPhone,
       serviceId,
       discovery,
-      message: discovery?.problemStatement || discovery?.additionalNotes || "Strategic Consultation Request",
       status: "NEW",
     },
   });

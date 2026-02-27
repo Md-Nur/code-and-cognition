@@ -8,20 +8,18 @@ datasource db {
 
 /// Core User model representing both administrators and contractors.
 model User {
-  id               String          @id @default(cuid())
-  name             String
-  email            String          @unique
-  passwordHash     String
-  role             Role            @default(CONTRACTOR)
-  createdAt        DateTime        @default(now())
-  ledgerBalance    LedgerBalance?
-  receivedMessages Message[]       @relation("ReceivedMessages")
-  sentMessages     Message[]       @relation("SentMessages")
-  notifications    Notification[]
-  finderProjects   Project[]       @relation("Finder")
-  memberProjects   ProjectMember[]
-  activityLogs     ActivityLog[]
-  changeRequests   ChangeRequest[]
+  id             String          @id @default(cuid())
+  name           String
+  email          String          @unique
+  passwordHash   String
+  role           Role            @default(CONTRACTOR)
+  createdAt      DateTime        @default(now())
+  ledgerBalance  LedgerBalance?
+  finderProjects Project[]       @relation("Finder")
+  memberProjects ProjectMember[]
+  activityLogs   ActivityLog[]
+  changeRequests ChangeRequest[]
+  notifications  Notification[]
 }
 
 /// Secure, short-lived tokens for passwordless client login.
@@ -34,33 +32,6 @@ model MagicToken {
   createdAt DateTime @default(now())
 
   @@index([email])
-}
-
-/// Internal message system for communication between users.
-model Message {
-  id         String   @id @default(cuid())
-  content    String
-  senderId   String
-  receiverId String?
-  projectId  String? /// Links the message to a specific project workspace
-  isRead     Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  receiver   User?    @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
-  project    Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-/// System notifications for users regarding bookings, projects, and payments.
-model Notification {
-  id        String           @id @default(cuid())
-  userId    String
-  title     String
-  message   String
-  type      NotificationType
-  link      String? /// Optional link to redirect user (e.g., to a specific booking)
-  isRead    Boolean          @default(false)
-  createdAt DateTime         @default(now())
-  user      User             @relation(fields: [userId], references: [id])
 }
 
 /// High-level service categories for organizing offerings (e.g., Digital Platforms, Brand Strategy)
@@ -142,7 +113,6 @@ model Booking {
   proposalId  String?       @unique
   budgetBDT   Float?
   budgetUSD   Float?
-  message     String?
   discovery   Json? /// Structured discovery data: { companyName, role, industry, revenueRange, budgetRange, problemStatement, timeline, etc. }
   status      BookingStatus @default(NEW)
   createdAt   DateTime      @default(now())
@@ -171,7 +141,6 @@ model Project {
   createdAt        DateTime        @default(now())
   payments         Payment[]
   proposals        Proposal[]
-  messages         Message[]
   booking          Booking?        @relation(fields: [bookingId], references: [id])
   finder           User            @relation("Finder", fields: [finderId], references: [id])
   members          ProjectMember[]
@@ -308,16 +277,6 @@ model Article {
   updatedAt    DateTime @updatedAt
 }
 
-enum NotificationType {
-  BOOKING_NEW
-  BOOKING_STATUS_CHANGE
-  PROJECT_NEW
-  PROJECT_STATUS_CHANGE
-  MESSAGE_NEW
-  PAYMENT_RECEIVED
-  SYSTEM
-}
-
 enum Role {
   FOUNDER
   CO_FOUNDER
@@ -366,6 +325,20 @@ enum ProjectStatus {
   DELIVERED
   COMPLETED
   CANCELLED
+}
+
+enum NotificationType {
+  MESSAGE_NEW
+  PROJECT_UPDATE
+  TASK_ASSIGNED
+  PAYMENT_RECEIVED
+  SYSTEM_ALERT
+  PROPOSAL_SENT
+  PROPOSAL_APPROVED
+  PROPOSAL_REJECTED
+  BOOKING_NEW
+  MILESTONE_COMPLETED
+  CHANGE_REQUEST_NEW
 }
 
 enum Currency {
@@ -453,4 +426,21 @@ model SecurityLog {
   @@index([email])
   @@index([action])
   @@index([ip, createdAt])
+}
+
+/// System notifications for users
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
 }

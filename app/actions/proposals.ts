@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { createNotification } from "@/lib/notifications";
 import { Role, Prisma } from "@prisma/client";
 import { withProxyValidation } from "@/lib/api-handler";
 import { sendMail } from "@/lib/mailer";
@@ -81,13 +80,7 @@ export const createProposalForBooking = withProxyValidation(
     });
 
     if (clientUser) {
-      await createNotification({
-        userId: clientUser.id,
-        title: "Proposal Drafted",
-        message: `A proposal draft is ready for ${booking.service?.title || "your strategic consultation"}.`,
-        type: "SYSTEM",
-        link: `/dashboard/proposals/${proposal.id}`,
-      });
+      // Notification removed
     }
 
     return { ok: true, proposal } as const;
@@ -114,13 +107,7 @@ export const sendProposal = withProxyValidation(
       });
 
       if (clientUser) {
-        await createNotification({
-          userId: clientUser.id,
-          title: "Proposal Sent",
-          message: "Your proposal is ready for review.",
-          type: "SYSTEM",
-          link: `/dashboard/proposals/${proposal.id}`,
-        });
+        // Notification removed
       }
 
       await prisma.booking.update({
@@ -403,14 +390,7 @@ export const approveProposalByToken = async (token: string, email: string) => {
     return { proposal: updatedProposal, project };
   });
 
-  // Notify the founder
-  await createNotification({
-    userId: founder.id,
-    title: "Proposal Approved by Client",
-    message: `${booking.clientName} has signed and approved the proposal for "${booking.service?.title || "your project"}".`,
-    type: "SYSTEM",
-    link: `/dashboard/proposals/${proposal.id}`,
-  });
+  // Notification removed
 
   // Send Magic Link to Client for Project Access
   try {

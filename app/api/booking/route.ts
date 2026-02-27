@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createNotification } from "@/lib/notifications";
 import { rateLimit, getIp } from "@/lib/rate-limit";
 
 const bookingSchema = z.object({
@@ -67,25 +66,9 @@ export async function POST(req: Request) {
         clientPhone: clientPhone?.trim(),
         serviceId,
         discovery,
-        message: discovery?.additionalNotes || discovery?.goals,
         status: "NEW",
       },
     });
-
-    // Notify founders
-    const founders = await prisma.user.findMany({
-      where: { role: "FOUNDER" },
-    });
-
-    for (const founder of founders) {
-      await createNotification({
-        userId: founder.id,
-        title: "New Booking Request",
-        message: `${clientName} has requested a new booking.`,
-        type: "BOOKING_NEW",
-        link: `/dashboard/leads`,
-      });
-    }
 
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {

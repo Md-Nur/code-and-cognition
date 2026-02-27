@@ -15,7 +15,7 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        scopeSummary: lead.message || "",
+        scopeSummary: (lead.discovery as any)?.problemStatement || "",
         deliverables: ["Initial consultation", "Project roadmap"],
         milestones: ["Project Kickoff", "Final Delivery"],
         budgetBDT: lead.budgetBDT || 0,

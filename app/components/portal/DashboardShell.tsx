@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import NotificationBell from "@/app/components/NotificationBell";
 import { Role } from "@prisma/client";
 import {
     LayoutDashboard,
@@ -14,9 +13,7 @@ import {
     FileText,
     CreditCard,
     TrendingUp,
-    MessageSquare,
     Wrench,
-    MessageCircle,
     Briefcase,
     LogOut,
     Menu,
@@ -24,6 +21,10 @@ import {
     User as UserIcon,
     Target
 } from "lucide-react";
+
+import dynamic from "next/dynamic";
+
+const NotificationBell = dynamic(() => import("@/app/components/NotificationBell"), { ssr: false });
 
 interface DashboardShellProps {
     children: React.ReactNode;
@@ -43,7 +44,6 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
         const common = [
             { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
             { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-            { name: "Messages", href: "/dashboard/messages", icon: MessageSquare },
             { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
         ];
 
@@ -53,7 +53,6 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 { name: "Lead Database", href: "/dashboard/leads", icon: Target },
                 { name: "Proposals", href: "/dashboard/proposals", icon: FileText },
                 { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-                { name: "Messages", href: "/dashboard/messages", icon: MessageSquare },
                 { name: "Clients", href: "/dashboard/clients", icon: Briefcase },
                 { name: "Services", href: "/dashboard/services", icon: Wrench },
                 { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },

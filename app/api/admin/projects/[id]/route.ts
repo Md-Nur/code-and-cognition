@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { canAccessProject } from "@/lib/rbac";
-import { createNotification } from "@/lib/notifications";
 import { getNextAction } from "@/lib/next-action";
 import { z } from "zod";
 
@@ -123,7 +122,7 @@ export async function PATCH(
             data: {
               title: project.title,
               description:
-                project.booking?.message || "Successfully completed project.",
+                (project.booking?.discovery as any)?.problemStatement || "Successfully completed project.",
               serviceId: project.booking.serviceId,
               technologies: [],
               isFeatured: false,
@@ -155,13 +154,7 @@ export async function PATCH(
         : `Project "${project.title}" has been marked as delivered. Final review is now pending.`;
 
       for (const user of uniqueUsers) {
-        await createNotification({
-          userId: user.id,
-          title,
-          message,
-          type: "PROJECT_STATUS_CHANGE",
-          link: `/dashboard/projects/${id}`,
-        });
+        // Notification removed
       }
     }
 

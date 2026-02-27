@@ -1,32 +1,47 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 export async function PATCH(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const session = await auth();
-    if (!session) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { id } = await params;
-
     try {
-        const notification = await prisma.notification.update({
+        const session = await auth();
+        if (!session?.user) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        // Must await params in Next.js 15
+        const { id } = await params;
+
+        const notification = await prisma.notification.findUnique({
             where: {
                 id,
-                userId: session.user.id,
-            },
-            data: {
-                isRead: true,
-            },
+            }
         });
 
-        return NextResponse.json(notification);
+        if (!notification) {
+            return new NextResponse("Not Found", { status: 404 });
+        }
+
+        // Ensure user can only mark their own notifications
+        if (notification.userId !== session.user.id) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const updatedNotification = await prisma.notification.update({
+            where: {
+                id,
+            },
+            data: {
+                isRead: true
+            }
+        });
+
+        return NextResponse.json(updatedNotification);
     } catch (error) {
-        console.error("Error updating notification:", error);
-        return NextResponse.json({ error: "Failed to update notification" }, { status: 500 });
+        console.error("[NOTIFICATION_PATCH]", error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }

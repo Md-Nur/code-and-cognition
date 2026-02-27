@@ -123,33 +123,6 @@ export default function Navbar({ user }: NavbarProps) {
 
               {/* CTA & Profile - Right */}
               <div className="flex-shrink-0 lg:flex-1 flex items-center justify-end gap-x-3 sm:gap-x-4 lg:gap-x-6">
-                {user && (
-                  <Link
-                    href="/dashboard/messages"
-                    className="relative hidden md:inline-flex p-2 text-white/50 hover:text-white transition-colors group"
-                    aria-label="Messages"
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="transition-transform duration-300 group-hover:-translate-y-0.5"
-                    >
-                      <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-                    </svg>
-                    {unreadMessages > 0 && (
-                      <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-agency-accent text-[9px] font-black text-white ring-2 ring-black">
-                        {unreadMessages}
-                      </span>
-                    )}
-                  </Link>
-                )}
-
                 {user && <span className="hidden md:block"><NotificationBell /></span>}
 
                 {user ? (

@@ -11,7 +11,6 @@ import {
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
 import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
 import EditableMilestones from "@/app/components/project/EditableMilestones";
-import ProjectMessages from "@/app/components/project/ProjectMessages";
 import RevenueSplitSettings from "@/app/components/project/RevenueSplitSettings";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
@@ -102,12 +101,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                             userRole={user.role}
                         />
                     </div>
-
-                    {/* Messages */}
-                    <ProjectMessages
-                        projectId={project.id}
-                        currentUserRole={user.role}
-                    />
 
                     {/* Change Requests */}
                     {user.role !== Role.CLIENT && (

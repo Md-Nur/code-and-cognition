@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
-import { createNotification } from "@/lib/notifications";
 import { bookingUpdateSchema, bookingCreateSchema } from "@/lib/validations/admin";
 
 export const GET = withAuth(async () => {
@@ -51,13 +50,7 @@ export const PATCH = withAuth(async (req) => {
         });
 
         if (clientUser) {
-            await createNotification({
-                userId: clientUser.id,
-                title: "Booking Status Updated",
-                message: `Your booking status for "${booking.id}" has been updated to ${status}.`,
-                type: "BOOKING_STATUS_CHANGE",
-                link: `/services`, // Or a specific booking view if it exists
-            });
+            // Notification removed
         }
 
         // 3. Email Automation
