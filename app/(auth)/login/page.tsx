@@ -3,17 +3,25 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MailCheck, KeyRound, ArrowRight } from "lucide-react";
+import { MailCheck, KeyRound, ArrowRight, UserPlus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
     const router = useRouter();
-    const [error, setError] = useState("");
+    const searchParams = useSearchParams();
+    const [error, setError] = useState(searchParams.get("error") || "");
+    const [successMessage, setSuccessMessage] = useState(searchParams.get("success") || "");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showRegisterLink, setShowRegisterLink] = useState(false);
 
     // Redirect if already logged in (Ping backend or check cookie if possible)
-    // For simplicity, we'll let the user interact, but if they are a client 
-    // we want to ensure they don't stay here.
     useEffect(() => {
+        // Check for setup
+        fetch("/api/auth/setup-check")
+            .then(res => res.json())
+            .then(data => setShowRegisterLink(data.setupRequired))
+            .catch(() => { });
+
         // Quick session check
         fetch("/api/admin/projects") // This will trigger role check
             .then(res => {
@@ -144,6 +152,12 @@ export default function LoginPage() {
                     </div>
                 )}
 
+                {successMessage && (
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 text-sm text-center">
+                        {successMessage}
+                    </div>
+                )}
+
                 <button
                     type="submit"
                     disabled={isSubmitting}
@@ -167,6 +181,13 @@ export default function LoginPage() {
                     >
                         Use a different email address?
                     </button>
+                )}
+
+                {showRegisterLink && (
+                    <Link href="/register" className="flex items-center justify-center gap-2 text-sm text-agency-accent font-medium hover:text-white transition-colors p-3 rounded-xl bg-agency-accent/5 border border-agency-accent/10">
+                        <UserPlus className="w-4 h-4" />
+                        First time? Setup Agency Founder
+                    </Link>
                 )}
                 <Link href="/" className="text-sm text-gray-500 hover:text-white transition-colors">
                     ← Back to Website

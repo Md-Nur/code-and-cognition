@@ -136,32 +136,16 @@ export async function POST(req: Request) {
                     } else {
                         console.log(`[AUTH] Magic link sent successfully to ${user.email}`);
                     }
-                } else {
-                    // Staff requesting magic link - tell them to use password
-                    console.log(`[AUTH] Staff user ${user.email} (Role: ${user.role}) requested magic link. Redirecting to password login.`);
-                    await prisma.securityLog.create({
-                        data: { email, action: "MAGIC_LINK_REQUEST", status: "REJECTED_STAFF", ip, userAgent, fingerprint, isSuspicious }
+                } else if (!password) {
+                    // Staff user, no password provided – return requirePassword hint
+                    return NextResponse.json({
+                        requirePassword: true,
+                        message: "Please enter your password to continue."
                     });
-
-                    await sendMail(
-                        user.email,
-                        "Security Notice - Code & Cognition",
-                        `<div style="font-family: sans-serif; padding: 20px;">
-                            <h2>Secure Sign In Required</h2>
-                            <p>Hi ${user.name}, you just tried to request a magic link login. As a staff member, you must sign in using your password for enhanced security.</p>
-                            <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com"}/login" style="display: inline-block; padding: 10px 20px; background-color: #333; color: #fff; text-decoration: none; font-weight: bold; border-radius: 5px;">Go to Login</a>
-                          </div>`
-                    );
                 }
-            } else {
-                // Non-existent email - log it
-                console.log(`[AUTH] Magic link requested for NON-EXISTENT email: ${email}`);
-                await prisma.securityLog.create({
-                    data: { email, action: "MAGIC_LINK_REQUEST", status: "NOT_FOUND", ip, userAgent, fingerprint, isSuspicious }
-                });
             }
 
-            // Return generic success
+            // Return generic success for clients or non-existent (to prevent enumeration)
             return NextResponse.json({
                 magicLinkSent: true,
                 message: "If an account exists for this email, you will receive a login link shortly."
