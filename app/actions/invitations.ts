@@ -50,6 +50,7 @@ export async function getInvitations() {
     }
 
     return prisma.invitation.findMany({
+        where: { used: false },
         orderBy: { createdAt: "desc" },
     });
 }

@@ -27,7 +27,8 @@ export const POST = withAuth(async (req) => {
 
 export const DELETE = withAuth(async (req) => {
     try {
-        const { id } = await req.json();
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
         if (!id) {
             return ApiResponse.error("Invitation ID is required", 400);
         }
