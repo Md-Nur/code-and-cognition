@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MailCheck, KeyRound, ArrowRight, UserPlus } from "lucide-react";
+import { MailCheck, KeyRound, ArrowRight, UserPlus, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [error, setError] = useState(searchParams.get("error") || "");
@@ -194,5 +195,17 @@ export default function LoginPage() {
                 </Link>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center p-12">
+                <Loader2 className="w-8 h-8 text-agency-accent animate-spin" />
+            </div>
+        }>
+            <LoginForm />
+        </Suspense>
     );
 }
