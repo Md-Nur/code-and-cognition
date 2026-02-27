@@ -132,13 +132,13 @@ export async function POST(req: Request) {
                     );
 
                     if (!mailSent) {
-                        console.error(`[AUTH] FAILED to send magic link to ${user.email}`);
+                        console.error(`[AUTH] FAILED to send magic link to ${user.email} - Check SMTP settings`);
                     } else {
                         console.log(`[AUTH] Magic link sent successfully to ${user.email}`);
                     }
                 } else {
                     // Staff requesting magic link - tell them to use password
-                    console.log(`[AUTH] Staff user ${user.email} requested magic link. Redirecting to password login.`);
+                    console.log(`[AUTH] Staff user ${user.email} (Role: ${user.role}) requested magic link. Redirecting to password login.`);
                     await prisma.securityLog.create({
                         data: { email, action: "MAGIC_LINK_REQUEST", status: "REJECTED_STAFF", ip, userAgent, fingerprint, isSuspicious }
                     });
