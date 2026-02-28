@@ -13,6 +13,7 @@ import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
 import RevenueSplitsControl from "@/app/components/admin/RevenueSplitsControl";
 import EditableMilestones from "@/app/components/project/EditableMilestones";
 import ChangeRequestsPanel from "@/app/components/admin/ChangeRequestsPanel";
+import EditableProjectTitle from "@/app/components/project/EditableProjectTitle";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },
@@ -76,7 +77,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                         <ArrowLeft className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform" /> All Projects
                     </Link>
                     <div className="space-y-2">
-                        <h1 className="text-3xl md:text-4xl font-display font-medium tracking-tight text-white">{project.title}</h1>
+                        <EditableProjectTitle
+                            projectId={project.id}
+                            initialTitle={project.title}
+                            userRole={user.role}
+                        />
                         <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
                             {project.startDate && (
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">

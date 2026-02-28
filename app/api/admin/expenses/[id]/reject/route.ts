@@ -1,0 +1,38 @@
+import { prisma } from "@/lib/prisma";
+import { withAuth, ApiResponse } from "@/lib/api-handler";
+import { Role } from "@prisma/client";
+
+export const POST = withAuth(async (req: Request, { params }: { params: Promise<{ id: string }> }, session: any) => {
+    try {
+        const { id } = await params;
+
+        // 1. Record the rejection
+        await prisma.expenseApproval.upsert({
+            where: {
+                expenseId_userId: {
+                    expenseId: id,
+                    userId: session.user.id
+                }
+            },
+            update: { status: "REJECTED" },
+            create: {
+                expenseId: id,
+                userId: session.user.id,
+                status: "REJECTED"
+            }
+        });
+
+        // 2. Set the expense status to REJECTED immediately
+        // A single rejection or lack of consensus might be enough depending on business rules, 
+        // but here "A single rejection is enough to reject it" seems appropriate for a "must all approve" system.
+        await prisma.expense.update({
+            where: { id },
+            data: { status: "REJECTED" }
+        });
+
+        return ApiResponse.success({ message: "Expense rejected" });
+    } catch (error) {
+        console.error("Reject Expense Error:", error);
+        return ApiResponse.error("Internal Server Error", 500);
+    }
+}, [Role.FOUNDER, Role.CO_FOUNDER]);

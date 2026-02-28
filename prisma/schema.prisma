@@ -8,20 +8,23 @@ datasource db {
 
 /// Core User model representing both administrators and contractors.
 model User {
-  id             String          @id @default(cuid())
-  name           String
-  email          String          @unique
-  passwordHash   String
-  role           Role            @default(CONTRACTOR)
-  createdAt      DateTime        @default(now())
-  ledgerBalance  LedgerBalance?
-  memberProjects ProjectMember[]
-  finderProjects Project[]       @relation("ProjectFinder")
-  activityLogs   ActivityLog[]
-  changeRequests ChangeRequest[]
-  notifications  Notification[]
-  ledgerEntries  LedgerEntry[]
-  projects       Project[]       @relation("ClientProject")
+  id               String            @id @default(cuid())
+  name             String
+  email            String            @unique
+  passwordHash     String
+  role             Role              @default(CONTRACTOR)
+  createdAt        DateTime          @default(now())
+  activityLogs     ActivityLog[]
+  changeRequests   ChangeRequest[]
+  ledgerBalance    LedgerBalance?
+  ledgerEntries    LedgerEntry[]
+  notifications    Notification[]
+  projects         Project[]         @relation("ClientProject")
+  finderProjects   Project[]         @relation("ProjectFinder")
+  memberProjects   ProjectMember[]
+  withdrawals      Withdrawal[]
+  proposedExpenses Expense[]         @relation("ExpenseProposer")
+  expenseApprovals ExpenseApproval[]
 }
 
 /// Secure, short-lived tokens for passwordless client login.
@@ -55,31 +58,39 @@ model Service {
   categoryId       String
   title            String            @unique
   slug             String            @unique
-  description      String /// Technical description
-  overview         String? /// High-level service overview
-  positioningText  String? /// Business value and strategic positioning
+  /// Technical description
+  description      String
+  /// High-level service overview
+  overview         String?
+  /// Business value and strategic positioning
+  positioningText  String?
   status           Status            @default(ACTIVE)
   thumbnailUrl     String?
   order            Int               @default(0)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-  category         ServiceCategory   @relation(fields: [categoryId], references: [id])
   bookings         Booking[]
-  portfolioItems   PortfolioItem[]
   engagementModels EngagementModel[]
+  portfolioItems   PortfolioItem[]
+  category         ServiceCategory   @relation(fields: [categoryId], references: [id])
 }
 
 /// Flexible engagement models for services (Strategy | Implementation | Optimization | Retainer)
 model EngagementModel {
   id            String      @id @default(cuid())
   serviceId     String
-  name          String /// e.g., Strategy, Implementation, Optimization, Retainer
+  /// e.g., Strategy, Implementation, Optimization, Retainer
+  name          String
   description   String
   pricingType   PricingType @default(CUSTOM)
-  basePriceBDT  Float? /// Nullable for custom pricing
-  basePriceUSD  Float? /// Nullable for custom pricing
-  deliverables  String[] /// List of key deliverables
-  estimatedDays Int? /// Estimated timeline in days
+  /// Nullable for custom pricing
+  basePriceBDT  Float?
+  /// Nullable for custom pricing
+  basePriceUSD  Float?
+  /// List of key deliverables
+  deliverables  String[]
+  /// Estimated timeline in days
+  estimatedDays Int?
   order         Int         @default(0)
   status        Status      @default(ACTIVE)
   createdAt     DateTime    @default(now())
@@ -112,14 +123,15 @@ model Booking {
   clientEmail String
   clientPhone String?
   serviceId   String?
-  proposalId  String?       @unique
   budgetBDT   Float?
   budgetUSD   Float?
-  discovery   Json? /// Structured discovery data: { companyName, role, industry, revenueRange, budgetRange, problemStatement, timeline, etc. }
   status      BookingStatus @default(NEW)
   createdAt   DateTime      @default(now())
-  service     Service?      @relation(fields: [serviceId], references: [id])
+  /// Structured discovery data: { companyName, role, industry, revenueRange, budgetRange, problemStatement, timeline, etc. }
+  discovery   Json?
+  proposalId  String?       @unique
   proposal    Proposal?     @relation(fields: [proposalId], references: [id])
+  service     Service?      @relation(fields: [serviceId], references: [id])
   project     Project?
 }
 
@@ -128,35 +140,40 @@ model Project {
   id               String          @id @default(cuid())
   title            String
   bookingId        String?         @unique
-  finderId         String? /// The user who brought in the project (maintained for backward compatibility)
+  /// The user who brought in the project (maintained for backward compatibility)
+  finderId         String?
   status           ProjectStatus   @default(ACTIVE)
   health           ProjectHealth   @default(GREEN)
-  viewToken        String?         @unique @default(uuid()) /// Public viewing token for clients
-  scope            String? /// Project scope and objectives
-  startDate        DateTime? /// Project start date
-  endDate          DateTime? /// Project end date / deadline
-  riskNotes        String? /// Risk management notes
-  workspaceUrl     String? /// Internal/External workspace link (e.g. Notion, Slack, or internal)
-  workspaceStatus  String?         @default("PENDING") /// PENDING | ACTIVE | ARCHIVED
-  companyFundRatio Float           @default(0.10) /// Dynamic split for company fund
-  finderFeeRatio   Float           @default(0.20) /// Dynamic split for finder fee
+  /// Public viewing token for clients
+  viewToken        String?         @unique @default(uuid())
+  /// Project scope and objectives
+  scope            String?
+  /// Project start date
+  startDate        DateTime?
+  /// Project end date / deadline
+  endDate          DateTime?
+  /// Risk management notes
+  riskNotes        String?
   createdAt        DateTime        @default(now())
-  payments         Payment[]
-  proposals        Proposal[]
-  booking          Booking?        @relation(fields: [bookingId], references: [id], onDelete: SetNull)
-  finder           User?           @relation("ProjectFinder", fields: [finderId], references: [id])
-  members          ProjectMember[]
-  milestones       Milestone[]
+  /// PENDING | ACTIVE | ARCHIVED
+  workspaceStatus  String?         @default("PENDING")
+  /// Internal/External workspace link (e.g. Notion, Slack, or internal)
+  workspaceUrl     String?
+  /// Dynamic split for company fund
+  companyFundRatio Float           @default(0.10)
+  /// Dynamic split for finder fee
+  finderFeeRatio   Float           @default(0.20)
+  clientUserId     String?
   activityLogs     ActivityLog[]
   changeRequests   ChangeRequest[]
   ledgerEntries    LedgerEntry[]
-  clientUserId     String? // Renamed from userId to clientUserId to avoid ambiguity
+  milestones       Milestone[]
+  payments         Payment[]
+  booking          Booking?        @relation(fields: [bookingId], references: [id])
   clientUser       User?           @relation("ClientProject", fields: [clientUserId], references: [id])
-}
-
-enum ProjectMemberRole {
-  FINDER
-  EXECUTION
+  finder           User?           @relation("ProjectFinder", fields: [finderId], references: [id])
+  members          ProjectMember[]
+  proposals        Proposal[]
 }
 
 /// Contractors assigned to a project with their respective role and execution share (percentage).
@@ -164,8 +181,9 @@ model ProjectMember {
   id        String            @id @default(cuid())
   projectId String
   userId    String
+  /// Percentage share of pool earnings
+  share     Float
   role      ProjectMemberRole @default(EXECUTION)
-  share     Float /// Percentage share of pool earnings
   project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -176,28 +194,40 @@ model ProjectMember {
 model Proposal {
   id                String           @id @default(cuid())
   projectId         String?
-  booking           Booking?
-  engagementModelId String? /// Can reference an engagement model or be fully custom
-  scopeSummary      String /// Detailed scope of work
-  deliverables      String[] /// List of deliverables
-  milestones        String[] /// Milestones for delivery
+  /// Can reference an engagement model or be fully custom
+  engagementModelId String?
+  /// Detailed scope of work
+  scopeSummary      String
+  /// List of deliverables
+  deliverables      String[]
   budgetBDT         Float?
   budgetUSD         Float?
   currency          Currency         @default(BDT)
-  estimatedDays     Int? /// Timeline estimate
-  status            ProposalStatus   @default(DRAFT) /// DRAFT -> SENT -> APPROVED | REJECTED
+  /// Timeline estimate
+  estimatedDays     Int?
   approved          Boolean          @default(false)
   approvedAt        DateTime?
-  signedAt          DateTime? /// When the client signed & paid
-  paymentTerms      String? /// Payment terms and schedules
-  contractText      String?          @db.Text /// Full contract text or additional legal terms
-  notes             String?          @db.Text /// Additional notes for the proposal
-  version           Int              @default(1) /// For proposal versioning
-  viewToken         String?          @unique @default(uuid()) /// Public viewing token for clients
+  /// For proposal versioning
+  version           Int              @default(1)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
-  project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  /// Milestones for delivery
+  milestones        String[]
+  /// DRAFT -> SENT -> APPROVED | REJECTED
+  status            ProposalStatus   @default(DRAFT)
+  /// Full contract text or additional legal terms
+  contractText      String?
+  /// Payment terms and schedules
+  paymentTerms      String?
+  /// Additional notes for the proposal
+  notes             String?
+  /// When the client signed & paid
+  signedAt          DateTime?
+  /// Public viewing token for clients
+  viewToken         String?          @unique @default(uuid())
+  booking           Booking?
   engagementModel   EngagementModel? @relation(fields: [engagementModelId], references: [id])
+  project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 /// Financial payments received for a project.
@@ -209,23 +239,41 @@ model Payment {
   currency  Currency      @default(BDT)
   note      String?
   paidAt    DateTime      @default(now())
-  splits    LedgerEntry[] /// Automatic splits generated for founders and project members
+  splits    LedgerEntry[]
   project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 /// Detailed ledger entries for each payment split (e.g., Company, Finder Fee, Execution).
 model LedgerEntry {
-  id        String    @id @default(cuid())
-  paymentId String
-  projectId String?
-  userId    String? /// Null for COMPANY_FUND
-  type      SplitType
-  amountBDT Float?
-  amountUSD Float?
-  createdAt DateTime  @default(now())
-  payment   Payment   @relation(fields: [paymentId], references: [id])
-  project   Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user      User?     @relation(fields: [userId], references: [id])
+  id           String      @id @default(cuid())
+  paymentId    String?
+  /// Null for COMPANY_FUND
+  userId       String?
+  type         SplitType
+  amountBDT    Float?
+  amountUSD    Float?
+  createdAt    DateTime    @default(now())
+  projectId    String?
+  note         String?
+  withdrawalId String?
+  payment      Payment?    @relation(fields: [paymentId], references: [id])
+  project      Project?    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user         User?       @relation(fields: [userId], references: [id])
+  withdrawal   Withdrawal? @relation(fields: [withdrawalId], references: [id])
+}
+
+model Withdrawal {
+  id            String           @id @default(cuid())
+  userId        String
+  amount        Float
+  currency      Currency         @default(BDT)
+  status        WithdrawalStatus @default(PENDING)
+  note          String?
+  processedAt   DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  ledgerEntries LedgerEntry[]
+  user          User             @relation(fields: [userId], references: [id])
 }
 
 /// Running totals of earnings for each user.
@@ -264,15 +312,32 @@ model Client {
 
 /// Business expenses recorded for profit/revenue tracking.
 model Expense {
-  id        String   @id @default(cuid())
-  title     String
-  amountBDT Float
-  amountUSD Float?
-  category  String?
-  date      DateTime @default(now())
-  note      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String            @id @default(cuid())
+  title        String
+  amountBDT    Float
+  amountUSD    Float?
+  category     String?
+  date         DateTime          @default(now())
+  note         String?
+  status       ExpenseStatus     @default(PENDING)
+  proposedById String?
+  executedAt   DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  proposedBy   User?             @relation("ExpenseProposer", fields: [proposedById], references: [id])
+  approvals    ExpenseApproval[]
+}
+
+model ExpenseApproval {
+  id        String     @id @default(cuid())
+  expenseId String
+  userId    String
+  status    VoteStatus @default(APPROVED)
+  createdAt DateTime   @default(now())
+  expense   Expense    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([expenseId, userId])
 }
 
 /// Articles and thought leadership pieces for the Insights section.
@@ -280,22 +345,18 @@ model Article {
   id           String   @id @default(cuid())
   title        String
   slug         String   @unique
-  content      String /// Markdown or HTML content
-  excerpt      String? /// Brief summary for grid view
-  category     String /// e.g., AI & Automation, Product Strategy
+  /// Markdown or HTML content
+  content      String
+  /// Brief summary for grid view
+  excerpt      String?
+  /// e.g., AI & Automation, Product Strategy
+  category     String
   thumbnailUrl String?
   isFeatured   Boolean  @default(false)
   viewCount    Int      @default(0)
   publishedAt  DateTime @default(now())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-}
-
-enum Role {
-  FOUNDER
-  CO_FOUNDER
-  CONTRACTOR
-  CLIENT
 }
 
 model Invitation {
@@ -306,74 +367,6 @@ model Invitation {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
-}
-
-enum Status {
-  ACTIVE
-  INACTIVE
-}
-
-enum PricingType {
-  FIXED /// Fixed price engagement
-  CUSTOM /// Custom pricing per project
-  RETAINER /// Monthly retainer model
-}
-
-enum ProposalStatus {
-  DRAFT
-  SENT
-  APPROVED
-  REJECTED
-}
-
-enum BookingStatus {
-  NEW
-  QUALIFIED
-  PROPOSAL_SENT
-  CLOSED_WON
-  CLOSED_LOST
-}
-
-enum ProjectStatus {
-  ACTIVE
-  DELIVERED
-  COMPLETED
-  CANCELLED
-}
-
-enum NotificationType {
-  MESSAGE_NEW
-  PROJECT_UPDATE
-  PAYMENT_RECEIVED
-  SYSTEM_ALERT
-  PROPOSAL_SENT
-  PROPOSAL_APPROVED
-  PROPOSAL_REJECTED
-  BOOKING_NEW
-  CHANGE_REQUEST_NEW
-}
-
-enum Currency {
-  BDT
-  USD
-}
-
-enum SplitType {
-  COMPANY_FUND
-  FINDER_FEE
-  EXECUTION
-}
-
-enum ProjectHealth {
-  GREEN
-  YELLOW
-  RED
-}
-
-enum MilestoneStatus {
-  PENDING
-  IN_PROGRESS
-  COMPLETED
 }
 
 /// Project milestones for tracking progress and deliverables.
@@ -398,7 +391,7 @@ model ActivityLog {
   action    String
   createdAt DateTime @default(now())
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 /// Client-initiated or founder-created change requests within a project.
@@ -408,8 +401,10 @@ model ChangeRequest {
   requestedById         String
   title                 String
   description           String
-  estimatedTimeImpact   Float     @default(0) /// In hours
-  estimatedBudgetImpact Float     @default(0) /// In project currency
+  /// In hours
+  estimatedTimeImpact   Float     @default(0)
+  /// In project currency
+  estimatedBudgetImpact Float     @default(0)
   status                CRStatus  @default(PENDING)
   clientApprovalAt      DateTime?
   createdAt             DateTime  @default(now())
@@ -417,23 +412,19 @@ model ChangeRequest {
   requestedBy           User      @relation(fields: [requestedById], references: [id])
 }
 
-enum CRStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 /// Audit trail for authentication and security events.
 model SecurityLog {
   id           String   @id @default(cuid())
   email        String
-  action       String /// e.g., "MAGIC_LINK_REQUEST", "MAGIC_LINK_VERIFY", "PASSWORD_LOGIN"
-  status       String /// e.g., "SUCCESS", "FAILURE", "INVALID_ROLE", "REJECTED"
+  /// e.g., "MAGIC_LINK_REQUEST", "MAGIC_LINK_VERIFY", "PASSWORD_LOGIN"
+  action       String
+  /// e.g., "SUCCESS", "FAILURE", "INVALID_ROLE", "REJECTED"
+  status       String
   ip           String?
   userAgent    String?
+  createdAt    DateTime @default(now())
   fingerprint  String?
   isSuspicious Boolean  @default(false)
-  createdAt    DateTime @default(now())
 
   @@index([email])
   @@index([action])
@@ -450,9 +441,116 @@ model Notification {
   link      String?
   isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isRead])
+}
+
+enum ProjectMemberRole {
+  FINDER
+  EXECUTION
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum Role {
+  FOUNDER
+  CONTRACTOR
+  CLIENT
+  CO_FOUNDER
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum PricingType {
+  /// Fixed price engagement
+  FIXED
+  /// Custom pricing per project
+  CUSTOM
+  /// Monthly retainer model
+  RETAINER
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  APPROVED
+  REJECTED
+}
+
+enum BookingStatus {
+  NEW
+  QUALIFIED
+  PROPOSAL_SENT
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  DELIVERED
+}
+
+enum NotificationType {
+  MESSAGE_NEW
+  PROJECT_UPDATE
+  PAYMENT_RECEIVED
+  SYSTEM_ALERT
+  PROPOSAL_SENT
+  PROPOSAL_APPROVED
+  PROPOSAL_REJECTED
+  BOOKING_NEW
+  CHANGE_REQUEST_NEW
+}
+
+enum Currency {
+  BDT
+  USD
+}
+
+enum SplitType {
+  COMPANY_FUND
+  FINDER_FEE
+  EXECUTION
+  WITHDRAWAL
+}
+
+enum ProjectHealth {
+  GREEN
+  YELLOW
+  RED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum CRStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VoteStatus {
+  APPROVED
+  REJECTED
 }

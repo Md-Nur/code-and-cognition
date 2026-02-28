@@ -39,9 +39,18 @@ export default function RevenueSplitsControl({
     const executionPoolRatio = Math.max(0, 100 - companyFundRatio - finderFeeRatio);
 
     const addMember = (role: ProjectMemberRole) => {
+        if (role === "FINDER") {
+            const finders = members.filter(m => m.role === "FINDER");
+            if (finders.length >= 1) return; // Max 1 finder
+        }
+
         let newMembers: Member[] = [...members, { userId: "", role, share: 0 }];
 
-        if (role === "EXECUTION") {
+        if (role === "FINDER") {
+            newMembers = newMembers.map(m =>
+                m.role === "FINDER" ? { ...m, share: 10 } : m
+            );
+        } else if (role === "EXECUTION") {
             const executionMembers = newMembers.filter(m => m.role === "EXECUTION");
             const count = executionMembers.length;
             if (count > 0) {
@@ -104,12 +113,12 @@ export default function RevenueSplitsControl({
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    companyFundRatio: 0.2,
-                    finderFeeRatio: 0.1,
+                    companyFundRatio: 0.2, // 20% by default based on UI
+                    finderFeeRatio: 0.1,   // 10% by default based on UI
                     members: members.map(m => ({
                         userId: m.userId,
                         role: m.role,
-                        share: m.share
+                        share: m.role === "FINDER" ? 10 : m.share
                     }))
                 }),
             });
@@ -182,14 +191,16 @@ export default function RevenueSplitsControl({
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                        <UserCheck className="w-4 h-4 text-emerald-500" /> Finders
+                        <UserCheck className="w-4 h-4 text-emerald-500" /> Finder (Max 1)
                     </h4>
-                    <button
-                        onClick={() => addMember("FINDER")}
-                        className="text-[10px] font-bold uppercase tracking-widest text-agency-accent hover:text-white transition-colors flex items-center gap-1"
-                    >
-                        <Plus className="w-3 h-3" /> Add Finder
-                    </button>
+                    {finders.length === 0 && (
+                        <button
+                            onClick={() => addMember("FINDER")}
+                            className="text-[10px] font-bold uppercase tracking-widest text-agency-accent hover:text-white transition-colors flex items-center gap-1"
+                        >
+                            <Plus className="w-3 h-3" /> Add Finder
+                        </button>
+                    )}
                 </div>
 
                 <div className="space-y-3">
@@ -210,16 +221,9 @@ export default function RevenueSplitsControl({
                                 })}
                             </select>
                             <div className="w-32 flex items-center gap-2">
-                                <input
-                                    type="number"
-                                    value={member.share}
-                                    onChange={(e) => updateMember(members.indexOf(member), { share: Number(e.target.value) })}
-                                    className="w-full input-field px-3 py-2 text-sm"
-                                    placeholder="Weight"
-                                />
-                                <span className="text-[10px] text-gray-500 font-mono">
-                                    {totalFinderShare > 0 ? ((member.share / totalFinderShare) * 100).toFixed(0) : 0}%
-                                </span>
+                                <div className="w-full bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-sm text-gray-400 text-center">
+                                    10% fixed
+                                </div>
                             </div>
                             <button
                                 onClick={() => removeMember(members.indexOf(member))}
@@ -230,7 +234,7 @@ export default function RevenueSplitsControl({
                         </div>
                     ))}
                     {finders.length === 0 && (
-                        <p className="text-xs text-gray-600 italic">No finders assigned. (Pool will go to legacy finder if set)</p>
+                        <p className="text-xs text-gray-600 italic">No finder assigned. Pool (10%) will be unallocated or go to legacy finder.</p>
                     )}
                 </div>
             </div>

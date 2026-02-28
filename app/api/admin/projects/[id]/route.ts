@@ -16,7 +16,8 @@ const projectUpdateSchema = z.object({
     role: z.enum(["FINDER", "EXECUTION"]),
     share: z.number().min(0)
   })).optional(),
-}).refine((d) => d.status !== undefined || d.health !== undefined || d.companyFundRatio !== undefined || d.finderFeeRatio !== undefined || d.members !== undefined, {
+  title: z.string().min(1).optional(),
+}).refine((d) => d.status !== undefined || d.health !== undefined || d.companyFundRatio !== undefined || d.finderFeeRatio !== undefined || d.members !== undefined || d.title !== undefined, {
   message: "At least one update property must be provided",
 });
 
@@ -100,7 +101,17 @@ export async function PATCH(
     );
   }
 
-  const { status, health, companyFundRatio, finderFeeRatio, members } = validation.data;
+  const { status, health, companyFundRatio, finderFeeRatio, members, title } = validation.data;
+
+  if (members) {
+    const finders = members.filter((m) => m.role === "FINDER");
+    if (finders.length > 1) {
+      return NextResponse.json(
+        { error: "Only one finder is allowed per project" },
+        { status: 400 }
+      );
+    }
+  }
 
   try {
     const project = await prisma.$transaction(async (tx) => {
@@ -110,8 +121,9 @@ export async function PATCH(
         data: {
           ...(status && { status }),
           ...(health && { health }),
-          companyFundRatio: 0.1,
-          finderFeeRatio: 0.2,
+          ...(title && { title }),
+          companyFundRatio: 0.2,
+          finderFeeRatio: 0.1,
         },
         include: {
           booking: true,

@@ -25,7 +25,7 @@ export const PATCH = withAuth(async (req: Request, { params }: { params: Promise
         console.error("Update Expense Error:", error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER);
+}, [Role.FOUNDER, Role.CO_FOUNDER]);
 
 export const DELETE = withAuth(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try {
@@ -38,4 +38,4 @@ export const DELETE = withAuth(async (req: Request, { params }: { params: Promis
         console.error("Delete Expense Error:", error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER);
+}, [Role.FOUNDER, Role.CO_FOUNDER]);
