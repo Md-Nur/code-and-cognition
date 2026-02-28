@@ -12,8 +12,12 @@ export const GET = withAuth(async () => {
     return ApiResponse.success(payments);
 }, Role.FOUNDER);
 
-export const POST = withAuth(async (req) => {
+export const POST = withAuth(async (req, context, session) => {
     try {
+        if (!session?.user?.isCFO) {
+            return ApiResponse.error("Only the CFO can add a payment", 403);
+        }
+
         const body = await req.json();
         const validation = paymentSchema.safeParse(body);
 
@@ -22,6 +26,23 @@ export const POST = withAuth(async (req) => {
         }
 
         const { projectId, amount, currency, note } = validation.data;
+
+        // Validation for Finder and Execution members
+        const project = await prisma.project.findUnique({
+            where: { id: projectId },
+            include: { members: true },
+        });
+
+        if (!project) {
+            return ApiResponse.error("Project not found", 404);
+        }
+
+        const hasFinder = project.finderId || project.members.some(m => m.role === "FINDER");
+        const hasExecution = project.members.some(m => m.role === "EXECUTION");
+
+        if (!hasFinder || !hasExecution) {
+            return ApiResponse.error("Please add a finder and at least one executive member to this project before adding a payment.", 400);
+        }
 
         // Create Payment Record
         const payment = await prisma.payment.create({

@@ -19,7 +19,8 @@ import {
     Menu,
     X,
     User as UserIcon,
-    Target
+    Target,
+    Wallet
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -58,6 +59,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 { name: "Expenses", href: "/dashboard/expenses", icon: CreditCard },
                 { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },
                 { name: "Payments", href: "/dashboard/payments", icon: CreditCard },
+                { name: "Withdrawals", href: "/dashboard/withdrawals", icon: Wallet },
                 { name: "Users", href: "/dashboard/users", icon: Users },
                 { name: "Shares", href: "/dashboard/shares", icon: FileText },
                 { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
@@ -68,6 +70,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             return [
                 ...common,
                 { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },
+                { name: "Withdrawals", href: "/dashboard/withdrawals", icon: Wallet },
             ];
         }
 

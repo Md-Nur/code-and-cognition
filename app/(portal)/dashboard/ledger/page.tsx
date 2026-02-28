@@ -18,6 +18,7 @@ type LedgerData = {
     approvedExpenses: Expense[];
     userBalances: (LedgerBalance & { user: User })[];
     pendingWithdrawals: (Withdrawal & { user: User })[];
+    completedWithdrawals?: (Withdrawal & { user: User })[];
     totalCompanyFund?: { bdt: number; usd: number };
     totalUserBalances?: { bdt: number; usd: number };
 };
@@ -142,6 +143,14 @@ export default function LedgerPage() {
             amountBDT: -e.amountBDT,
             amountUSD: e.amountUSD ? -e.amountUSD : null,
             type: "EXPENSE" as const
+        })) || []),
+        ...(data?.completedWithdrawals?.map(w => ({
+            id: w.id,
+            date: w.updatedAt || w.createdAt,
+            source: `Withdrawal ${w.status === 'REJECTED' ? '(Rejected)' : '(Completed)'}: ${w.user?.name || 'User'}`,
+            amountBDT: w.currency === "BDT" ? (w.status === 'REJECTED' ? 0 : -w.amount) : null,
+            amountUSD: w.currency === "USD" ? (w.status === 'REJECTED' ? 0 : -w.amount) : null,
+            type: "WITHDRAWAL" as const
         })) || [])
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 

@@ -5,6 +5,13 @@ import { Role } from "@prisma/client";
 export const PATCH = withAuth(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try {
         const { id } = await params;
+
+        // Block edits on fully-approved expenses
+        const existing = await prisma.expense.findUnique({ where: { id }, select: { status: true } });
+        if (existing?.status === "APPROVED") {
+            return ApiResponse.error("Cannot edit an expense that has been fully approved.", 403);
+        }
+
         const body = await req.json();
         const { title, amountBDT, amountUSD, category, date, note } = body;
 
@@ -30,6 +37,13 @@ export const PATCH = withAuth(async (req: Request, { params }: { params: Promise
 export const DELETE = withAuth(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try {
         const { id } = await params;
+
+        // Block deletion of fully-approved expenses
+        const existing = await prisma.expense.findUnique({ where: { id }, select: { status: true } });
+        if (existing?.status === "APPROVED") {
+            return ApiResponse.error("Cannot delete an expense that has been fully approved.", 403);
+        }
+
         await prisma.expense.delete({
             where: { id }
         });

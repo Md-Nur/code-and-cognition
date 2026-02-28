@@ -1,1 +1,0 @@
-No payout system exist. If any user want to withdraw his money he can request for withdraw then the CFO accept the request then the transaction will happen.

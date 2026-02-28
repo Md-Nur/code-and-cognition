@@ -3,6 +3,21 @@ import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role, SplitType, WithdrawalStatus } from "@prisma/client";
 import { z } from "zod";
 
+// GET /api/user/withdraw — list current user's withdrawal history
+export const GET = withAuth(async (req, context, session) => {
+    try {
+        const userId = session.user.id;
+        const withdrawals = await prisma.withdrawal.findMany({
+            where: { userId },
+            orderBy: { createdAt: "desc" },
+        });
+        return ApiResponse.success(withdrawals);
+    } catch (error) {
+        console.error("[WITHDRAW_GET]", error);
+        return ApiResponse.error("Internal Server Error", 500);
+    }
+}, [Role.FOUNDER, Role.CO_FOUNDER, Role.CONTRACTOR]);
+
 const withdrawalSchema = z.object({
     amount: z.number().positive(),
     currency: z.enum(["BDT", "USD"]),

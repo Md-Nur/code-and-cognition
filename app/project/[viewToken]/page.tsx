@@ -71,9 +71,8 @@ export default async function ClientPortalPage(props: {
                 path: "/",
             });
 
-            // Re-fetch auth to ensure consistency in this render if needed, 
             // though we can also just manually set the session variable.
-            session = { user: { id: user.id, email: user.email, role: user.role, name: user.name } };
+            session = { user: { id: user.id, email: user.email, role: user.role, name: user.name, isCFO: user.isCFO } };
         }
     }
 

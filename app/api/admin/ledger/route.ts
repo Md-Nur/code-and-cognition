@@ -35,6 +35,12 @@ export const GET = withAuth(
         orderBy: { createdAt: "desc" },
       });
 
+      const completedWithdrawals = await prisma.withdrawal.findMany({
+        where: { status: { in: ["COMPLETED", "REJECTED"] } },
+        include: { user: true },
+        orderBy: { createdAt: "desc" },
+      });
+
       // Calculate Company Fund (Gross - Expenses)
       const companyFundPool = await prisma.ledgerEntry.aggregate({
         where: { type: SplitType.COMPANY_FUND },
@@ -61,6 +67,7 @@ export const GET = withAuth(
         approvedExpenses,
         userBalances,
         pendingWithdrawals,
+        completedWithdrawals,
         totalCompanyFund,
         totalUserBalances,
       });

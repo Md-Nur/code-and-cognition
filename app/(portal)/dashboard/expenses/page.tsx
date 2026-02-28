@@ -103,19 +103,18 @@ export default function AdminExpensesPage() {
         }
     }
 
-    async function handleVote(id: string, action: 'approve' | 'reject') {
-        const res = await fetch(`/api/admin/expenses/${id}/${action}`, { method: "POST" });
+    async function handleVote(id: string) {
+        const res = await fetch(`/api/admin/expenses/${id}/approve`, { method: "POST" });
         if (res.ok) {
             fetchExpenses();
         } else {
-            alert(`Failed to ${action} expense`);
+            alert(`Failed to approve expense`);
         }
     }
 
     const getStatusColor = (status: string) => {
         switch (status) {
             case "APPROVED": return "text-green-400 bg-green-400/10 border-green-400/20";
-            case "REJECTED": return "text-red-400 bg-red-400/10 border-red-400/20";
             default: return "text-amber-400 bg-amber-400/10 border-amber-400/20";
         }
     };
@@ -202,25 +201,23 @@ export default function AdminExpensesPage() {
                                         <td className="py-4 px-6 text-right align-top">
                                             <div className="flex justify-end gap-3 transition-opacity">
                                                 {expense.status === "PENDING" && !hasVoted && (
+                                                    <button
+                                                        onClick={() => handleVote(expense.id)}
+                                                        className="text-xs font-bold text-green-400 hover:text-green-300 uppercase"
+                                                    >Approve</button>
+                                                )}
+                                                {expense.status !== "APPROVED" && (
                                                     <>
                                                         <button
-                                                            onClick={() => handleVote(expense.id, 'approve')}
-                                                            className="text-xs font-bold text-green-400 hover:text-green-300 uppercase"
-                                                        >Approve</button>
+                                                            onClick={() => { setEditingExpense(expense); setIsModalOpen(true); }}
+                                                            className="text-xs font-bold text-gray-400 hover:text-white uppercase lg:opacity-0 lg:group-hover:opacity-100"
+                                                        >Edit</button>
                                                         <button
-                                                            onClick={() => handleVote(expense.id, 'reject')}
-                                                            className="text-xs font-bold text-red-400 hover:text-red-300 uppercase"
-                                                        >Reject</button>
+                                                            onClick={() => setDeletingExpense(expense)}
+                                                            className="text-xs font-bold text-red-400 hover:text-red-300 uppercase lg:opacity-0 lg:group-hover:opacity-100"
+                                                        >Delete</button>
                                                     </>
                                                 )}
-                                                <button
-                                                    onClick={() => { setEditingExpense(expense); setIsModalOpen(true); }}
-                                                    className="text-xs font-bold text-gray-400 hover:text-white uppercase lg:opacity-0 lg:group-hover:opacity-100"
-                                                >Edit</button>
-                                                <button
-                                                    onClick={() => setDeletingExpense(expense)}
-                                                    className="text-xs font-bold text-red-400 hover:text-red-300 uppercase lg:opacity-0 lg:group-hover:opacity-100"
-                                                >Delete</button>
                                             </div>
                                         </td>
                                     </tr>

@@ -593,7 +593,6 @@ enum CRStatus {
 enum ExpenseStatus {
   PENDING
   APPROVED
-  REJECTED
 }
 
 enum VoteStatus {
