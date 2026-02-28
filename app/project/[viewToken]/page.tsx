@@ -1,5 +1,6 @@
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
     CheckCircle2,
     Clock,
@@ -21,6 +22,12 @@ export default async function ClientPortalPage(props: {
 }) {
     const { viewToken } = await props.params;
 
+    const session = await auth();
+
+    if (!session?.user) {
+        redirect(`/login?callbackUrl=/project/${viewToken}`);
+    }
+
     const project = await prisma.project.findUnique({
         where: { viewToken },
         include: {
@@ -40,6 +47,13 @@ export default async function ClientPortalPage(props: {
     });
 
     if (!project) return notFound();
+
+    const isClient = project.clientUserId === session.user.id;
+    const isFounder = session.user.role === "FOUNDER" || session.user.role === "CO_FOUNDER";
+
+    if (!isClient && !isFounder) {
+        return notFound();
+    }
 
     const pendingChangeRequests = await prisma.changeRequest.count({
         where: {
