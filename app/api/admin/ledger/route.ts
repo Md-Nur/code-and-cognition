@@ -4,10 +4,10 @@ import { SplitType, Role } from "@prisma/client";
 
 export const GET = withAuth(
   async (req, context, session) => {
-    const isFounder = session.user.role === Role.FOUNDER;
+    const isPrivileged = [Role.FOUNDER, Role.CO_FOUNDER].includes(session.user.role);
 
-    // Founder sees all company fund entries and overall stats
-    if (isFounder) {
+    // Privileged users see all company fund entries, overall stats, and pending withdrawals
+    if (isPrivileged) {
       const companyFundEntries = await prisma.ledgerEntry.findMany({
         where: { type: SplitType.COMPANY_FUND },
         include: { payment: { include: { project: true } } },
@@ -23,12 +23,17 @@ export const GET = withAuth(
         include: { user: true },
       });
 
-      // Combine and format for UI consistency if needed, 
-      // but for now just sending both lists is fine as the UI handles them.
+      const pendingWithdrawals = await prisma.withdrawal.findMany({
+        where: { status: "PENDING" },
+        include: { user: true },
+        orderBy: { createdAt: "desc" },
+      });
+
       return ApiResponse.success({
         companyFundEntries,
         approvedExpenses,
         userBalances,
+        pendingWithdrawals,
       });
     }
 

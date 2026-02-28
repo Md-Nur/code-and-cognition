@@ -21,7 +21,7 @@ export const POST = withAuth(async (req, context, session) => {
         const { amount, currency, note } = validation.data;
         const userId = session.user.id;
 
-        // 1. Check current balance
+        // 1. Check current balance vs (requested amount + pending withdrawals)
         const balance = await prisma.ledgerBalance.findUnique({
             where: { userId },
         });
@@ -30,50 +30,32 @@ export const POST = withAuth(async (req, context, session) => {
             return ApiResponse.error("Insufficient balance", 400);
         }
 
-        const currentBalance = currency === "BDT" ? balance.totalBDT : balance.totalUSD;
-        if (currentBalance < amount) {
-            return ApiResponse.error("Insufficient balance", 400);
-        }
-
-        // 2. Process withdrawal
-        const withdrawal = await prisma.$transaction(async (tx) => {
-            // Create Withdrawal record
-            const withdraw = await tx.withdrawal.create({
-                data: {
-                    userId,
-                    amount,
-                    currency,
-                    note,
-                    status: WithdrawalStatus.COMPLETED, // Auto-completed for now
-                    processedAt: new Date(),
-                },
-            });
-
-            // Create negative Ledger Entry
-            await tx.ledgerEntry.create({
-                data: {
-                    userId,
-                    withdrawalId: withdraw.id,
-                    type: SplitType.WITHDRAWAL,
-                    amountBDT: currency === "BDT" ? -amount : null,
-                    amountUSD: currency === "USD" ? -amount : null,
-                    note: note || "Withdrawal",
-                },
-            });
-
-            // Update Ledger Balance
-            await tx.ledgerBalance.update({
-                where: { userId },
-                data: {
-                    totalBDT: { decrement: currency === "BDT" ? amount : 0 },
-                    totalUSD: { decrement: currency === "USD" ? amount : 0 },
-                },
-            });
-
-            return withdraw;
+        const pendingWithdrawals = await prisma.withdrawal.findMany({
+            where: { userId, status: WithdrawalStatus.PENDING },
         });
 
-        return ApiResponse.success({ message: "Withdrawal successful", withdrawal });
+        const totalPending = pendingWithdrawals.reduce((sum, w) => {
+            if (w.currency === currency) return sum + w.amount;
+            return sum;
+        }, 0);
+
+        const currentBalance = currency === "BDT" ? balance.totalBDT : balance.totalUSD;
+        if (currentBalance < (amount + totalPending)) {
+            return ApiResponse.error("Insufficient balance (including pending requests)", 400);
+        }
+
+        // 2. Create withdrawal request (PENDING)
+        const withdrawal = await prisma.withdrawal.create({
+            data: {
+                userId,
+                amount,
+                currency,
+                note,
+                status: WithdrawalStatus.PENDING,
+            },
+        });
+
+        return ApiResponse.success({ message: "Withdrawal request submitted for approval", withdrawal });
     } catch (error) {
         console.error("[WITHDRAW_POST]", error);
         return ApiResponse.error("Internal Server Error", 500);

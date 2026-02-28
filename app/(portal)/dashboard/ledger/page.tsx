@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LedgerEntry, LedgerBalance, User, Role, Expense } from "@prisma/client";
-import { CircleDollarSign, Wallet, X, CheckCircle2, LayoutDashboard, UserCircle, PlusCircle, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { LedgerEntry, LedgerBalance, User, Role, Expense, Withdrawal } from "@prisma/client";
+import {
+    CircleDollarSign, Wallet, X, CheckCircle2, LayoutDashboard,
+    UserCircle, PlusCircle, ArrowUpRight, ArrowDownRight,
+    Clock, Check, XCircle
+} from "lucide-react";
 import WalletView from "@/app/components/dashboard/WalletView";
 
 type LedgerData = {
     companyFundEntries: (LedgerEntry & { payment: { project: { title: string } } })[];
     approvedExpenses: Expense[];
     userBalances: (LedgerBalance & { user: User })[];
+    pendingWithdrawals: (Withdrawal & { user: User })[];
 };
 
 export default function LedgerPage() {
@@ -19,6 +24,7 @@ export default function LedgerPage() {
     const [payoutAmount, setPayoutAmount] = useState("");
     const [currency, setCurrency] = useState<"BDT" | "USD">("BDT");
     const [activeTab, setActiveTab] = useState<"admin" | "personal">("personal");
+    const [processingId, setProcessingId] = useState<string | null>(null);
 
     const [session, setSession] = useState<any>(null);
 
@@ -37,8 +43,9 @@ export default function LedgerPage() {
                     window.location.href = "/dashboard";
                 }
                 setSession(s);
-                // Default to admin tab for founders
-                if (s.user.role === Role.FOUNDER || s.user.role === Role.CO_FOUNDER) {
+                // Default to admin tab for privileged roles
+                const privileged = [Role.FOUNDER, Role.CO_FOUNDER, Role.CASHIER].includes(s.user.role);
+                if (privileged) {
                     setActiveTab("admin");
                 }
             }
@@ -46,6 +53,22 @@ export default function LedgerPage() {
         getSession();
         fetchData();
     }, []);
+
+    async function handleWithdrawAction(id: string, action: 'approve' | 'reject') {
+        setProcessingId(id);
+        try {
+            const res = await fetch(`/api/admin/withdrawals/${id}/${action}`, { method: "POST" });
+            if (res.ok) {
+                fetchData();
+            } else {
+                alert(`Failed to ${action} withdrawal`);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setProcessingId(null);
+        }
+    }
 
     async function handlePayout(e: React.FormEvent) {
         e.preventDefault();
@@ -76,7 +99,7 @@ export default function LedgerPage() {
 
     if (loading) return <div className="p-8 text-center text-gray-500">Loading ledger data...</div>;
 
-    const isAdmin = session?.user?.role === Role.FOUNDER || session?.user?.role === Role.CO_FOUNDER;
+    const isPrivileged = [Role.FOUNDER, Role.CO_FOUNDER, Role.CASHIER].includes(session?.user?.role);
 
     // Consolidate income and expenses
     const history = [
@@ -107,7 +130,7 @@ export default function LedgerPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
-                    {isAdmin && (
+                    {isPrivileged && (
                         <a
                             href="/dashboard/expenses"
                             className="btn-brand px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2"
@@ -116,7 +139,7 @@ export default function LedgerPage() {
                             Add Expense
                         </a>
                     )}
-                    {isAdmin && (
+                    {isPrivileged && (
                         <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-fit">
                             <button
                                 onClick={() => setActiveTab("admin")}
@@ -185,46 +208,96 @@ export default function LedgerPage() {
                         </div>
                     </div>
 
-                    {/* User Balances */}
-                    <div className="space-y-4">
-                        <h2 className="text-lg font-bold flex items-center gap-2 px-2">
-                            👥 Contractor Balances
-                        </h2>
-                        <div className="glass-panel overflow-hidden rounded-2xl border-white/5">
-                            <div className="table-container">
-                                <table className="data-table w-full">
-                                    <thead>
-                                        <tr>
-                                            <th className="text-left py-4 px-6 border-b border-white/5 bg-white/[0.02]">User</th>
-                                            <th className="text-right py-4 px-6 border-b border-white/5 bg-white/[0.02]">Balance</th>
-                                            <th className="text-right py-4 px-6 border-b border-white/5 bg-white/[0.02]">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {data?.userBalances.length === 0 ? (
-                                            <tr><td colSpan={3} className="p-8 text-center text-gray-500">No balances recorded.</td></tr>
-                                        ) : data?.userBalances.map((balance) => (
-                                            <tr key={balance.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                                <td className="py-4 px-6 font-medium">{balance.user.name}</td>
-                                                <td className="py-4 px-6 text-right">
-                                                    <div className="text-sm font-mono">৳{balance.totalBDT.toLocaleString()}</div>
-                                                    <div className="text-xs text-gray-500 font-mono">${balance.totalUSD.toLocaleString()}</div>
-                                                </td>
-                                                <td className="py-4 px-6 text-right">
+                    {/* Right column */}
+                    <div className="space-y-8">
+                        {/* Pending Withdrawals */}
+                        {data?.pendingWithdrawals && data.pendingWithdrawals.length > 0 && (
+                            <div className="space-y-4">
+                                <h2 className="text-lg font-bold flex items-center gap-2 px-2 text-amber-400">
+                                    <Clock className="w-5 h-5" />
+                                    Pending Withdrawals
+                                </h2>
+                                <div className="glass-panel border-amber-500/20 bg-amber-500/5 rounded-2xl overflow-hidden p-4 space-y-4">
+                                    {data.pendingWithdrawals.map((w) => (
+                                        <div key={w.id} className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-3">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <div className="font-bold text-sm">{w.user.name}</div>
+                                                    <div className="text-[10px] text-gray-500">{new Date(w.createdAt).toLocaleString()}</div>
+                                                </div>
+                                                <div className="font-mono font-bold text-amber-400">
+                                                    {w.currency === "BDT" ? `৳${w.amount.toLocaleString()}` : `$${w.amount.toLocaleString()}`}
+                                                </div>
+                                            </div>
+                                            {w.note && <div className="text-[10px] text-gray-400 italic">"{w.note}"</div>}
+                                            {isCFO && (
+                                                <div className="flex gap-2">
                                                     <button
-                                                        onClick={() => {
-                                                            setSelectedUser(balance.user);
-                                                            setShowPayoutModal(true);
-                                                        }}
-                                                        className="text-xs btn-outline py-1 px-3 rounded-lg"
+                                                        onClick={() => handleWithdrawAction(w.id, 'approve')}
+                                                        disabled={processingId === w.id}
+                                                        className="flex-1 py-1.5 rounded-lg bg-green-500/20 hover:bg-green-500/30 text-green-400 text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-colors disabled:opacity-50"
                                                     >
-                                                        Payout
+                                                        <Check className="w-3 h-3" />
+                                                        Approve
                                                     </button>
-                                                </td>
+                                                    <button
+                                                        onClick={() => handleWithdrawAction(w.id, 'reject')}
+                                                        disabled={processingId === w.id}
+                                                        className="flex-1 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-colors disabled:opacity-50"
+                                                    >
+                                                        <XCircle className="w-3 h-3" />
+                                                        Reject
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* User Balances */}
+                        <div className="space-y-4">
+                            <h2 className="text-lg font-bold flex items-center gap-2 px-2">
+                                👥 Contractor Balances
+                            </h2>
+                            <div className="glass-panel overflow-hidden rounded-2xl border-white/5">
+                                <div className="table-container">
+                                    <table className="data-table w-full">
+                                        <thead>
+                                            <tr>
+                                                <th className="text-left py-4 px-6 border-b border-white/5 bg-white/[0.02]">User</th>
+                                                <th className="text-right py-4 px-6 border-b border-white/5 bg-white/[0.02]">Balance</th>
+                                                <th className="text-right py-4 px-6 border-b border-white/5 bg-white/[0.02]">Action</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {data?.userBalances.length === 0 ? (
+                                                <tr><td colSpan={3} className="p-8 text-center text-gray-500">No balances recorded.</td></tr>
+                                            ) : data?.userBalances.map((balance) => (
+                                                <tr key={balance.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                                    <td className="py-4 px-6 font-medium text-xs">{balance.user.name}</td>
+                                                    <td className="py-4 px-6 text-right">
+                                                        <div className="text-[10px] font-mono">৳{balance.totalBDT.toLocaleString()}</div>
+                                                        <div className="text-[9px] text-gray-500 font-mono">${balance.totalUSD.toLocaleString()}</div>
+                                                    </td>
+                                                    <td className="py-4 px-6 text-right">
+                                                        <button
+                                                            onClick={() => {
+                                                                setSelectedUser(balance.user);
+                                                                setShowPayoutModal(true);
+                                                            }}
+                                                            className="text-[10px] btn-outline py-1 px-2 rounded-lg"
+                                                            title="Direct Payout"
+                                                        >
+                                                            Payout
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
