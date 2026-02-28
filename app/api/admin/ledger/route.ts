@@ -10,7 +10,7 @@ export const GET = withAuth(
     // All allowed users (Founders, Co-Founders, Contractors) see company transaction history
     // and approved expenses
     const transactions = await prisma.ledgerEntry.findMany({
-      include: { 
+      include: {
         payment: { include: { project: true } },
         user: true,
         withdrawal: true
@@ -35,11 +35,34 @@ export const GET = withAuth(
         orderBy: { createdAt: "desc" },
       });
 
+      // Calculate Company Fund (Gross - Expenses)
+      const companyFundPool = await prisma.ledgerEntry.aggregate({
+        where: { type: SplitType.COMPANY_FUND },
+        _sum: { amountBDT: true, amountUSD: true }
+      });
+
+      const totalExpenses = await prisma.expense.aggregate({
+        where: { status: "APPROVED" },
+        _sum: { amountBDT: true, amountUSD: true }
+      });
+
+      const totalCompanyFund = {
+        bdt: (companyFundPool._sum.amountBDT || 0) - (totalExpenses._sum.amountBDT || 0),
+        usd: (companyFundPool._sum.amountUSD || 0) - (totalExpenses._sum.amountUSD || 0),
+      };
+
+      const totalUserBalances = {
+        bdt: userBalances.reduce((acc, curr) => acc + curr.totalBDT, 0),
+        usd: userBalances.reduce((acc, curr) => acc + curr.totalUSD, 0),
+      };
+
       return ApiResponse.success({
         transactions,
         approvedExpenses,
         userBalances,
         pendingWithdrawals,
+        totalCompanyFund,
+        totalUserBalances,
       });
     }
 

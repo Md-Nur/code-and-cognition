@@ -5,7 +5,7 @@ import { LedgerEntry, LedgerBalance, User, Role, Expense, Withdrawal } from "@pr
 import {
     CircleDollarSign, Wallet, X, CheckCircle2,
     PlusCircle, ArrowUpRight, ArrowDownRight,
-    Clock, Check, XCircle, Building2
+    Clock, Check, XCircle, Building2, Users
 } from "lucide-react";
 
 
@@ -18,6 +18,8 @@ type LedgerData = {
     approvedExpenses: Expense[];
     userBalances: (LedgerBalance & { user: User })[];
     pendingWithdrawals: (Withdrawal & { user: User })[];
+    totalCompanyFund?: { bdt: number; usd: number };
+    totalUserBalances?: { bdt: number; usd: number };
 };
 
 export default function LedgerPage() {
@@ -39,7 +41,7 @@ export default function LedgerPage() {
 
     useEffect(() => {
         async function getSession() {
-            const res = await fetch("/api/auth/profile");
+            const res = await fetch("/api/auth/me");
             if (res.ok) {
                 const s = await res.json();
                 if (s.user.role === "CLIENT") {
@@ -164,7 +166,38 @@ export default function LedgerPage() {
                 </div>
             </div>
 
-            <div className="animate-fade-in pt-4">
+            <div className="animate-fade-in pt-4 space-y-8">
+                {/* Summary Cards */}
+                {isPrivileged && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="glass-panel p-6 rounded-3xl border-white/5 bg-gradient-to-br from-blue-500/10 to-transparent flex items-center gap-5 group hover:border-blue-500/30 transition-all duration-500">
+                            <div className="p-4 rounded-2xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform duration-500">
+                                <Building2 className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">Company Fund</p>
+                                <div className="flex flex-col">
+                                    <span className="text-2xl font-bold font-mono text-white">৳{data?.totalCompanyFund?.bdt.toLocaleString()}</span>
+                                    <span className="text-sm font-mono text-gray-500">${data?.totalCompanyFund?.usd.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="glass-panel p-6 rounded-3xl border-white/5 bg-gradient-to-br from-purple-500/10 to-transparent flex items-center gap-5 group hover:border-purple-500/30 transition-all duration-500">
+                            <div className="p-4 rounded-2xl bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform duration-500">
+                                <Users className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">Total Payouts Due</p>
+                                <div className="flex flex-col">
+                                    <span className="text-2xl font-bold font-mono text-white">৳{data?.totalUserBalances?.bdt.toLocaleString()}</span>
+                                    <span className="text-sm font-mono text-gray-500">${data?.totalUserBalances?.usd.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
                     {/* Consolidated Fund History */}
                     <div className="space-y-6 lg:col-span-2">

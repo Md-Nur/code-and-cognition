@@ -6,11 +6,7 @@ export const POST = withAuth(async (req: Request, { params }: { params: Promise<
     try {
         const { id } = await params;
 
-        if (!session.user.isCFO) {
-            return ApiResponse.error("Only the designated CFO can reject expenses", 403);
-        }
-
-        // 1. Record the rejection for history
+        // 1. Record this founder's rejection vote
         await prisma.expenseApproval.upsert({
             where: {
                 expenseId_userId: {
@@ -26,15 +22,13 @@ export const POST = withAuth(async (req: Request, { params }: { params: Promise<
             }
         });
 
-        // 2. Set the expense status to REJECTED immediately
-        // A single rejection or lack of consensus might be enough depending on business rules, 
-        // but here "A single rejection is enough to reject it" seems appropriate for a "must all approve" system.
+        // 2. A single rejection is enough to reject the expense immediately
         await prisma.expense.update({
             where: { id },
             data: { status: "REJECTED" }
         });
 
-        return ApiResponse.success({ message: "Expense rejected" });
+        return ApiResponse.success({ message: "Expense rejected." });
     } catch (error) {
         console.error("Reject Expense Error:", error);
         return ApiResponse.error("Internal Server Error", 500);

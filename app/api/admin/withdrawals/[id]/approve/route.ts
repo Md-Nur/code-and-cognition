@@ -6,7 +6,13 @@ export const POST = withAuth(async (req: Request, { params }: { params: Promise<
     try {
         const { id } = await params;
 
-        if (!session.user.isCFO) {
+        // Re-fetch isCFO from DB to guard against stale JWTs
+        const dbUser = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { isCFO: true },
+        });
+
+        if (!dbUser?.isCFO) {
             return ApiResponse.error("Only the designated CFO can approve withdrawals", 403);
         }
 

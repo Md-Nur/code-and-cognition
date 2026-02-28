@@ -1,10 +1,1 @@
-Create Expense Error: TypeError: Cannot read properties of undefined (reading 'id')
-    at <unknown> (app\api\admin\expenses\route.ts:47:44)
-  45 |                 note,
-  46 |                 status: "PENDING",
-> 47 |                 proposedById: session.user.id
-     |                                            ^
-  48 |             }
-  49 |         });
-  50 |
- 
+No payout system exist. If any user want to withdraw his money he can request for withdraw then the CFO accept the request then the transaction will happen.
