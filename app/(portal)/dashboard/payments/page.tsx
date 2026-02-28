@@ -74,7 +74,8 @@ export default function AdminPaymentsPage() {
                 setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
                 setEditingPaymentId(null);
             } else {
-                alert(`Failed to ${editingPaymentId ? 'update' : 'create'} payment`);
+                const errorData = await res.json();
+                alert(errorData.error || `Failed to ${editingPaymentId ? 'update' : 'create'} payment`);
             }
         } catch (error) {
             console.error(error);
@@ -103,7 +104,8 @@ export default function AdminPaymentsPage() {
             if (res.ok) {
                 fetchPayments();
             } else {
-                alert("Failed to delete payment");
+                const errorData = await res.json();
+                alert(errorData.error || "Failed to delete payment");
             }
         } catch (error) {
             console.error(error);
@@ -122,14 +124,16 @@ export default function AdminPaymentsPage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Payments & Splits</h1>
-                <button onClick={() => {
-                    setEditingPaymentId(null);
-                    setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
-                    setShowModal(true);
-                }} className="btn-brand gap-2">
-                    <Plus className="w-4 h-4" />
-                    Record Payment
-                </button>
+                {session?.user?.isCFO && (
+                    <button onClick={() => {
+                        setEditingPaymentId(null);
+                        setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
+                        setShowModal(true);
+                    }} className="btn-brand gap-2">
+                        <Plus className="w-4 h-4" />
+                        Record Payment
+                    </button>
+                )}
             </div>
 
             {/* Payment History Table */}
@@ -165,25 +169,29 @@ export default function AdminPaymentsPage() {
                                         </span>
                                     </td>
                                     <td className="p-4 text-right">
-                                        <button
-                                            onClick={() => handleEdit(payment)}
-                                            className="text-blue-400 hover:text-blue-300 transition-colors p-2"
-                                            title="Edit"
-                                        >
-                                            <Edit2 className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(payment.id)}
-                                            className="text-red-400 hover:text-red-300 transition-colors p-2"
-                                            disabled={isDeleting === payment.id}
-                                            title="Delete"
-                                        >
-                                            {isDeleting === payment.id ? (
-                                                <div className="w-4 h-4 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
-                                            ) : (
-                                                <Trash2 className="w-4 h-4" />
-                                            )}
-                                        </button>
+                                        {session?.user?.isCFO && (
+                                            <>
+                                                <button
+                                                    onClick={() => handleEdit(payment)}
+                                                    className="text-blue-400 hover:text-blue-300 transition-colors p-2"
+                                                    title="Edit"
+                                                >
+                                                    <Edit2 className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(payment.id)}
+                                                    className="text-red-400 hover:text-red-300 transition-colors p-2"
+                                                    disabled={isDeleting === payment.id}
+                                                    title="Delete"
+                                                >
+                                                    {isDeleting === payment.id ? (
+                                                        <div className="w-4 h-4 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                                                    ) : (
+                                                        <Trash2 className="w-4 h-4" />
+                                                    )}
+                                                </button>
+                                            </>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

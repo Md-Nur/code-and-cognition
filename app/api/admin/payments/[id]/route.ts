@@ -4,8 +4,12 @@ import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
 import { paymentSchema } from "@/lib/validations/admin";
 
-export const PUT = withAuth(async (req, context) => {
+export const PUT = withAuth(async (req, context, session) => {
     try {
+        if (!session?.user?.isCFO) {
+            return ApiResponse.error("Only the CFO can update a payment", 403);
+        }
+
         const { id } = context.params;
         const body = await req.json();
         const validation = paymentSchema.safeParse(body);
@@ -23,6 +27,11 @@ export const PUT = withAuth(async (req, context) => {
 
         if (!existingPayment) {
             return ApiResponse.error("Payment not found", 404);
+        }
+
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        if (existingPayment.paidAt < twentyFourHoursAgo) {
+            return ApiResponse.error("Payment cannot be edited or deleted after 24 hours.", 403);
         }
 
         // 1. Reverse the existing split
@@ -50,8 +59,12 @@ export const PUT = withAuth(async (req, context) => {
     }
 }, Role.FOUNDER);
 
-export const DELETE = withAuth(async (req, context) => {
+export const DELETE = withAuth(async (req, context, session) => {
     try {
+        if (!session?.user?.isCFO) {
+            return ApiResponse.error("Only the CFO can delete a payment", 403);
+        }
+
         const { id } = context.params;
 
         // Verify Payment exists
@@ -61,6 +74,11 @@ export const DELETE = withAuth(async (req, context) => {
 
         if (!payment) {
             return ApiResponse.error("Payment not found", 404);
+        }
+
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        if (payment.paidAt < twentyFourHoursAgo) {
+            return ApiResponse.error("Payment cannot be edited or deleted after 24 hours.", 403);
         }
 
         // 1. Reverse the existing split

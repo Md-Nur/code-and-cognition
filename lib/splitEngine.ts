@@ -21,10 +21,10 @@ export async function processPaymentSplit(paymentId: string) {
     const currency = payment.currency;
     const isBDT = currency === Currency.BDT;
 
-    // Dynamic Split Ratios from Project
-    const companyFundRatio = payment.project.companyFundRatio;
-    const finderFeeRatio = payment.project.finderFeeRatio;
-    const executionPoolRatio = Math.max(0, 1 - companyFundRatio - finderFeeRatio);
+    // Hardcoded Split Ratios
+    const finderFeeRatio = 0.10; // 10% Finder pool
+    const companyFundRatio = 0.20; // 20% Company fund
+    const executionPoolRatio = 0.70; // 70% Executive pool
 
     // Calculate Amounts
     const companyFundAmount = amount * companyFundRatio;
