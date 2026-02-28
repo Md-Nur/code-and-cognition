@@ -6,19 +6,25 @@ export const GET = withAuth(
   async (req, context, session) => {
     const isPrivileged = [Role.FOUNDER, Role.CO_FOUNDER].includes(session.user.role);
 
-    // Privileged users see all company fund entries, overall stats, and pending withdrawals
+    // All allowed users (Founders, Co-Founders, Contractors) see company fund entries and approved expenses
+    // All allowed users (Founders, Co-Founders, Contractors) see company transaction history
+    // and approved expenses
+    const transactions = await prisma.ledgerEntry.findMany({
+      include: { 
+        payment: { include: { project: true } },
+        user: true,
+        withdrawal: true
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const approvedExpenses = await prisma.expense.findMany({
+      where: { status: "APPROVED" },
+      orderBy: { date: "desc" },
+    });
+
+    // Privileged users also see overall stats and pending withdrawals
     if (isPrivileged) {
-      const companyFundEntries = await prisma.ledgerEntry.findMany({
-        where: { type: SplitType.COMPANY_FUND },
-        include: { payment: { include: { project: true } } },
-        orderBy: { createdAt: "desc" },
-      });
-
-      const approvedExpenses = await prisma.expense.findMany({
-        where: { status: "APPROVED" },
-        orderBy: { date: "desc" },
-      });
-
       const userBalances = await prisma.ledgerBalance.findMany({
         include: { user: true },
       });
@@ -30,28 +36,17 @@ export const GET = withAuth(
       });
 
       return ApiResponse.success({
-        companyFundEntries,
+        transactions,
         approvedExpenses,
         userBalances,
         pendingWithdrawals,
       });
     }
 
-    // Contractor sees their own entries and balance
-    const myEntries = await prisma.ledgerEntry.findMany({
-      where: { userId: session.user.id },
-      include: { payment: { include: { project: true } } },
-      orderBy: { createdAt: "desc" },
-    });
-
-    const myBalance = await prisma.ledgerBalance.findUnique({
-      where: { userId: session.user.id },
-    });
-
     return ApiResponse.success({
-      entries: myEntries,
-      balance: myBalance,
+      transactions,
+      approvedExpenses,
     });
   },
-  [Role.FOUNDER, Role.CONTRACTOR],
+  [Role.FOUNDER, Role.CO_FOUNDER, Role.CONTRACTOR],
 );

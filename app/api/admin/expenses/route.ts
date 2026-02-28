@@ -26,7 +26,7 @@ export const GET = withAuth(async () => {
     }
 }, [Role.FOUNDER, Role.CO_FOUNDER]);
 
-export const POST = withAuth(async (req: Request, session: any) => {
+export const POST = withAuth(async (req: Request, context: any, session: any) => {
     try {
         const body = await req.json();
         const { title, amountBDT, amountUSD, category, date, note } = body;
