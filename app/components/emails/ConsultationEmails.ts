@@ -84,10 +84,6 @@ export const proposalEmailHtml = (clientName: string, proposalUrl: string) => {
             <a href="${proposalUrl}" class="button">Review & Approve Proposal</a>
         </div>
 
-        <p style="margin-top: 25px; font-size: 15px; color: #666; border-top: 1px dashed #eee; pt: 20px;">
-            <strong>Pro Tip:</strong> You can also <a href="https://www.codencognition.com/login" style="color: #0070f3; font-weight: 600;">login to your Client Dashboard</a> at any time to track project progress, view milestones, and chat securely with our team.
-        </p>
-
         <p>If you have any immediate questions, feel free to reply to this email or book a quick 15-minute sync with us.</p>
     `;
     return withEmailLayout("Your Personalized Project Proposal", content);

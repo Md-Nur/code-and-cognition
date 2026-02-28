@@ -94,8 +94,9 @@ export async function POST(req: Request) {
                 return ApiResponse.error(`Please wait ${cooldown} seconds before requesting another link.`, 429);
             }
 
-            // We ALWAYS return a success message to prevent email enumeration
-            // unless it's a cooldown error above.
+            if (!user) {
+                return ApiResponse.error("No account found with this email", 404);
+            }
 
             // Perform background actions if applicable
             if (user) {
@@ -145,10 +146,10 @@ export async function POST(req: Request) {
                 }
             }
 
-            // Return generic success for clients or non-existent (to prevent enumeration)
+            // Return success since user exists
             return NextResponse.json({
                 magicLinkSent: true,
-                message: "If an account exists for this email, you will receive a login link shortly."
+                message: "We've sent a secure, single-use login link to your email."
             });
         }
 

@@ -41,6 +41,13 @@ function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+    const showToast = (msg: string) => {
+        setToastMsg(msg);
+        setTimeout(() => setToastMsg(null), 3000);
+    };
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsSubmitting(true);
@@ -61,8 +68,11 @@ function LoginForm() {
             const data = await res.json();
 
             if (!res.ok) {
-                // If it's a 429 or generic error
-                setError(data.error || "An error occurred");
+                if (res.status === 404) {
+                    showToast(data.error || "Warning: No account found with this email");
+                } else {
+                    setError(data.error || "An error occurred");
+                }
                 return;
             }
 
@@ -194,6 +204,14 @@ function LoginForm() {
                     ← Back to Website
                 </Link>
             </div>
+
+            {/* Toast rendering */}
+            {toastMsg && (
+                <div className="fixed bottom-4 right-4 bg-black/80 text-white px-6 py-3 rounded-xl border border-white/10 shadow-2xl z-50 animate-fade-in flex items-center gap-3">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                    <span className="text-sm font-medium">{toastMsg}</span>
+                </div>
+            )}
         </div>
     );
 }

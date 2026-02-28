@@ -1,0 +1,1 @@
+/project/[id] this page is for client but this page can access by anyone. take some step to identify the acutal client who is assigned to that project as a client.

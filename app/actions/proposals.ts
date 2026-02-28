@@ -9,6 +9,7 @@ import { Role, Prisma } from "@prisma/client";
 import { withProxyValidation } from "@/lib/api-handler";
 import { sendMail } from "@/lib/mailer";
 import { proposalEmailHtml } from "@/app/components/emails/ConsultationEmails";
+import { createNotification } from "@/lib/notifications";
 
 const proposalCreateSchema = z.object({
   bookingId: z.string().min(1),
@@ -213,12 +214,12 @@ export const approveProposal = withProxyValidation(
           })),
         });
       } else {
-        // Default: Finder as initial member with 100% share of execution pool
+        // Default: Finder as initial member with 70% share of execution pool
         await tx.projectMember.create({
           data: {
             projectId: project.id,
             userId: finderId,
-            share: 100,
+            share: 70,
           },
         });
       }
@@ -351,12 +352,12 @@ export const approveProposalByToken = async (token: string, email: string) => {
       },
     });
 
-    // 2. Assign Founder as initial team member
+    // 2. Assign Founder as initial team member with 70% execution share
     await tx.projectMember.create({
       data: {
         projectId: project.id,
         userId: founder.id,
-        share: 100,
+        share: 70,
       },
     });
 
@@ -390,7 +391,28 @@ export const approveProposalByToken = async (token: string, email: string) => {
     return { proposal: updatedProposal, project };
   });
 
-  // Notification removed
+  // Notify Admins
+  try {
+    const admins = await prisma.user.findMany({
+      where: {
+        role: {
+          in: [Role.FOUNDER, Role.CO_FOUNDER],
+        },
+      },
+    });
+
+    for (const admin of admins) {
+      await createNotification({
+        userId: admin.id,
+        title: "Project Accepted",
+        message: `${booking.clientName} has accepted the proposal for ${result.project.title}.`,
+        type: "PROPOSAL_APPROVED",
+        link: `/dashboard/projects/${result.project.id}`,
+      });
+    }
+  } catch (error) {
+    console.error("Failed to create admin notification:", error);
+  }
 
   // Send Magic Link to Client for Project Access
   try {

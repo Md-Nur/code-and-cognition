@@ -39,11 +39,38 @@ export default function RevenueSplitsControl({
     const executionPoolRatio = Math.max(0, 100 - companyFundRatio - finderFeeRatio);
 
     const addMember = (role: ProjectMemberRole) => {
-        setMembers([...members, { userId: "", role, share: 0 }]);
+        let newMembers: Member[] = [...members, { userId: "", role, share: 0 }];
+
+        if (role === "EXECUTION") {
+            const executionMembers = newMembers.filter(m => m.role === "EXECUTION");
+            const count = executionMembers.length;
+            if (count > 0) {
+                const sharePerMember = parseFloat((executionPoolRatio / count).toFixed(2));
+                newMembers = newMembers.map(m =>
+                    m.role === "EXECUTION" ? { ...m, share: sharePerMember } : m
+                );
+            }
+        }
+
+        setMembers(newMembers);
     };
 
     const removeMember = (index: number) => {
-        setMembers(members.filter((_, i) => i !== index));
+        const removedRole = members[index].role;
+        let newMembers = members.filter((_, i) => i !== index);
+
+        if (removedRole === "EXECUTION") {
+            const executionMembers = newMembers.filter(m => m.role === "EXECUTION");
+            const count = executionMembers.length;
+            if (count > 0) {
+                const sharePerMember = parseFloat((executionPoolRatio / count).toFixed(2));
+                newMembers = newMembers.map(m =>
+                    m.role === "EXECUTION" ? { ...m, share: sharePerMember } : m
+                );
+            }
+        }
+
+        setMembers(newMembers);
     };
 
     const updateMember = (index: number, updates: Partial<Member>) => {
