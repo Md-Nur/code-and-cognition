@@ -103,6 +103,13 @@ export async function POST(req: Request) {
                 const { sendMail } = await import("@/lib/mailer");
 
                 if (isClient) {
+                    // Find the project associated with this client to redirect them directly
+                    const latestProject = await prisma.project.findFirst({
+                        where: { booking: { clientEmail: user.email } },
+                        orderBy: { createdAt: "desc" },
+                        select: { viewToken: true }
+                    });
+
                     // Generate Secure Token
                     const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
                         .map((b) => b.toString(16).padStart(2, "0"))
@@ -118,8 +125,9 @@ export async function POST(req: Request) {
                         data: { email, action: "MAGIC_LINK_REQUEST", status: "SUCCESS", ip, userAgent, fingerprint, isSuspicious }
                     });
 
-                    // Send Magic Link
-                    const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com"}/magic-login?token=${token}`;
+                    // Send Magic Link - Redirect directly to project if possible
+                    const redirectPath = latestProject?.viewToken ? `/project/${latestProject.viewToken}` : '/dashboard';
+                    const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com"}/api/auth/magic-verify-redirect?token=${token}&goto=${encodeURIComponent(redirectPath)}`;
                     console.log(`[AUTH] Attempting to send magic link to ${user.email}`);
                     const mailSent = await sendMail(
                         user.email,
