@@ -55,7 +55,8 @@ export async function GET(req: Request) {
             id: user.id,
             email: user.email,
             role: user.role,
-            name: user.name
+            name: user.name,
+            isCFO: user.isCFO
         }, "7d");
 
         // 6. Set cookie

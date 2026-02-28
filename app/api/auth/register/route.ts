@@ -69,12 +69,13 @@ export async function POST(req: Request) {
                 email: email.toLowerCase(),
                 passwordHash,
                 role,
+                isCFO: userCount === 0,
             },
         });
 
         return ApiResponse.success({
             message: "Registration successful",
-            user: { id: user.id, name: user.name, email: user.email, role: user.role },
+            user: { id: user.id, name: user.name, email: user.email, role: user.role, isCFO: user.isCFO },
         }, 201);
 
     } catch (error) {

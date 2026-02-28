@@ -44,7 +44,7 @@ export default function LedgerPage() {
                 }
                 setSession(s);
                 // Default to admin tab for privileged roles
-                const privileged = [Role.FOUNDER, Role.CO_FOUNDER, Role.CASHIER].includes(s.user.role);
+                const privileged = [Role.FOUNDER, Role.CO_FOUNDER].includes(s.user.role);
                 if (privileged) {
                     setActiveTab("admin");
                 }
@@ -99,7 +99,8 @@ export default function LedgerPage() {
 
     if (loading) return <div className="p-8 text-center text-gray-500">Loading ledger data...</div>;
 
-    const isPrivileged = [Role.FOUNDER, Role.CO_FOUNDER, Role.CASHIER].includes(session?.user?.role);
+    const isPrivileged = [Role.FOUNDER, Role.CO_FOUNDER].includes(session?.user?.role);
+    const isCFO = session?.user?.isCFO;
 
     // Consolidate income and expenses
     const history = [

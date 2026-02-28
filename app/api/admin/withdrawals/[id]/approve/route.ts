@@ -2,9 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role, WithdrawalStatus, SplitType } from "@prisma/client";
 
-export const POST = withAuth(async (req, { params }) => {
+export const POST = withAuth(async (req: Request, { params }: { params: Promise<{ id: string }> }, session: any) => {
     try {
         const { id } = await params;
+
+        if (!session.user.isCFO) {
+            return ApiResponse.error("Only the designated CFO can approve withdrawals", 403);
+        }
 
         const withdrawal = await prisma.withdrawal.findUnique({
             where: { id },

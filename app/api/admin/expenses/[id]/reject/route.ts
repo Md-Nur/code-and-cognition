@@ -6,7 +6,11 @@ export const POST = withAuth(async (req: Request, { params }: { params: Promise<
     try {
         const { id } = await params;
 
-        // 1. Record the rejection
+        if (!session.user.isCFO) {
+            return ApiResponse.error("Only the designated CFO can reject expenses", 403);
+        }
+
+        // 1. Record the rejection for history
         await prisma.expenseApproval.upsert({
             where: {
                 expenseId_userId: {

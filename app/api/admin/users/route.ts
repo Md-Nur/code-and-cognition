@@ -12,6 +12,7 @@ export const GET = withAuth(async () => {
             name: true,
             email: true,
             role: true,
+            isCFO: true,
             createdAt: true,
             ledgerBalance: true,
         },
@@ -22,6 +23,28 @@ export const GET = withAuth(async () => {
 export const POST = withAuth(async (req) => {
     try {
         const body = await req.json();
+
+        // Handle CFO Designation
+        if (body.action === "SET_CFO") {
+            const { userId } = body;
+            const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+            if (!targetUser || targetUser.role !== Role.FOUNDER) {
+                return ApiResponse.error("Only a Founder can be designated as CFO", 400);
+            }
+
+            await prisma.$transaction([
+                prisma.user.updateMany({
+                    where: { isCFO: true },
+                    data: { isCFO: false }
+                }),
+                prisma.user.update({
+                    where: { id: userId },
+                    data: { isCFO: true }
+                })
+            ]);
+            return ApiResponse.success({ message: "CFO designated successfully" });
+        }
+
         const validation = userSchema.safeParse(body);
 
         if (!validation.success) {
@@ -43,6 +66,7 @@ export const POST = withAuth(async (req) => {
                 name: true,
                 email: true,
                 role: true,
+                isCFO: true,
             },
         });
 

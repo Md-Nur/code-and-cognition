@@ -29,6 +29,7 @@ model User {
   coFounderProposals CoFounderProposal[] @relation("Proposee")
   proposalsMade      CoFounderProposal[] @relation("Proposer")
   coFounderApprovals CoFounderApproval[]
+  isCFO              Boolean             @default(false)
 }
 
 /// Tracks company ownership distribution and lock-in periods.

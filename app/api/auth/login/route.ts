@@ -71,7 +71,7 @@ export async function POST(req: Request) {
             });
 
             // Create JWT
-            const token = await signToken({ id: user.id, email: user.email, role: user.role });
+            const token = await signToken({ id: user.id, email: user.email, role: user.role, isCFO: user.isCFO });
             const cookieStore = await cookies();
             cookieStore.set("auth_token", token, {
                 httpOnly: true,
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
             });
 
             return ApiResponse.success({
-                user: { id: user.id, name: user.name, email: user.email, role: user.role },
+                user: { id: user.id, name: user.name, email: user.email, role: user.role, isCFO: user.isCFO },
             });
         }
 

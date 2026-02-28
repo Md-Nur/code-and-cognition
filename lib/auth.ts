@@ -17,6 +17,7 @@ export async function auth() {
       email: payload.email as string,
       role: payload.role as Role,
       name: payload.name as string,
+      isCFO: payload.isCFO as boolean,
     },
   };
 }
