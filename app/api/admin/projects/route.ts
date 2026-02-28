@@ -78,7 +78,7 @@ export const POST = withAuth(async (req) => {
 
                     // 3. Send Onboarding Email (Token-based Link-only Access)
                     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com";
-                    const directAccessUrl = `${appUrl}/api/auth/token-login/${project.viewToken}`;
+                    const directAccessUrl = `${appUrl}/project/${project.viewToken}`;
 
                     await sendMail(
                         booking.clientEmail,

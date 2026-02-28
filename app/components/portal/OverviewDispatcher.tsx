@@ -97,7 +97,7 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
                         {proposals.map(p => (
                             <Link
                                 key={p.id}
-                                href={`/dashboard/proposals/${p.id}`}
+                                href={`/proposal/view/${p.viewToken}`}
                                 className="glass-panel p-6 rounded-3xl border border-white/5 hover:border-agency-accent/30 transition-all group"
                             >
                                 <div className="flex justify-between items-start mb-4">
@@ -138,7 +138,7 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
                             {activeProjects.map(project => (
                                 <Link
                                     key={project.id}
-                                    href={`/dashboard/projects/${project.id}`}
+                                    href={`/project/${project.viewToken}`}
                                     className="p-6 rounded-2xl border border-white/5 hover:bg-white/5 transition-all text-left flex items-center justify-between"
                                 >
                                     <div>

@@ -48,18 +48,19 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
     const { user } = session;
 
+    // RBAC: Clients should always be redirected to their dedicated portal, not the admin dashboard
+    if (user.role === Role.CLIENT) {
+        if (project.viewToken) {
+            redirect(`/project/${project.viewToken}`);
+        } else {
+            redirect("/dashboard/projects");
+        }
+    }
+
     // RBAC: Contractors can only view their own assigned projects
     if (user.role === Role.CONTRACTOR) {
         const isMember = project.members.some((m: any) => m.userId === user.id);
         if (!isMember && project.finderId !== user.id) redirect("/dashboard/projects");
-    }
-
-    // RBAC: Clients can only view their own projects based on email
-    if (user.role === Role.CLIENT) {
-        const clientEmail = project.booking?.clientEmail;
-        if (!clientEmail || clientEmail.toLowerCase() !== user.email.toLowerCase()) {
-            redirect("/dashboard/projects");
-        }
     }
 
     const pendingCRs = project.changeRequests.filter((c: any) => c.status === "PENDING").length;
@@ -161,33 +162,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     )}
 
                     {/* Change Requests */}
-                    {user.role !== Role.CLIENT && (
-                        <ChangeRequestsPanel
-                            projectId={project.id}
-                            initialCRs={project.changeRequests as any}
-                            userRole={user.role}
-                        />
-                    )}
+                    <ChangeRequestsPanel
+                        projectId={project.id}
+                        initialCRs={project.changeRequests as any}
+                        userRole={user.role}
+                    />
                 </div>
 
                 {/* Right Column - Sidebar */}
                 <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8 lg:self-start">
-                    {/* Quick Stats for Clients */}
-                    {user.role === Role.CLIENT && (
-                        <div className="glass-panel p-6 rounded-3xl border border-white/5 space-y-4">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Quick Stats</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                                    <div className="text-[10px] text-gray-500 uppercase mb-1">Payments</div>
-                                    <div className="text-lg font-bold text-white">{project.payments.length}</div>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                                    <div className="text-[10px] text-gray-500 uppercase mb-1">Requests</div>
-                                    <div className="text-lg font-bold text-white">{project.changeRequests.length}</div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Admin Tools */}
                     {user.role === Role.FOUNDER && (
