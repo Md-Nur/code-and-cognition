@@ -1,1 +1,3 @@
-/project/[id] this page is for client but this page can access by anyone. take some step to identify the acutal client who is assigned to that project as a client.
+in project thier can be only one finder and his share is 10%. This is fixed and can't be changed. by default the execution user have 70% share. even if there have multiple execution users then the total share for the execution users will be 70%. When save the revenue config make sure this logical things are correct and save the data which will use for payment.
+
+why in every project title is "Consultation project - {client name}"? Can't the project title be changed?

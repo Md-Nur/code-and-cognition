@@ -25,6 +25,11 @@ export async function GET(
         milestones: {
           orderBy: { order: "asc" },
         },
+        proposals: {
+          where: { status: "APPROVED" },
+          orderBy: { createdAt: "desc" },
+          take: 1
+        },
       },
     });
 
@@ -40,8 +45,8 @@ export async function GET(
       scope: project.scope || undefined,
       startDate: project.startDate?.toISOString(),
       endDate: project.endDate?.toISOString(),
-      budgetBDT: project.booking?.budgetBDT || undefined,
-      budgetUSD: project.booking?.budgetUSD || undefined,
+      budgetBDT: project.booking?.budgetBDT || project.proposals?.[0]?.budgetBDT || undefined,
+      budgetUSD: project.booking?.budgetUSD || project.proposals?.[0]?.budgetUSD || undefined,
       riskNotes: project.riskNotes || undefined,
       milestones: project.milestones.map((m) => ({
         title: m.title,

@@ -110,10 +110,10 @@ export function ProjectBriefPDF({ project }: { project: any }) {
                     <View style={styles.row}>
                         <Text style={styles.label}>Budget:</Text>
                         <Text style={styles.value}>
-                            {project.booking?.budgetBDT ? formatMoney(project.booking.budgetBDT, 'BDT') : ''}
-                            {project.booking?.budgetBDT && project.booking?.budgetUSD ? ' / ' : ''}
-                            {project.booking?.budgetUSD ? formatMoney(project.booking.budgetUSD, 'USD') : ''}
-                            {(!project.booking?.budgetBDT && !project.booking?.budgetUSD) && 'Not Specified'}
+                            {(project.booking?.budgetBDT || project.proposals?.[0]?.budgetBDT) ? formatMoney(project.booking?.budgetBDT || project.proposals?.[0]?.budgetBDT, 'BDT') : ''}
+                            {(project.booking?.budgetBDT || project.proposals?.[0]?.budgetBDT) && (project.booking?.budgetUSD || project.proposals?.[0]?.budgetUSD) ? ' / ' : ''}
+                            {(project.booking?.budgetUSD || project.proposals?.[0]?.budgetUSD) ? formatMoney(project.booking?.budgetUSD || project.proposals?.[0]?.budgetUSD, 'USD') : ''}
+                            {(!(project.booking?.budgetBDT || project.proposals?.[0]?.budgetBDT) && !(project.booking?.budgetUSD || project.proposals?.[0]?.budgetUSD)) && 'Not Specified'}
                         </Text>
                     </View>
                 </View>
