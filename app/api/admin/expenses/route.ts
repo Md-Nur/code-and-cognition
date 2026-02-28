@@ -53,4 +53,4 @@ export const POST = withAuth(async (req: Request, session: any) => {
         console.error("Create Expense Error:", error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER, Role.CO_FOUNDER);
+}, [Role.FOUNDER, Role.CO_FOUNDER]);
