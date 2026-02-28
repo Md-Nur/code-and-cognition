@@ -8,23 +8,68 @@ datasource db {
 
 /// Core User model representing both administrators and contractors.
 model User {
-  id               String            @id @default(cuid())
-  name             String
-  email            String            @unique
-  passwordHash     String
-  role             Role              @default(CONTRACTOR)
-  createdAt        DateTime          @default(now())
-  activityLogs     ActivityLog[]
-  changeRequests   ChangeRequest[]
-  ledgerBalance    LedgerBalance?
-  ledgerEntries    LedgerEntry[]
-  notifications    Notification[]
-  projects         Project[]         @relation("ClientProject")
-  finderProjects   Project[]         @relation("ProjectFinder")
-  memberProjects   ProjectMember[]
-  withdrawals      Withdrawal[]
-  proposedExpenses Expense[]         @relation("ExpenseProposer")
-  expenseApprovals ExpenseApproval[]
+  id                 String              @id @default(cuid())
+  name               String
+  email              String              @unique
+  passwordHash       String
+  role               Role                @default(CONTRACTOR)
+  createdAt          DateTime            @default(now())
+  activityLogs       ActivityLog[]
+  changeRequests     ChangeRequest[]
+  ledgerBalance      LedgerBalance?
+  ledgerEntries      LedgerEntry[]
+  notifications      Notification[]
+  projects           Project[]           @relation("ClientProject")
+  finderProjects     Project[]           @relation("ProjectFinder")
+  memberProjects     ProjectMember[]
+  withdrawals        Withdrawal[]
+  proposedExpenses   Expense[]           @relation("ExpenseProposer")
+  expenseApprovals   ExpenseApproval[]
+  companyShares      CompanyShare[]
+  coFounderProposals CoFounderProposal[] @relation("Proposee")
+  proposalsMade      CoFounderProposal[] @relation("Proposer")
+  coFounderApprovals CoFounderApproval[]
+}
+
+/// Tracks company ownership distribution and lock-in periods.
+model CompanyShare {
+  id          String   @id @default(cuid())
+  userId      String
+  percentage  Float
+  grantedAt   DateTime @default(now())
+  lockedUntil DateTime
+  note        String?
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Workflow for transitioning a contractor to a co-founder.
+model CoFounderProposal {
+  id          String              @id @default(cuid())
+  proposerId  String
+  userId      String
+  targetShare Float
+  status      ProposalStatus      @default(DRAFT)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  proposer    User                @relation("Proposer", fields: [proposerId], references: [id])
+  user        User                @relation("Proposee", fields: [userId], references: [id])
+  approvals   CoFounderApproval[]
+
+  @@index([userId])
+}
+
+model CoFounderApproval {
+  id         String            @id @default(cuid())
+  proposalId String
+  userId     String
+  status     VoteStatus        @default(APPROVED)
+  createdAt  DateTime          @default(now())
+  proposal   CoFounderProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([proposalId, userId])
 }
 
 /// Secure, short-lived tokens for passwordless client login.

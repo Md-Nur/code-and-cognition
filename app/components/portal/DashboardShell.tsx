@@ -47,7 +47,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
         ];
 
-        if (role === Role.FOUNDER) {
+        if (role === Role.FOUNDER || role === Role.CO_FOUNDER) {
             return [
                 { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
                 { name: "Lead Database", href: "/dashboard/leads", icon: Target },
@@ -58,6 +58,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },
                 { name: "Payments", href: "/dashboard/payments", icon: CreditCard },
                 { name: "Users", href: "/dashboard/users", icon: Users },
+                { name: "Shares", href: "/dashboard/shares", icon: FileText },
                 { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
             ];
         }
