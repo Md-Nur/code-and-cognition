@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LedgerEntry, LedgerBalance, User, Role } from "@prisma/client";
-import { CircleDollarSign, Wallet, X, CheckCircle2, LayoutDashboard, UserCircle } from "lucide-react";
+import { LedgerEntry, LedgerBalance, User, Role, Expense } from "@prisma/client";
+import { CircleDollarSign, Wallet, X, CheckCircle2, LayoutDashboard, UserCircle, PlusCircle, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import WalletView from "@/app/components/dashboard/WalletView";
 
 type LedgerData = {
     companyFundEntries: (LedgerEntry & { payment: { project: { title: string } } })[];
+    approvedExpenses: Expense[];
     userBalances: (LedgerBalance & { user: User })[];
 };
 
@@ -77,6 +78,26 @@ export default function LedgerPage() {
 
     const isAdmin = session?.user?.role === Role.FOUNDER || session?.user?.role === Role.CO_FOUNDER;
 
+    // Consolidate income and expenses
+    const history = [
+        ...(data?.companyFundEntries.map(e => ({
+            id: e.id,
+            date: e.createdAt,
+            source: e.payment?.project?.title || "Project Payment",
+            amountBDT: e.amountBDT,
+            amountUSD: e.amountUSD,
+            type: "INCOME" as const
+        })) || []),
+        ...(data?.approvedExpenses.map(e => ({
+            id: e.id,
+            date: e.date,
+            source: e.title,
+            amountBDT: -e.amountBDT,
+            amountUSD: e.amountUSD ? -e.amountUSD : null,
+            type: "EXPENSE" as const
+        })) || [])
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -85,34 +106,45 @@ export default function LedgerPage() {
                     <p className="text-gray-400">Manage earnings, payouts, and company funds.</p>
                 </div>
 
-                {isAdmin && (
-                    <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-fit">
-                        <button
-                            onClick={() => setActiveTab("admin")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'admin' ? 'bg-agency-accent text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                <div className="flex flex-wrap items-center gap-4">
+                    {isAdmin && (
+                        <a
+                            href="/dashboard/expenses"
+                            className="btn-brand px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2"
                         >
-                            <LayoutDashboard className="w-4 h-4" />
-                            Admin Ledger
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("personal")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'personal' ? 'bg-agency-accent text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            <UserCircle className="w-4 h-4" />
-                            My Wallet
-                        </button>
-                    </div>
-                )}
+                            <PlusCircle className="w-4 h-4" />
+                            Add Expense
+                        </a>
+                    )}
+                    {isAdmin && (
+                        <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-fit">
+                            <button
+                                onClick={() => setActiveTab("admin")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'admin' ? 'bg-agency-accent text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                            >
+                                <LayoutDashboard className="w-4 h-4" />
+                                Admin Ledger
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("personal")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'personal' ? 'bg-agency-accent text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                            >
+                                <UserCircle className="w-4 h-4" />
+                                My Wallet
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {activeTab === "personal" ? (
                 <WalletView />
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
-                    {/* Company Fund History */}
+                    {/* Consolidated Fund History */}
                     <div className="space-y-4 lg:col-span-2">
                         <h2 className="text-lg font-bold flex items-center gap-2 px-2">
-                            🏛️ Company Fund History
+                            🏛️ Company Transaction History
                         </h2>
                         <div className="glass-panel overflow-hidden rounded-2xl border-white/5">
                             <div className="table-container">
@@ -120,20 +152,29 @@ export default function LedgerPage() {
                                     <thead>
                                         <tr>
                                             <th className="text-left py-4 px-6 border-b border-white/5 bg-white/[0.02]">Date</th>
-                                            <th className="text-left py-4 px-6 border-b border-white/5 bg-white/[0.02]">Source</th>
+                                            <th className="text-left py-4 px-6 border-b border-white/5 bg-white/[0.02]">Description</th>
                                             <th className="text-right py-4 px-6 border-b border-white/5 bg-white/[0.02]">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {data?.companyFundEntries.length === 0 ? (
+                                        {history.length === 0 ? (
                                             <tr><td colSpan={3} className="p-8 text-center text-gray-500">No entries yet.</td></tr>
-                                        ) : data?.companyFundEntries.map((entry) => (
+                                        ) : history.map((entry) => (
                                             <tr key={entry.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                                 <td className="py-4 px-6 text-sm text-gray-500">
-                                                    {new Date(entry.createdAt).toLocaleDateString()}
+                                                    {new Date(entry.date).toLocaleDateString()}
                                                 </td>
-                                                <td className="py-4 px-6 text-sm font-medium">{entry.payment?.project?.title || "Project"}</td>
-                                                <td className="py-4 px-6 text-right font-mono text-green-400">
+                                                <td className="py-4 px-6 text-sm">
+                                                    <div className="flex items-center gap-2">
+                                                        {entry.type === "INCOME" ? (
+                                                            <ArrowDownRight className="w-3 h-3 text-green-400" />
+                                                        ) : (
+                                                            <ArrowUpRight className="w-3 h-3 text-red-400" />
+                                                        )}
+                                                        <span className="font-medium">{entry.source}</span>
+                                                    </div>
+                                                </td>
+                                                <td className={`py-4 px-6 text-right font-mono ${entry.type === 'INCOME' ? 'text-green-400' : 'text-red-400'}`}>
                                                     {entry.amountBDT ? `৳${entry.amountBDT.toLocaleString()}` : `$${entry.amountUSD?.toLocaleString()}`}
                                                 </td>
                                             </tr>

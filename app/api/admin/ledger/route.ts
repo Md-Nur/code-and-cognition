@@ -14,12 +14,20 @@ export const GET = withAuth(
         orderBy: { createdAt: "desc" },
       });
 
+      const approvedExpenses = await prisma.expense.findMany({
+        where: { status: "APPROVED" },
+        orderBy: { date: "desc" },
+      });
+
       const userBalances = await prisma.ledgerBalance.findMany({
         include: { user: true },
       });
 
+      // Combine and format for UI consistency if needed, 
+      // but for now just sending both lists is fine as the UI handles them.
       return ApiResponse.success({
         companyFundEntries,
+        approvedExpenses,
         userBalances,
       });
     }

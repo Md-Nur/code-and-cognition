@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ApiResponse } from "@/lib/api-handler";
 
+import WalletView from "@/app/components/dashboard/WalletView";
+
 export default function ProfilePage() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: "", text: "" });
@@ -47,13 +49,28 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="space-y-8 animate-fade-in">
+        <div className="space-y-12 animate-fade-in pb-12">
             <header>
                 <h1 className="text-3xl font-bold mb-2">My Profile</h1>
-                <p className="text-gray-400">Manage your account settings and security.</p>
+                <p className="text-gray-400">Manage your account settings, security, and earnings.</p>
             </header>
 
-            <div className="max-w-2xl">
+            <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-agency-accent/10 rounded-lg text-agency-accent">
+                        <span className="text-xl">💰</span>
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-bold">Financial History</h2>
+                        <p className="text-sm text-gray-500">Track your personal balance and earnings.</p>
+                    </div>
+                </div>
+                <div className="glass-panel p-1 rounded-3xl overflow-hidden">
+                    <WalletView />
+                </div>
+            </section>
+
+            <div className="max-w-2xl pt-8 border-t border-white/5">
                 <div className="glass-panel p-8 rounded-2xl">
                     <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                         <span className="p-2 bg-agency-accent/10 rounded-lg text-agency-accent">🔐</span>
@@ -113,6 +130,6 @@ export default function ProfilePage() {
                     </form>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
