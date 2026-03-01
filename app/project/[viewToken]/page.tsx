@@ -43,47 +43,15 @@ export default async function ClientPortalPage(props: {
 
     if (!project) return notFound();
 
-    // --- AUTO-LOGIN LOGIC ---
-    if (!session?.user && project.viewToken === viewToken && project.booking) {
-        // Find associated client user
-        const user = await prisma.user.findUnique({
-            where: { email: project.booking.clientEmail }
-        });
+    // Check access rights
+    const isMagicLink = project.viewToken === viewToken;
+    const isFounder = session?.user && (session.user.role === "FOUNDER" || session.user.role === "CO_FOUNDER");
+    const isClientAccount = session?.user && project.clientUserId === session.user.id;
 
-        if (user && user.role === "CLIENT") {
-            // Create 7-day Session
-            const { signToken } = await import("@/lib/jwt");
-            const { cookies } = await import("next/headers");
-
-            const sessionToken = await signToken({
-                id: user.id,
-                email: user.email,
-                role: user.role,
-                name: user.name
-            }, "7d");
-
-            const cookieStore = await cookies();
-            cookieStore.set("auth_token", sessionToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 60 * 60 * 24 * 7,
-                path: "/",
-            });
-
-            // though we can also just manually set the session variable.
-            session = { user: { id: user.id, email: user.email, role: user.role, name: user.name, isCFO: user.isCFO } };
+    if (!isMagicLink && !isClientAccount && !isFounder) {
+        if (!session?.user) {
+            redirect(`/login?callbackUrl=/project/${viewToken}`);
         }
-    }
-
-    if (!session?.user) {
-        redirect(`/login?callbackUrl=/project/${viewToken}`);
-    }
-
-    const isClient = project.clientUserId === session.user.id;
-    const isFounder = session.user.role === "FOUNDER" || session.user.role === "CO_FOUNDER";
-
-    if (!isClient && !isFounder) {
         return notFound();
     }
 

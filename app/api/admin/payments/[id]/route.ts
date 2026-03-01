@@ -57,7 +57,7 @@ export const PUT = withAuth(async (req, context, session) => {
         console.error(error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER);
+});
 
 export const DELETE = withAuth(async (req, context, session) => {
     try {
@@ -94,4 +94,4 @@ export const DELETE = withAuth(async (req, context, session) => {
         console.error(error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER);
+});

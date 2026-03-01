@@ -4,13 +4,16 @@ import { withAuth, ApiResponse } from "@/lib/api-handler";
 import { Role } from "@prisma/client";
 import { paymentSchema } from "@/lib/validations/admin";
 
-export const GET = withAuth(async () => {
+export const GET = withAuth(async (req, context, session) => {
+    if (session?.user?.role !== Role.FOUNDER && session?.user?.role !== Role.CO_FOUNDER && !session?.user?.isCFO) {
+        return ApiResponse.error("Forbidden", 403);
+    }
     const payments = await prisma.payment.findMany({
         include: { project: true },
         orderBy: { paidAt: "desc" },
     });
     return ApiResponse.success(payments);
-}, Role.FOUNDER);
+});
 
 export const POST = withAuth(async (req, context, session) => {
     try {
@@ -63,4 +66,4 @@ export const POST = withAuth(async (req, context, session) => {
         console.error(error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER);
+});

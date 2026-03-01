@@ -12,11 +12,6 @@ const patchSchema = z.object({
 
 /** GET /api/portal/project/:viewToken/change-requests  — list all CRs for a project */
 export async function GET(_req: Request, { params }: Params) {
-    const session = await auth();
-    if (!session) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { viewToken } = await params;
 
     const project = await prisma.project.findUnique({
@@ -37,12 +32,7 @@ export async function GET(_req: Request, { params }: Params) {
 
 /** PATCH /api/portal/project/:viewToken/change-requests  — approve or reject a CR (client only) */
 export async function PATCH(req: Request, { params }: Params) {
-    // Must be authenticated
     const session = await auth();
-    if (!session) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { viewToken } = await params;
 
     const body = await req.json();
@@ -63,12 +53,25 @@ export async function PATCH(req: Request, { params }: Params) {
 
     if (!project) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    // Only the client for this project or a FOUNDER can approve/reject
-    const user = session.user as { id: string; email: string; role: string };
-    const isClient = project.booking?.clientEmail?.toLowerCase() === user.email.toLowerCase();
-    const isFounder = user.role === "FOUNDER";
+    // Check authorization: magic link via viewToken OR logged-in founder/client
+    let isAuthorized = false;
 
-    if (!isClient && !isFounder) {
+    // 1. Magic Link (if we trust the viewToken for write actions like approve/reject)
+    if (viewToken && project.viewToken === viewToken) {
+        isAuthorized = true;
+    }
+
+    // 2. Logged-in user check
+    if (session?.user) {
+        const user = session.user as { id: string; email: string; role: string };
+        const isClient = project.booking?.clientEmail?.toLowerCase() === user.email.toLowerCase();
+        const isFounder = user.role === "FOUNDER";
+        if (isClient || isFounder) {
+            isAuthorized = true;
+        }
+    }
+
+    if (!isAuthorized) {
         return NextResponse.json(
             { error: "Forbidden: Only the project client or a founder can respond to change requests" },
             { status: 403 }
