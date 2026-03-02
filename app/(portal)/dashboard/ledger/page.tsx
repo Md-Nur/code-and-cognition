@@ -26,10 +26,6 @@ type LedgerData = {
 export default function LedgerPage() {
     const [data, setData] = useState<LedgerData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [showPayoutModal, setShowPayoutModal] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [payoutAmount, setPayoutAmount] = useState("");
-    const [currency, setCurrency] = useState<"BDT" | "USD">("BDT");
     const [processingId, setProcessingId] = useState<string | null>(null);
 
     const [session, setSession] = useState<any>(null);
@@ -71,32 +67,6 @@ export default function LedgerPage() {
         }
     }
 
-    async function handlePayout(e: React.FormEvent) {
-        e.preventDefault();
-        if (!selectedUser) return;
-
-        try {
-            const res = await fetch("/api/admin/ledger/payout", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    userId: selectedUser.id,
-                    amount: parseFloat(payoutAmount),
-                    currency,
-                }),
-            });
-
-            if (res.ok) {
-                setShowPayoutModal(false);
-                setPayoutAmount("");
-                fetchData();
-            } else {
-                alert("Failed to record payout");
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    }
 
     if (loading) return <div className="p-8 text-center text-gray-500">Loading ledger data...</div>;
 
@@ -197,7 +167,7 @@ export default function LedgerPage() {
                                 <Users className="w-8 h-8" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">Total Payouts Due</p>
+                                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">Total Balance Outstanding</p>
                                 <div className="flex flex-col">
                                     <span className="text-2xl font-bold font-mono text-white">৳{data?.totalUserBalances?.bdt.toLocaleString()}</span>
                                     <span className="text-sm font-mono text-gray-500">${data?.totalUserBalances?.usd.toLocaleString()}</span>
@@ -316,7 +286,6 @@ export default function LedgerPage() {
                                                 <tr>
                                                     <th className="text-left py-4 px-6 border-b border-white/5 bg-white/[0.02]">User</th>
                                                     <th className="text-right py-4 px-6 border-b border-white/5 bg-white/[0.02]">Balance</th>
-                                                    <th className="text-right py-4 px-6 border-b border-white/5 bg-white/[0.02]">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -328,18 +297,6 @@ export default function LedgerPage() {
                                                         <td className="py-4 px-6 text-right">
                                                             <div className="text-[10px] font-mono">৳{balance.totalBDT.toLocaleString()}</div>
                                                             <div className="text-[9px] text-gray-500 font-mono">${balance.totalUSD.toLocaleString()}</div>
-                                                        </td>
-                                                        <td className="py-4 px-6 text-right">
-                                                            <button
-                                                                onClick={() => {
-                                                                    setSelectedUser(balance.user);
-                                                                    setShowPayoutModal(true);
-                                                                }}
-                                                                className="text-[10px] btn-outline py-1 px-2 rounded-lg"
-                                                                title="Direct Payout"
-                                                            >
-                                                                Payout
-                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -353,63 +310,6 @@ export default function LedgerPage() {
                 </div>
             </div>
 
-            {/* Payout Modal */}
-            {showPayoutModal && selectedUser && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-                    <div className="glass-panel w-full max-w-sm p-0 rounded-3xl overflow-hidden animate-fade-in-up border-white/10 shadow-brand/20">
-                        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
-                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                <Wallet className="w-5 h-5 text-agency-accent" />
-                                Record Payout
-                            </h3>
-                            <button onClick={() => setShowPayoutModal(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors text-gray-500 hover:text-white">
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        <form onSubmit={handlePayout} className="p-8 space-y-6">
-                            <div className="space-y-2">
-                                <p className="text-sm text-gray-400">Recording payout for <span className="text-white font-medium">{selectedUser.name}</span></p>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="input-label">Currency</label>
-                                <select
-                                    className="select-field"
-                                    value={currency}
-                                    onChange={(e) => setCurrency(e.target.value as any)}
-                                >
-                                    <option value="BDT">BDT (৳)</option>
-                                    <option value="USD">USD ($)</option>
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="input-label flex items-center gap-2">
-                                    <CircleDollarSign className="w-4 h-4 text-gray-500" />
-                                    Payout Amount
-                                </label>
-                                <input
-                                    type="number"
-                                    required
-                                    className="input-field"
-                                    placeholder="Enter amount..."
-                                    value={payoutAmount}
-                                    onChange={(e) => setPayoutAmount(e.target.value)}
-                                />
-                            </div>
-                            <div className="flex gap-4 pt-4 border-t border-white/5">
-                                <button type="button" onClick={() => setShowPayoutModal(false)} className="btn-outline flex-1 rounded-2xl py-3">
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn-brand flex-1 rounded-2xl py-3 gap-2">
-                                    <CheckCircle2 className="w-4 h-4" />
-                                    Confirm Payout
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

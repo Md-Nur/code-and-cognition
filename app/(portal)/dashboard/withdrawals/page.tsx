@@ -128,7 +128,7 @@ export default function WithdrawalsPage() {
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">My Withdrawals</h1>
                     <p className="text-gray-400 text-sm mt-1">
-                        Request a payout from your earned balance. The CFO will review and approve.
+                        Request a withdrawal from your earned balance. The CFO will review and approve.
                     </p>
                 </div>
                 <button
@@ -194,8 +194,8 @@ export default function WithdrawalsPage() {
                                                 type="button"
                                                 onClick={() => setCurrency(c)}
                                                 className={`py-2.5 rounded-xl text-sm font-bold border transition-all duration-200 ${currency === c
-                                                        ? "border-agency-accent/50 bg-agency-accent/10 text-agency-accent"
-                                                        : "border-white/10 text-gray-400 hover:border-white/20 hover:text-white"
+                                                    ? "border-agency-accent/50 bg-agency-accent/10 text-agency-accent"
+                                                    : "border-white/10 text-gray-400 hover:border-white/20 hover:text-white"
                                                     }`}
                                             >
                                                 {c === "BDT" ? "৳ BDT" : "$ USD"}

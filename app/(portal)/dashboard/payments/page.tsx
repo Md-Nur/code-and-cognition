@@ -277,9 +277,11 @@ export default function AdminPaymentsPage() {
                                     onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
                                 >
                                     <option value="">Select Project...</option>
-                                    {projects.map(p => (
-                                        <option key={p.id} value={p.id}>{p.title}</option>
-                                    ))}
+                                    {projects
+                                        .filter(p => p.status !== "COMPLETED" || p.id === formData.projectId)
+                                        .map(p => (
+                                            <option key={p.id} value={p.id}>{p.title}</option>
+                                        ))}
                                 </select>
                             </div>
 
