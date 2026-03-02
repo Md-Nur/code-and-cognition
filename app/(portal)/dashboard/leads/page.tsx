@@ -12,15 +12,6 @@ export default function LeadsDatabasePage() {
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState<string>("ALL");
-    const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({
-        clientName: "",
-        clientEmail: "",
-        clientPhone: "",
-        serviceId: "",
-        budgetUSD: "",
-        additionalNotes: "",
-    });
 
     const [searchTerm, setSearchTerm] = useState("");
     const [sortBy, setSortBy] = useState<"date" | "budget">("date");
@@ -71,36 +62,7 @@ export default function LeadsDatabasePage() {
         });
     }
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        try {
-            const res = await fetch("/api/admin/leads", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...formData,
-                    budgetUSD: parseFloat(formData.budgetUSD) || 0,
-                }),
-            });
 
-            if (res.ok) {
-                setShowModal(false);
-                fetchBookings();
-                setFormData({
-                    clientName: "",
-                    clientEmail: "",
-                    clientPhone: "",
-                    serviceId: "",
-                    budgetUSD: "",
-                    additionalNotes: "",
-                });
-            } else {
-                alert("Failed to create booking");
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     const [session, setSession] = useState<any>(null);
 

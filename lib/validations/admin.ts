@@ -19,15 +19,7 @@ export const bookingUpdateSchema = z.object({
     status: z.enum(["NEW", "QUALIFIED", "PROPOSAL_SENT", "CLOSED_WON", "CLOSED_LOST"]),
 });
 
-export const bookingCreateSchema = z.object({
-    clientName: z.string().min(1, "Name is required").max(100, "Name too long"),
-    clientEmail: z.string().email("Invalid email").max(200, "Email too long"),
-    clientPhone: z.string().max(30, "Phone too long").optional().nullable(),
-    serviceId: z.string().min(1, "Service ID is required"),
-    budgetBDT: z.number().nonnegative().max(100_000_000).optional().nullable(),
-    budgetUSD: z.number().nonnegative().max(1_000_000).optional().nullable(),
-    message: z.string().max(2000, "Message too long").optional().nullable(),
-});
+
 
 export const projectSchema = z.object({
     title: z.string().min(1, "Title is required").max(200, "Title too long"),

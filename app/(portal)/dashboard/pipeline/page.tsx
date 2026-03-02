@@ -49,9 +49,6 @@ export default function CRMPipelinePage() {
                     <h1 className="text-2xl font-bold">CRM Pipeline</h1>
                     <p className="text-sm text-gray-500">Visual sales funnel and lead progression</p>
                 </div>
-                <Link href="/dashboard/leads" className="btn-brand flex items-center gap-2">
-                    <Plus className="w-4 h-4" /> Add Lead
-                </Link>
             </div>
 
             <div className="flex gap-6 overflow-x-auto pb-6 min-h-[70vh]">
