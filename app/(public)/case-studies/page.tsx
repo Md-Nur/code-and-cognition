@@ -1,37 +1,15 @@
-import { prisma } from "@/lib/prisma";
-import ProjectList from "@/app/components/public/ProjectList";
 import type { Metadata } from "next";
+import CaseStudiesListing from "@/app/components/public/CaseStudiesListing";
 
 export const metadata: Metadata = {
-    title: "Portfolio | Code & Cognition",
-    description: "Explore our portfolio of digital products built for ambitious brands worldwide.",
+    title: "Case Studies | Code & Cognition",
+    description: "Enterprise transformations and strategic digital architectural design.",
 };
 
-export default async function ProjectsPage() {
-    const [projects, services] = await Promise.all([
-        prisma.portfolioItem.findMany({
-            include: {
-                service: {
-                    select: {
-                        title: true
-                    }
-                }
-            },
-            orderBy: { createdAt: "desc" },
-        }),
-        prisma.service.findMany({
-            where: { status: "ACTIVE" },
-            select: {
-                id: true,
-                title: true,
-            },
-            orderBy: { createdAt: "asc" },
-        })
-    ]);
-
+export default function CaseStudiesPage() {
     return (
-        <main className="pt-32">
-            <ProjectList initialProjects={projects as any} services={services} />
+        <main className="bg-black min-h-screen pt-32 selection:bg-agency-accent selection:text-white">
+            <CaseStudiesListing />
         </main>
     );
 }

@@ -1,139 +1,192 @@
-import { prisma } from "@/lib/prisma";
+import { caseStudies } from "@/lib/data/case-studies";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, MoveRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, MoveRight, Layers, Target, Shield, Cpu, Zap, BarChart3, ChevronRight } from "lucide-react";
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    // Note: PortfolioItem doesn't have a slug yet in the schema I see, 
-    // but the user's request mentioned /[slug]. I'll use id as slug for now or 
-    // find workaround if title-based slug isn't there. 
-    // Actually, looking at schema again, PortfolioItem only has id. 
-    // I'll use ID as the identifier.
-
-    const project = await prisma.portfolioItem.findUnique({
-        where: { id: slug },
-        include: { service: true }
-    });
+    const project = caseStudies.find(cs => cs.slug === slug);
 
     if (!project) {
         notFound();
     }
 
+    const sections = [
+        { id: "overview", title: "Client Overview", icon: Target },
+        { id: "challenge", title: "The Challenge", icon: Shield },
+        { id: "approach", title: "Our Approach", icon: Layers },
+        { id: "architecture", title: "Technical Architecture", icon: Cpu },
+        { id: "implementation", title: "Implementation", icon: Zap },
+        { id: "results", title: "Results & Impact", icon: BarChart3 },
+    ];
+
     return (
-        <main className="bg-agency-black min-h-screen selection:bg-agency-accent selection:text-white">
-            {/* Header / Back Link */}
-            <div className="section-container pt-32 pb-12">
-                <Link
-                    href="/case-studies"
-                    className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-white transition-colors group"
-                >
-                    <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-                    Back to Case Studies
-                </Link>
-            </div>
-
+        <main className="bg-black min-h-screen pt-32 selection:bg-agency-accent selection:text-white pb-24">
             {/* Hero Section */}
-            <section className="pb-24">
-                <div className="section-container">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                        <div>
-                            <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">
-                                Case Study: {project.service.title}
-                            </span>
-                            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-8 leading-tight">
-                                {project.title}
-                            </h1>
-                            <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10">
-                                {project.description}
-                            </p>
+            <section className="relative h-[80vh] min-h-[600px] flex items-center overflow-hidden border-b border-white/5">
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src={project.coverImage}
+                        alt={project.title}
+                        fill
+                        className="object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-1000"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-linear-to-b from-black via-black/60 to-black" />
+                </div>
 
-                            <div className="flex flex-wrap gap-3 mb-12">
-                                {project.technologies.map((tech: string) => (
-                                    <span key={tech} className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white/70">
+                <div className="section-container relative z-10 w-full">
+                    <div className="max-w-4xl">
+                        <Link
+                            href="/case-studies"
+                            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-12 group"
+                        >
+                            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                            Back to Case Studies
+                        </Link>
+
+                        <div className="flex items-center gap-4 mb-6">
+                            <span className="section-tag mb-0">{project.industry}</span>
+                            <div className="h-px w-12 bg-white/20" />
+                            <span className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">Execution Case Study</span>
+                        </div>
+
+                        <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-8 tracking-tight leading-[1.1]">
+                            {project.title}
+                        </h1>
+
+                        <p className="text-xl md:text-2xl text-agency-accent font-medium leading-relaxed max-w-2xl border-l-2 border-agency-accent pl-8">
+                            {project.resultStatement}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Scroll Indicator */}
+                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-white/20 animate-bounce">
+                    <span className="text-[10px] uppercase tracking-[0.5em] font-bold">Scroll</span>
+                    <div className="w-px h-12 bg-white/20" />
+                </div>
+            </section>
+
+            <div className="section-container mt-24">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                    {/* Sticky Sidebar (TOC) */}
+                    <aside className="lg:col-span-3 hidden lg:block">
+                        <div className="sticky top-40 space-y-8">
+                            <div>
+                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-6">Contents</h4>
+                                <nav className="flex flex-col gap-4">
+                                    {sections.map((section) => (
+                                        <a
+                                            key={section.id}
+                                            href={`#${section.id}`}
+                                            className="group flex items-center gap-3 text-sm text-gray-500 hover:text-white transition-colors"
+                                        >
+                                            <div className="w-2 h-2 rounded-full bg-agency-accent/0 group-hover:bg-agency-accent transition-all" />
+                                            {section.title}
+                                        </a>
+                                    ))}
+                                </nav>
+                            </div>
+
+                            <div className="pt-8 border-t border-white/5">
+                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-6">Tech Stack</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {project.techStack.map((tech) => (
+                                        <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] text-white/70 font-medium">
+                                            {tech}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* Content Sections */}
+                    <div className="lg:col-span-9 space-y-32">
+                        {sections.map((section) => {
+                            const content = (project as any)[section.id];
+                            if (!content) return null;
+                            const Icon = section.icon;
+
+                            return (
+                                <section key={section.id} id={section.id} className="scroll-mt-40 animate-fade-in">
+                                    <div className="flex items-center gap-4 mb-8">
+                                        <div className="w-12 h-12 rounded-2xl bg-agency-accent/10 border border-agency-accent/20 flex items-center justify-center text-agency-accent">
+                                            <Icon className="w-6 h-6" />
+                                        </div>
+                                        <h2 className="text-3xl font-bold text-white tracking-tight">{section.title}</h2>
+                                    </div>
+
+                                    <div className="prose prose-invert max-w-none">
+                                        <p className="text-lg text-gray-400 leading-relaxed whitespace-pre-line">
+                                            {content}
+                                        </p>
+                                    </div>
+
+                                    {section.id === "architecture" && project.architectureImage && (
+                                        <div className="mt-12 relative aspect-video rounded-3xl overflow-hidden border border-white/10 group">
+                                            <Image
+                                                src={project.architectureImage}
+                                                alt="Technical Architecture Diagram"
+                                                fill
+                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {section.id === "results" && (
+                                        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div className="p-8 premium-card">
+                                                <BarChart3 className="w-8 h-8 text-agency-accent mb-4" />
+                                                <h4 className="text-2xl font-bold text-white mb-2">{project.highlightMetric}</h4>
+                                                <p className="text-sm text-gray-500">Key performance improvement validated post-launch.</p>
+                                            </div>
+                                            <div className="p-8 bg-white/5 rounded-3xl border border-white/10 flex items-center justify-center">
+                                                <div className="text-center">
+                                                    <span className="text-white/20 text-4xl font-bold uppercase tracking-widest rotate-12 block">Verified</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </section>
+                            );
+                        })}
+
+                        {/* Mobile Tech Stack (Visible only on small screens) */}
+                        <section className="lg:hidden border-t border-white/10 pt-12">
+                            <h2 className="text-2xl font-bold text-white mb-8">Tech Stack</h2>
+                            <div className="flex flex-wrap gap-3">
+                                {project.techStack.map((tech) => (
+                                    <span key={tech} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs text-white/70 font-medium">
                                         {tech}
                                     </span>
                                 ))}
                             </div>
+                        </section>
 
-                            {project.projectUrl && (
-                                <a
-                                    href={project.projectUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn-brand inline-flex items-center gap-2"
-                                >
-                                    Visit Live Project <MoveRight className="w-4 h-4" />
-                                </a>
-                            )}
-                        </div>
+                        {/* CTA Section */}
+                        <section className="py-24 premium-card p-12 relative overflow-hidden text-center group">
+                            <div className="absolute inset-0 bg-agency-accent/5 blur-[100px] pointer-events-none group-hover:bg-agency-accent/10 transition-colors duration-700" />
 
-                        <div className="relative aspect-[4/3] rounded-[40px] overflow-hidden border border-white/10 group">
-                            {project.imageUrl ? (
-                                <Image
-                                    src={project.imageUrl}
-                                    alt={project.title}
-                                    fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center">
-                                    <span className="text-white/10 font-bold uppercase tracking-[1em] text-2xl -rotate-12">Cognition</span>
-                                </div>
-                            )}
-                        </div>
+                            <h2 className="text-4xl font-bold text-white mb-6 relative z-10">Architecting Your Success</h2>
+                            <p className="text-gray-400 text-lg max-w-xl mx-auto mb-10 relative z-10">
+                                Ready to see similar results for your business? Let's discuss your technical challenges and build something exceptional together.
+                            </p>
+
+                            <div className="flex flex-wrap gap-4 justify-center relative z-10">
+                                <Link href="/schedule" className="btn-brand">
+                                    Start a Project <MoveRight className="ml-2 w-4 h-4" />
+                                </Link>
+                                <Link href="/services" className="btn-outline group">
+                                    Our Services <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </Link>
+                            </div>
+                        </section>
                     </div>
                 </div>
-            </section>
-
-            {/* Strategic Content (Mocked fields as schema is minimal) */}
-            <section className="py-24 border-t border-white/5 bg-white/[0.01]">
-                <div className="section-container">
-                    <div className="max-w-3xl mx-auto">
-                        <h2 className="text-3xl font-bold text-white mb-8">Strategic Objective</h2>
-                        <p className="text-gray-400 text-lg leading-relaxed mb-12">
-                            The primary focus for this engagement was to architect a solution that balances technical performance with enterprise scalability. We focused on reducing operational friction while maximizing digital output.
-                        </p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-                            {[
-                                "Architecture Modernization",
-                                "Performance Optimization",
-                                "Workflow Automation",
-                                "Scalable Design Language"
-                            ].map((item) => (
-                                <div key={item} className="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/5">
-                                    <CheckCircle2 className="w-6 h-6 text-agency-accent shrink-0" />
-                                    <span className="text-white font-medium">{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Call to Action */}
-            <section className="py-32 border-t border-white/5 relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-agency-accent/5 blur-[120px] rounded-full" />
-                </div>
-                <div className="section-container relative z-10 text-center">
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">Ready to Architect Your Success?</h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-16">
-                        Schedule a strategic consultation to discuss how we can apply a similar methodology to your unique business objectives.
-                    </p>
-                    <div className="max-w-xl mx-auto text-center">
-                        <Link
-                            href="/schedule"
-                            className="btn-brand px-12 py-5 rounded-full text-lg font-bold shadow-2xl shadow-agency-accent/20 inline-flex items-center gap-3 hover:-translate-y-1 transition-transform w-full justify-center"
-                        >
-                            Schedule Strategic Consultation
-                            <MoveRight className="w-5 h-5" />
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            </div>
         </main>
     );
 }
