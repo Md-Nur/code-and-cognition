@@ -5,6 +5,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Image,
   Font,
 } from "@react-pdf/renderer";
 
@@ -40,6 +41,16 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderBottom: "2 solid #000000",
     paddingBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerContent: {
+    flexDirection: "column",
+  },
+  logo: {
+    width: 100,
+    height: "auto",
   },
   title: {
     fontSize: 28,
@@ -135,9 +146,7 @@ const ProjectBriefDocument: React.FC<ProjectBriefDocumentProps> = ({
 
   const formatCurrency = (amount?: number, currency: "BDT" | "USD" = "BDT") => {
     if (!amount) return "Not specified";
-    return currency === "BDT"
-      ? `৳${amount.toLocaleString()}`
-      : `$${amount.toLocaleString()}`;
+    return amount.toLocaleString();
   };
 
   return (
@@ -145,11 +154,17 @@ const ProjectBriefDocument: React.FC<ProjectBriefDocumentProps> = ({
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>PROJECT BRIEF</Text>
-          <Text style={styles.subtitle}>{data.title}</Text>
-          <Text style={styles.subtitle}>
-            Generated on {formatDate(new Date().toISOString())}
-          </Text>
+          <View style={styles.headerContent}>
+            <Text style={styles.title}>PROJECT BRIEF</Text>
+            <Text style={styles.subtitle}>{data.title}</Text>
+            <Text style={styles.subtitle}>
+              Generated on {formatDate(new Date().toISOString())}
+            </Text>
+          </View>
+          <Image
+            src="https://raw.githubusercontent.com/Md-Nur/code-and-cognition/main/public/Main-Logo.png"
+            style={styles.logo}
+          />
         </View>
 
         {/* Client Information */}

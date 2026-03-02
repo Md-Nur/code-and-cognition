@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Payment, Project } from "@prisma/client";
+import { Payment, Project, PaymentApproval, Role } from "@prisma/client";
 import { Briefcase, CircleDollarSign, StickyNote, X, Plus, Trash2, Edit2, CheckCircle2 } from "lucide-react";
 
-type PaymentWithProject = Payment & { project: Project };
+type PaymentWithProject = Payment & {
+    project: Project;
+    approvals: (PaymentApproval & { user: { name: string, email: string } })[];
+};
 
 export default function AdminPaymentsPage() {
     const [payments, setPayments] = useState<PaymentWithProject[]>([]);
@@ -120,6 +123,16 @@ export default function AdminPaymentsPage() {
         setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
     }
 
+    async function handleVote(id: string) {
+        const res = await fetch(`/api/admin/payments/${id}/approve`, { method: "POST" });
+        if (res.ok) {
+            fetchPayments();
+        } else {
+            const errorData = await res.json();
+            alert(errorData.error || `Failed to approve payment`);
+        }
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -152,49 +165,86 @@ export default function AdminPaymentsPage() {
                         </thead>
                         <tbody>
                             {loading ? (
-                                <tr><td colSpan={5} className="text-center py-8">Loading...</td></tr>
-                            ) : payments.map((payment) => (
-                                <tr key={payment.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td className="p-4 text-gray-400">
-                                        {new Date(payment.paidAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="p-4 font-medium">{payment.project.title}</td>
-                                    <td className="p-4 font-bold text-white">
-                                        {payment.currency === "BDT" ? `৳${payment.amountBDT}` : `$${payment.amountUSD}`}
-                                    </td>
-                                    <td className="p-4 text-sm text-gray-500">{payment.note || "-"}</td>
-                                    <td className="p-4">
-                                        <span className="text-xs px-2 py-1 rounded border border-green-500/30 text-green-400 bg-green-500/10">
-                                            Split Processed
-                                        </span>
-                                    </td>
-                                    <td className="p-4 text-right">
-                                        {session?.user?.isCFO && (
-                                            <>
-                                                <button
-                                                    onClick={() => handleEdit(payment)}
-                                                    className="text-blue-400 hover:text-blue-300 transition-colors p-2"
-                                                    title="Edit"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(payment.id)}
-                                                    className="text-red-400 hover:text-red-300 transition-colors p-2"
-                                                    disabled={isDeleting === payment.id}
-                                                    title="Delete"
-                                                >
-                                                    {isDeleting === payment.id ? (
-                                                        <div className="w-4 h-4 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
-                                                    ) : (
-                                                        <Trash2 className="w-4 h-4" />
-                                                    )}
-                                                </button>
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
+                                <tr><td colSpan={6} className="text-center py-8">Loading...</td></tr>
+                            ) : payments.map((payment) => {
+                                const hasVoted = payment.approvals?.some(a => a.userId === session?.user?.id);
+                                const isFounder = [Role.FOUNDER, Role.CO_FOUNDER].includes(session?.user?.role);
+
+                                return (
+                                    <tr key={payment.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                        <td className="p-4 text-gray-400">
+                                            {new Date(payment.paidAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="p-4 font-medium">{payment.project.title}</td>
+                                        <td className="p-4 font-bold text-white">
+                                            {payment.currency === "BDT" ? `৳${payment.amountBDT}` : `$${payment.amountUSD}`}
+                                        </td>
+                                        <td className="p-4 text-sm text-gray-500">{payment.note || "-"}</td>
+                                        <td className="p-4">
+                                            <div className="flex flex-col gap-1">
+                                                <span className={`text-[10px] px-2 py-0.5 rounded border w-fit font-bold uppercase ${payment.status === "APPROVED"
+                                                    ? "text-green-400 bg-green-400/10 border-green-400/20"
+                                                    : "text-amber-400 bg-amber-400/10 border-amber-400/20"
+                                                    }`}>
+                                                    {payment.status === "APPROVED" ? "Split Processed" : "Pending Approval"}
+                                                </span>
+                                                {payment.status === "PENDING" && payment.approvals && (
+                                                    <div className="flex -space-x-1.5 mt-1">
+                                                        {payment.approvals.map(a => (
+                                                            <div key={a.id} title={a.user.name} className="w-4 h-4 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center text-[7px] text-brand uppercase font-bold">
+                                                                {a.user.name.charAt(0)}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                {payment.status === "PENDING" && isFounder && !hasVoted && (
+                                                    <button
+                                                        onClick={() => handleVote(payment.id)}
+                                                        className="text-[10px] font-bold text-green-400 hover:text-green-300 uppercase px-2 py-1 rounded bg-green-400/10 border border-green-400/20"
+                                                    >
+                                                        Approve
+                                                    </button>
+                                                )}
+                                                {(() => {
+                                                    const isLocked = payment.status === "APPROVED" && (
+                                                        !payment.executedAt || new Date(payment.executedAt).getTime() < Date.now() - 24 * 60 * 60 * 1000
+                                                    );
+
+                                                    if (isLocked || !session?.user?.isCFO) return null;
+
+                                                    return (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleEdit(payment)}
+                                                                className="text-blue-400 hover:text-blue-300 transition-colors p-2"
+                                                                title="Edit"
+                                                            >
+                                                                <Edit2 className="w-4 h-4" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDelete(payment.id)}
+                                                                className="text-red-400 hover:text-red-300 transition-colors p-2"
+                                                                disabled={isDeleting === payment.id}
+                                                                title="Delete"
+                                                            >
+                                                                {isDeleting === payment.id ? (
+                                                                    <div className="w-4 h-4 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                                                                ) : (
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                )}
+                                                            </button>
+                                                        </>
+                                                    );
+                                                })()}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

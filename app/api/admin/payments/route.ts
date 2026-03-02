@@ -9,7 +9,16 @@ export const GET = withAuth(async (req, context, session) => {
         return ApiResponse.error("Forbidden", 403);
     }
     const payments = await prisma.payment.findMany({
-        include: { project: true },
+        include: {
+            project: true,
+            approvals: {
+                include: {
+                    user: {
+                        select: { name: true, email: true }
+                    }
+                }
+            }
+        },
         orderBy: { paidAt: "desc" },
     });
     return ApiResponse.success(payments);
@@ -47,7 +56,7 @@ export const POST = withAuth(async (req, context, session) => {
             return ApiResponse.error("Please add a finder and at least one executive member to this project before adding a payment.", 400);
         }
 
-        // Create Payment Record
+        // Create Payment Record (Initially PENDING)
         const payment = await prisma.payment.create({
             data: {
                 projectId,
@@ -55,11 +64,12 @@ export const POST = withAuth(async (req, context, session) => {
                 amountBDT: currency === "BDT" ? amount : null,
                 amountUSD: currency === "USD" ? amount : null,
                 note,
+                status: "PENDING"
             },
         });
 
-        // Trigger Split Engine
-        await processPaymentSplit(payment.id);
+        // Split Engine will be triggered after all approvals
+        // await processPaymentSplit(payment.id);
 
         return ApiResponse.success(payment, 201);
     } catch (error) {

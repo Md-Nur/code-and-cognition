@@ -30,6 +30,7 @@ model User {
   proposalsMade      CoFounderProposal[] @relation("Proposer")
   coFounderApprovals CoFounderApproval[]
   isCFO              Boolean             @default(false)
+  paymentApprovals   PaymentApproval[]
 }
 
 /// Tracks company ownership distribution and lock-in periods.
@@ -281,15 +282,30 @@ model Proposal {
 
 /// Financial payments received for a project.
 model Payment {
-  id        String        @id @default(cuid())
-  projectId String
-  amountBDT Float?
-  amountUSD Float?
-  currency  Currency      @default(BDT)
-  note      String?
-  paidAt    DateTime      @default(now())
-  splits    LedgerEntry[]
-  project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id         String            @id @default(cuid())
+  projectId  String
+  amountBDT  Float?
+  amountUSD  Float?
+  currency   Currency          @default(BDT)
+  note       String?
+  paidAt     DateTime          @default(now())
+  status     ExpenseStatus     @default(PENDING)
+  executedAt DateTime?
+  splits     LedgerEntry[]
+  approvals  PaymentApproval[]
+  project    Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model PaymentApproval {
+  id        String     @id @default(cuid())
+  paymentId String
+  userId    String
+  status    VoteStatus @default(APPROVED)
+  createdAt DateTime   @default(now())
+  payment   Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([paymentId, userId])
 }
 
 /// Detailed ledger entries for each payment split (e.g., Company, Finder Fee, Execution).
@@ -305,7 +321,7 @@ model LedgerEntry {
   projectId    String?
   note         String?
   withdrawalId String?
-  payment      Payment?    @relation(fields: [paymentId], references: [id])
+  payment      Payment?    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   project      Project?    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user         User?       @relation(fields: [userId], references: [id])
   withdrawal   Withdrawal? @relation(fields: [withdrawalId], references: [id])

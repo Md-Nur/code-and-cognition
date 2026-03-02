@@ -29,9 +29,12 @@ export const PUT = withAuth(async (req, context, session) => {
             return ApiResponse.error("Payment not found", 404);
         }
 
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        if (existingPayment.paidAt < twentyFourHoursAgo) {
-            return ApiResponse.error("Payment cannot be edited or deleted after 24 hours.", 403);
+        const isApproved = existingPayment.status === "APPROVED";
+        if (isApproved) {
+            const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            if (existingPayment.executedAt && existingPayment.executedAt < twentyFourHoursAgo) {
+                return ApiResponse.error("Payment cannot be edited or deleted after 24 hours of approval.", 403);
+            }
         }
 
         // 1. Reverse the existing split
@@ -76,9 +79,12 @@ export const DELETE = withAuth(async (req, context, session) => {
             return ApiResponse.error("Payment not found", 404);
         }
 
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        if (payment.paidAt < twentyFourHoursAgo) {
-            return ApiResponse.error("Payment cannot be edited or deleted after 24 hours.", 403);
+        const isApproved = payment.status === "APPROVED";
+        if (isApproved) {
+            const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            if (payment.executedAt && payment.executedAt < twentyFourHoursAgo) {
+                return ApiResponse.error("Payment cannot be edited or deleted after 24 hours of approval.", 403);
+            }
         }
 
         // 1. Reverse the existing split

@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 
 const styles = StyleSheet.create({
@@ -16,6 +16,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#000000',
         paddingBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    headerText: {
+        flex: 1,
+    },
+    logo: {
+        width: 80,
+        height: 'auto',
     },
     section: {
         marginBottom: 20,
@@ -81,13 +91,19 @@ const styles = StyleSheet.create({
 export function ProjectBriefPDF({ project }: { project: any }) {
     const formatMoney = (amount: number | null | undefined, currency: string) => {
         if (amount == null) return 'N/A';
-        return currency === 'BDT' ? `BDT ${amount.toLocaleString()}` : `$${amount.toLocaleString()}`;
+        return amount.toLocaleString();
     };
 
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                <Text style={styles.header}>Project Brief: {project.title}</Text>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Project Brief: {project.title}</Text>
+                    <Image
+                        src="https://raw.githubusercontent.com/Md-Nur/code-and-cognition/main/public/Main-Logo.png"
+                        style={styles.logo}
+                    />
+                </View>
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Project Detail</Text>

@@ -206,18 +206,26 @@ export default function AdminExpensesPage() {
                                                         className="text-xs font-bold text-green-400 hover:text-green-300 uppercase"
                                                     >Approve</button>
                                                 )}
-                                                {expense.status !== "APPROVED" && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => { setEditingExpense(expense); setIsModalOpen(true); }}
-                                                            className="text-xs font-bold text-gray-400 hover:text-white uppercase lg:opacity-0 lg:group-hover:opacity-100"
-                                                        >Edit</button>
-                                                        <button
-                                                            onClick={() => setDeletingExpense(expense)}
-                                                            className="text-xs font-bold text-red-400 hover:text-red-300 uppercase lg:opacity-0 lg:group-hover:opacity-100"
-                                                        >Delete</button>
-                                                    </>
-                                                )}
+                                                {(() => {
+                                                    const isLocked = expense.status === "APPROVED" && (
+                                                        !expense.executedAt || new Date(expense.executedAt).getTime() < Date.now() - 24 * 60 * 60 * 1000
+                                                    );
+
+                                                    if (isLocked) return null;
+
+                                                    return (
+                                                        <>
+                                                            <button
+                                                                onClick={() => { setEditingExpense(expense); setIsModalOpen(true); }}
+                                                                className="text-xs font-bold text-gray-400 hover:text-white uppercase lg:opacity-0 lg:group-hover:opacity-100"
+                                                            >Edit</button>
+                                                            <button
+                                                                onClick={() => setDeletingExpense(expense)}
+                                                                className="text-xs font-bold text-red-400 hover:text-red-300 uppercase lg:opacity-0 lg:group-hover:opacity-100"
+                                                            >Delete</button>
+                                                        </>
+                                                    );
+                                                })()}
                                             </div>
                                         </td>
                                     </tr>
