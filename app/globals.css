@@ -180,3 +180,29 @@ h6 {
 .animation-delay-500 {
     animation-delay: 500ms;
 }
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.animation-delay-100 .animate-float,
+.animate-float.animation-delay-100 {
+    animation-delay: 100ms;
+}
+
+.animate-float.animation-delay-200 {
+    animation-delay: 200ms;
+}
+
+.animate-float.animation-delay-500 {
+    animation-delay: 500ms;
+}
