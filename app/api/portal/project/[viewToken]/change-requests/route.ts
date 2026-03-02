@@ -78,13 +78,36 @@ export async function PATCH(req: Request, { params }: Params) {
         );
     }
 
-    const cr = await prisma.changeRequest.update({
-        where: { id: crId, projectId: project.id },
-        data: {
-            status,
-            clientApprovalAt: new Date(),
-        },
-        include: { requestedBy: { select: { name: true } } },
+    const cr = await prisma.$transaction(async (tx) => {
+        const updatedCr = await tx.changeRequest.update({
+            where: { id: crId, projectId: project.id },
+            data: {
+                status,
+                clientApprovalAt: new Date(),
+            },
+            include: { requestedBy: { select: { name: true } } },
+        });
+
+        if (status === "APPROVED" && updatedCr.estimatedTimeImpact > 0) {
+            const currentProject = await tx.project.findUnique({
+                where: { id: project.id },
+                select: { endDate: true },
+            });
+
+            if (currentProject?.endDate) {
+                await tx.project.update({
+                    where: { id: project.id },
+                    data: {
+                        endDate: new Date(
+                            currentProject.endDate.getTime() +
+                            updatedCr.estimatedTimeImpact * 60 * 60 * 1000
+                        ),
+                    },
+                });
+            }
+        }
+
+        return updatedCr;
     });
 
     // Log to project activity on approval

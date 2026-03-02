@@ -140,6 +140,12 @@ export function ProposalPDF({ proposal, booking }: { proposal: any, booking: any
                         <Text style={styles.label}>Timeline</Text>
                         <Text style={styles.value}>{proposal.estimatedDays} Days</Text>
                     </View>
+                    {proposal.endDate && (
+                        <View style={styles.gridItem}>
+                            <Text style={styles.label}>Estimated Delivery</Text>
+                            <Text style={styles.value}>{format(new Date(proposal.endDate), 'MMMM d, yyyy')}</Text>
+                        </View>
+                    )}
                 </View>
 
                 <View style={styles.section}>

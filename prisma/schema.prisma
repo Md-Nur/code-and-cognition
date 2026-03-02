@@ -253,6 +253,7 @@ model Proposal {
   currency          Currency         @default(BDT)
   /// Timeline estimate
   estimatedDays     Int?
+  endDate           DateTime?
   approved          Boolean          @default(false)
   approvedAt        DateTime?
   /// For proposal versioning

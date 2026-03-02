@@ -26,6 +26,7 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
         paymentTerms: "50% upfront, 50% on completion",
         contractText: `This agreement is made between Code & Cognition and ${lead.clientName}.`,
         notes: "",
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     });
 
     const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -82,6 +83,7 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
                 contractText: formData.contractText,
                 notes: formData.notes,
                 title: formData.title,
+                endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
             });
 
             if (res.ok && res.proposal) {
@@ -283,6 +285,17 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
                                 value={formData.paymentTerms}
                                 onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
                                 placeholder="Splits, percentages, or conditions..."
+                            />
+                        </div>
+
+                        <div>
+                            <h2 className="text-xl font-bold mb-2">Project End Date</h2>
+                            <p className="text-gray-400 text-sm mb-4">The estimated date when all project work will be completed.</p>
+                            <input
+                                type="date"
+                                className="input-field"
+                                value={formData.endDate}
+                                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                             />
                         </div>
                     </div>

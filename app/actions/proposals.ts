@@ -24,6 +24,7 @@ const proposalCreateSchema = z.object({
   contractText: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   title: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
 });
 
 const proposalIdSchema = z.object({
@@ -63,6 +64,7 @@ export const createProposalForBooking = withProxyValidation(
         contractText: data.contractText ?? null,
         notes: data.notes ?? null,
         title: data.title ?? null,
+        endDate: data.endDate ? new Date(data.endDate) : null,
         status: "DRAFT",
         viewToken: crypto.randomUUID(),
       },
@@ -203,6 +205,7 @@ export const approveProposal = withProxyValidation(
               status: "PENDING",
             })),
           },
+          endDate: proposal.endDate,
         },
       });
 
@@ -351,6 +354,7 @@ export const approveProposalByToken = async (token: string, email: string) => {
             status: "PENDING",
           })),
         },
+        endDate: proposal.endDate,
       },
     });
 

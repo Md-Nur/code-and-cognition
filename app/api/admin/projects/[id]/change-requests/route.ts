@@ -123,13 +123,36 @@ export async function PATCH(req: Request, { params }: Params) {
     return NextResponse.json({ error: "crId and status are required" }, { status: 400 });
   }
 
-  const cr = await prisma.changeRequest.update({
-    where: { id: crId, projectId },
-    data: {
-      status,
-      clientApprovalAt: new Date(), // Using this generic field for admin design too for now
-    },
-    include: { requestedBy: { select: { name: true } } },
+  const cr = await prisma.$transaction(async (tx) => {
+    const updatedCr = await tx.changeRequest.update({
+      where: { id: crId, projectId },
+      data: {
+        status,
+        clientApprovalAt: new Date(),
+      },
+      include: { requestedBy: { select: { name: true } } },
+    });
+
+    if (status === "APPROVED" && updatedCr.estimatedTimeImpact > 0) {
+      const project = await tx.project.findUnique({
+        where: { id: projectId },
+        select: { endDate: true },
+      });
+
+      if (project?.endDate) {
+        await tx.project.update({
+          where: { id: projectId },
+          data: {
+            endDate: new Date(
+              project.endDate.getTime() +
+              updatedCr.estimatedTimeImpact * 60 * 60 * 1000,
+            ),
+          },
+        });
+      }
+    }
+
+    return updatedCr;
   });
 
   // Log to project activity
