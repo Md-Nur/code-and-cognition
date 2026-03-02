@@ -59,6 +59,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 { name: "Proposals", href: "/dashboard/proposals", icon: FileText },
                 { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
                 { name: "Clients", href: "/dashboard/clients", icon: Briefcase },
+                { name: "Case Studies", href: "/dashboard/case-studies", icon: FileText },
                 { name: "Services", href: "/dashboard/services", icon: Wrench },
                 { name: "Expenses", href: "/dashboard/expenses", icon: CreditCard },
                 { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },

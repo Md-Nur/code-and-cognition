@@ -618,3 +618,32 @@ enum VoteStatus {
   APPROVED
   REJECTED
 }
+enum CaseStudyStatus {
+    DRAFT
+    PUBLISHED
+    ARCHIVED
+}
+
+model CaseStudy {
+    id                String          @id @default(cuid())
+    title             String
+    slug              String          @unique
+    industry          String
+    clientName        String?
+    summary           String
+    challenge         String          @db.Text
+    approach          String          @db.Text
+    solution          String          @db.Text
+    results           String          @db.Text
+    highlightMetric   String?
+    techStack         String[]
+    coverImage        String?
+    architectureImage String?
+    status            CaseStudyStatus @default(DRAFT)
+    publishDate       DateTime?
+    isFeatured        Boolean         @default(false)
+    seoTitle          String?
+    seoDescription    String?
+    createdAt         DateTime        @default(now())
+    updatedAt         DateTime        @updatedAt
+}
