@@ -72,7 +72,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
         } else if (role === Role.CONTRACTOR) {
             items = [
                 ...common,
-                { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },
+                { name: "Lead Database", href: "/dashboard/leads", icon: Target },
                 { name: "Withdrawals", href: "/dashboard/withdrawals", icon: Wallet },
             ];
         } else {

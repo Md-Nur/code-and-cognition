@@ -13,7 +13,9 @@ import Link from "next/link";
 const formSchema = z.object({
     clientName: z.string().min(1, "Name is required"),
     clientEmail: z.string().email("Invalid email address"),
-    clientPhone: z.string().optional(),
+    clientPhone: z.string()
+        .min(1, "Phone number is required")
+        .regex(/^[+]?[(]?[0-9]{1,4}[)]?[-s./0-9]*$/, "Invalid phone number format"),
     discovery: z.object({
         companyName: z.string().min(1, "Company name is required"),
         industry: z.string().min(1, "Industry is required"),
@@ -232,6 +234,11 @@ export default function SchedulePage() {
                                         type="tel"
                                         className="input-field"
                                         placeholder={currency === 'BDT' ? "+880 1XXX-XXXXXX" : "+1 (555) 000-0000"}
+                                        onKeyPress={(e) => {
+                                            if (!/[0-9+\-() ]/.test(e.key)) {
+                                                e.preventDefault();
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>

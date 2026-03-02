@@ -42,7 +42,7 @@ export default function LedgerPage() {
             const res = await fetch("/api/auth/me");
             if (res.ok) {
                 const s = await res.json();
-                if (s.user.role === "CLIENT") {
+                if (s.user.role === "CLIENT" || s.user.role === "CONTRACTOR") {
                     window.location.href = "/dashboard";
                 }
                 setSession(s);

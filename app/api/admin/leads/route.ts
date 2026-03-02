@@ -9,7 +9,7 @@ export const GET = withAuth(async () => {
         orderBy: { createdAt: "desc" },
     });
     return ApiResponse.success(bookings);
-}, Role.FOUNDER);
+}, [Role.FOUNDER, Role.CONTRACTOR]);
 
 export const POST = withAuth(async (req) => {
     try {

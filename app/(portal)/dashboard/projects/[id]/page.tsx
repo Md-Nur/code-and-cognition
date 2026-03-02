@@ -6,7 +6,7 @@ import { Role } from "@prisma/client";
 import { format } from "date-fns";
 import {
     ArrowLeft, CheckCircle2, Clock, AlertCircle, Activity,
-    Layers, Calendar
+    Layers, Calendar, FileText
 } from "lucide-react";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
 import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
@@ -15,6 +15,7 @@ import EditableMilestones from "@/app/components/project/EditableMilestones";
 import ChangeRequestsPanel from "@/app/components/admin/ChangeRequestsPanel";
 import EditableProjectTitle from "@/app/components/project/EditableProjectTitle";
 import LocalTime from "@/app/components/shared/LocalTime";
+import DownloadBriefButton from "@/app/project/[viewToken]/DownloadBriefButton";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },
@@ -111,6 +112,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     <div className="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-xs text-gray-400 uppercase tracking-widest font-semibold">
                         {project.status.replace('_', ' ')}
                     </div>
+                    {project.viewToken && (
+                        <DownloadBriefButton viewToken={project.viewToken} />
+                    )}
                 </div>
             </div>
 

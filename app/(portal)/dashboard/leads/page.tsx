@@ -120,14 +120,9 @@ export default function LeadsDatabasePage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold">Lead Database / CRM</h1>
-                    <p className="text-sm text-gray-500">Manage your strategic sales pipeline and conversion funnel</p>
-                </div>
-                <button onClick={() => setShowModal(true)} className="btn-brand w-full sm:w-auto">
-                    + Add Manual Lead
-                </button>
+            <div>
+                <h1 className="text-2xl font-bold">Lead Database / CRM</h1>
+                <p className="text-sm text-gray-500">Manage your strategic sales pipeline and conversion funnel</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -303,77 +298,6 @@ export default function LeadsDatabasePage() {
                 ))}
             </div>
 
-            {/* Manual Booking Modal */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="glass-panel w-full max-w-md p-6 rounded-xl animate-fade-in-up">
-                        <h2 className="text-xl font-bold mb-4">Add Manual Lead</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="input-label">Client Name</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="input-field"
-                                        value={formData.clientName}
-                                        onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="input-label">Client Email</label>
-                                    <input
-                                        type="email"
-                                        required
-                                        className="input-field"
-                                        value={formData.clientEmail}
-                                        onChange={(e) => setFormData({ ...formData, clientEmail: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="input-label">Select Service</label>
-                                <select
-                                    required
-                                    className="input-field appearance-none"
-                                    value={formData.serviceId}
-                                    onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
-                                >
-                                    <option value="" className="bg-[#0f1117] text-[#e2e8f0]">Choose a service...</option>
-                                    {services.map(s => (
-                                        <option key={s.id} value={s.id} className="bg-[#0f1117] text-[#e2e8f0]">{s.title}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="input-label">Estimated Budget (USD)</label>
-                                <input
-                                    type="number"
-                                    className="input-field"
-                                    value={formData.budgetUSD}
-                                    onChange={(e) => setFormData({ ...formData, budgetUSD: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="input-label">Project Details</label>
-                                <textarea
-                                    className="input-field min-h-[100px]"
-                                    value={formData.additionalNotes}
-                                    onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
-                                />
-                            </div>
-                            <div className="flex gap-4 pt-2">
-                                <button type="button" onClick={() => setShowModal(false)} className="btn-outline flex-1">
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn-brand flex-1">
-                                    Create Lead
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-        </div>
+        </div >
     );
 }
