@@ -69,12 +69,12 @@ export function getNextAction(input: NextActionInput): NextAction {
     return { key: "PAYMENT_DUE" };
   }
 
-  if (isWaitingForClientApproval(input)) {
-    return { key: "WAITING_FOR_CLIENT_APPROVAL" };
-  }
-
   if (input.health !== "GREEN") {
     return { key: "HEALTH_ISSUE" };
+  }
+
+  if (isWaitingForClientApproval(input)) {
+    return { key: "WAITING_FOR_CLIENT_APPROVAL" };
   }
 
   return { key: "NO_ACTION" };
