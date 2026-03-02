@@ -26,7 +26,7 @@ export default function AdminPaymentsPage() {
 
     useEffect(() => {
         async function getSession() {
-            const res = await fetch("/api/auth/profile");
+            const res = await fetch("/api/auth/me");
             if (res.ok) {
                 const s = await res.json();
                 if (s.user.role === "CLIENT") {

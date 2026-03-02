@@ -33,6 +33,7 @@ interface DashboardShellProps {
         id: string;
         email: string;
         role: Role;
+        isCFO: boolean;
         name: string;
     };
 }
@@ -41,15 +42,18 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
     const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const getNavItems = (role: Role) => {
+    const getNavItems = (user: { role: Role; isCFO: boolean }) => {
+        const role = user.role;
         const common = [
             { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
             { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
             { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
         ];
 
+        let items = [];
+
         if (role === Role.FOUNDER || role === Role.CO_FOUNDER) {
-            return [
+            items = [
                 { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
                 { name: "Lead Database", href: "/dashboard/leads", icon: Target },
                 { name: "Proposals", href: "/dashboard/proposals", icon: FileText },
@@ -64,20 +68,30 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 { name: "Shares", href: "/dashboard/shares", icon: FileText },
                 { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
             ];
-        }
-
-        if (role === Role.CONTRACTOR) {
-            return [
+        } else if (role === Role.CONTRACTOR) {
+            items = [
                 ...common,
                 { name: "Ledger", href: "/dashboard/ledger", icon: TrendingUp },
                 { name: "Withdrawals", href: "/dashboard/withdrawals", icon: Wallet },
             ];
+        } else {
+            items = common;
         }
 
-        return common; // CLIENT
+        if (user.isCFO && !items.some(i => i.name === "Payments")) {
+            // Insert Payments before Profile or at the end
+            const profileIndex = items.findIndex(i => i.name === "Profile");
+            if (profileIndex !== -1) {
+                items.splice(profileIndex, 0, { name: "Payments", href: "/dashboard/payments", icon: CreditCard });
+            } else {
+                items.push({ name: "Payments", href: "/dashboard/payments", icon: CreditCard });
+            }
+        }
+
+        return items;
     };
 
-    const navItems = getNavItems(user.role);
+    const navItems = getNavItems(user);
 
     return (
         <div className="min-h-screen bg-agency-black flex text-white selection:bg-agency-accent selection:text-white">
