@@ -44,6 +44,7 @@ export default function ChangeRequestsPanel({
   onChangeRequests,
 }: Props) {
   const [crs, setCRs] = useState<CRWithUser[]>(initialCRs);
+  const [isExecutionMember, setIsExecutionMember] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
@@ -59,8 +60,9 @@ export default function ChangeRequestsPanel({
     const res = await fetch(`/api/admin/projects/${projectId}/change-requests`);
     if (res.ok) {
       const data = await res.json();
-      setCRs(data);
-      onChangeRequests?.(data);
+      setCRs(data.crs);
+      setIsExecutionMember(data.isExecutionMember);
+      onChangeRequests?.(data.crs);
     }
   }
 
@@ -187,8 +189,8 @@ export default function ChangeRequestsPanel({
                   </div>
                 </div>
 
-                {/* Approve / Reject Actions - ONLY For Founders and Pending State */}
-                {isFounder && cr.status === "PENDING" && (
+                {/* Approve / Reject Actions - ONLY For Execution Members and Pending State */}
+                {isExecutionMember && cr.status === "PENDING" && (
                   <div className="flex gap-2 shrink-0">
                     <button
                       onClick={() => handleDecision(cr.id, "REJECTED")}

@@ -27,7 +27,21 @@ export async function GET(_req: Request, { params }: Params) {
         orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(crs);
+    // Check if the current user is an EXECUTION member
+    const session = await auth();
+    let isExecutionMember = false;
+    if (session?.user) {
+        const member = await prisma.projectMember.findFirst({
+            where: {
+                projectId: project.id,
+                userId: (session.user as any).id,
+                role: "EXECUTION",
+            }
+        });
+        isExecutionMember = !!member;
+    }
+
+    return NextResponse.json({ crs, isExecutionMember });
 }
 
 /** PATCH /api/portal/project/:viewToken/change-requests  — approve or reject a CR (client only) */
@@ -53,27 +67,26 @@ export async function PATCH(req: Request, { params }: Params) {
 
     if (!project) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    // Check authorization: magic link via viewToken OR logged-in founder/client
+    // Only EXECUTION members can approve/reject
     let isAuthorized = false;
 
-    // 1. Magic Link (if we trust the viewToken for write actions like approve/reject)
-    if (viewToken && project.viewToken === viewToken) {
-        isAuthorized = true;
-    }
-
-    // 2. Logged-in user check
     if (session?.user) {
         const user = session.user as { id: string; email: string; role: string };
-        const isClient = project.booking?.clientEmail?.toLowerCase() === user.email.toLowerCase();
-        const isFounder = user.role === "FOUNDER";
-        if (isClient || isFounder) {
+        const projectMember = await prisma.projectMember.findFirst({
+            where: {
+                projectId: project.id,
+                userId: user.id,
+                role: "EXECUTION",
+            },
+        });
+        if (projectMember) {
             isAuthorized = true;
         }
     }
 
     if (!isAuthorized) {
         return NextResponse.json(
-            { error: "Forbidden: Only the project client or a founder can respond to change requests" },
+            { error: "Forbidden: Only execution members assigned to this project can respond to change requests" },
             { status: 403 }
         );
     }

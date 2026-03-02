@@ -28,6 +28,7 @@ function StatusBadge({ status }: { status: CRStatus }) {
 
 export default function ClientChangeRequestsPanel({ viewToken }: Props) {
     const [crs, setCRs] = useState<CRWithUser[]>([]);
+    const [isExecutionMember, setIsExecutionMember] = useState(false);
     const [loading, setLoading] = useState(true);
 
     async function fetchCRs() {
@@ -35,7 +36,9 @@ export default function ClientChangeRequestsPanel({ viewToken }: Props) {
         try {
             const res = await fetch(`/api/portal/project/${viewToken}/change-requests`);
             if (res.ok) {
-                setCRs(await res.json());
+                const data = await res.json();
+                setCRs(data.crs);
+                setIsExecutionMember(data.isExecutionMember);
             }
         } finally {
             setLoading(false);
@@ -151,8 +154,8 @@ export default function ClientChangeRequestsPanel({ viewToken }: Props) {
                                 </div>
                             </div>
 
-                            {/* Approve / Reject Actions - ONLY For Pending State */}
-                            {cr.status === "PENDING" && (
+                            {/* Approve / Reject Actions - ONLY For Execution Members and Pending State */}
+                            {isExecutionMember && cr.status === "PENDING" && (
                                 <div className="flex gap-2 shrink-0 md:mt-0 mt-2">
                                     <button
                                         onClick={() => handleDecision(cr.id, "REJECTED")}

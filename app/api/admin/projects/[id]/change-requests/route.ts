@@ -29,13 +29,18 @@ export async function GET(_req: Request, { params }: Params) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // Determine if the current user is an EXECUTION member
+  const isExecutionMember = project.members.some(
+    (m) => m.userId === session.user.id && m.role === "EXECUTION"
+  );
+
   const crs = await prisma.changeRequest.findMany({
     where: { projectId },
     include: { requestedBy: { select: { name: true, role: true } } },
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json(crs);
+  return NextResponse.json({ crs, isExecutionMember });
 }
 
 /** POST /api/admin/projects/:id/change-requests  — create a CR (FOUNDER or CONTRACTOR) */
@@ -111,9 +116,20 @@ export async function PATCH(req: Request, { params }: Params) {
 
   const { id: projectId } = await params;
 
-  // Only FOUNDER or CO_FOUNDER can approve/reject
-  if (session.user.role !== Role.FOUNDER && session.user.role !== Role.CO_FOUNDER) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  // Only EXECUTION members can approve/reject
+  const projectMember = await prisma.projectMember.findFirst({
+    where: {
+      projectId,
+      userId: session.user.id,
+      role: "EXECUTION",
+    },
+  });
+
+  if (!projectMember) {
+    return NextResponse.json(
+      { error: "Forbidden: Only execution members can approve/reject change requests" },
+      { status: 403 }
+    );
   }
 
   const body = await req.json();
