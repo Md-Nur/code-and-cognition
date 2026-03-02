@@ -23,6 +23,7 @@ const proposalCreateSchema = z.object({
   paymentTerms: z.string().optional().nullable(),
   contractText: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
+  title: z.string().optional().nullable(),
 });
 
 const proposalIdSchema = z.object({
@@ -61,6 +62,7 @@ export const createProposalForBooking = withProxyValidation(
         paymentTerms: data.paymentTerms ?? null,
         contractText: data.contractText ?? null,
         notes: data.notes ?? null,
+        title: data.title ?? null,
         status: "DRAFT",
         viewToken: crypto.randomUUID(),
       },
@@ -179,7 +181,7 @@ export const approveProposal = withProxyValidation(
       return { ok: false, error: "No finder available" } as const;
     }
 
-    const projectTitle = `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
+    const projectTitle = proposal.title || `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
 
     // Perform inside a transaction to ensure atomicity
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
@@ -327,7 +329,7 @@ export const approveProposalByToken = async (token: string, email: string) => {
     return { ok: false, error: "No founder available to start the project." } as const;
   }
 
-  const projectTitle = `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
+  const projectTitle = proposal.title || `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
 
   // Perform inside a transaction to ensure atomicity
   const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {

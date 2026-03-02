@@ -2,13 +2,16 @@ export type NextActionKey =
   | "CHANGE_REQUEST_REVIEW"
   | "PAYMENT_DUE"
   | "WAITING_FOR_CLIENT_APPROVAL"
+  | "HEALTH_ISSUE"
   | "NO_ACTION";
 
 type MilestoneStatusKey = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 type ProjectStatusKey = "ACTIVE" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+type ProjectHealthKey = "GREEN" | "YELLOW" | "RED";
 
 type NextActionInput = {
   status: ProjectStatusKey;
+  health: ProjectHealthKey;
   milestones: { status: MilestoneStatusKey }[];
   booking?: { budgetBDT?: number | null; budgetUSD?: number | null } | null;
   payments: { amountBDT?: number | null; amountUSD?: number | null }[];
@@ -68,6 +71,10 @@ export function getNextAction(input: NextActionInput): NextAction {
 
   if (isWaitingForClientApproval(input)) {
     return { key: "WAITING_FOR_CLIENT_APPROVAL" };
+  }
+
+  if (input.health !== "GREEN") {
+    return { key: "HEALTH_ISSUE" };
   }
 
   return { key: "NO_ACTION" };

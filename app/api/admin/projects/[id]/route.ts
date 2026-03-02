@@ -72,6 +72,7 @@ export async function GET(
 
   const nextAction = getNextAction({
     status: project.status,
+    health: project.health,
     milestones: project.milestones,
     booking: project.booking,
     payments: project.payments,

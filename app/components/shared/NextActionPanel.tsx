@@ -6,6 +6,7 @@ type ProjectStatusKey = "ACTIVE" | "DELIVERED" | "COMPLETED" | "CANCELLED";
 
 type NextActionInput = {
     status: ProjectStatusKey;
+    health: "GREEN" | "YELLOW" | "RED";
     milestones: { status: MilestoneStatusKey }[];
     booking?: { budgetBDT?: number | null; budgetUSD?: number | null } | null;
     payments: { amountBDT?: number | null; amountUSD?: number | null }[];
@@ -118,6 +119,40 @@ const NEXT_ACTION_CONFIG: Record<
             </svg>
         ),
     },
+    HEALTH_ISSUE: {
+        label: "Attention Required",
+        titleClass: "text-amber-300",
+        panelClass:
+            "border-amber-500/30 bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent",
+        iconClass: "bg-amber-500/15 text-amber-300",
+        pillClass: "border-amber-500/30 text-amber-300 bg-amber-500/15",
+        pillText: "Warning",
+        roleCopy: {
+            FOUNDER:
+                "Project health is currently non-green. Internal review may be needed.",
+            CONTRACTOR:
+                "Project health alert. Check with founder for updated priorities.",
+            CLIENT:
+                "We've flagged some minor blockers. Project health is currently yellow/red.",
+            DEFAULT: "Project health needs attention.",
+        },
+        icon: (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+        ),
+    },
     NO_ACTION: {
         label: "All Clear",
         titleClass: "text-emerald-300",
@@ -199,6 +234,7 @@ export default function NextActionPanel({
 }: NextActionPanelProps) {
     const nextAction = getNextAction({
         status: project.status,
+        health: project.health,
         milestones: project.milestones,
         booking: project.booking,
         payments: project.payments,
@@ -213,22 +249,39 @@ export default function NextActionPanel({
         pendingChangeRequests,
     );
 
+    // Dynamic config overrides for HEALTH_ISSUE based on RED/YELLOW
+    let activeConfig = { ...nextActionConfig };
+    if (nextAction.key === "HEALTH_ISSUE") {
+        if (project.health === "RED") {
+            activeConfig.titleClass = "text-rose-300";
+            activeConfig.panelClass = "border-rose-500/30 bg-gradient-to-br from-rose-500/15 via-rose-500/5 to-transparent";
+            activeConfig.iconClass = "bg-rose-500/15 text-rose-300";
+            activeConfig.pillClass = "border-rose-500/30 text-rose-300 bg-rose-500/15";
+            activeConfig.pillText = "Critical";
+            activeConfig.label = "Critical Status";
+        } else {
+            // YELLOW - use default amber from config
+            activeConfig.pillText = "Warning";
+            activeConfig.label = "Risk Detected";
+        }
+    }
+
     return (
         <div
-            className={`glass-panel p-6 rounded-2xl border relative overflow-hidden ${nextActionConfig.panelClass}`}
+            className={`glass-panel p-6 rounded-2xl border relative overflow-hidden ${activeConfig.panelClass}`}
         >
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                 <div
-                    className={`h-11 w-11 rounded-xl flex items-center justify-center ${nextActionConfig.iconClass}`}
+                    className={`h-11 w-11 rounded-xl flex items-center justify-center ${activeConfig.iconClass}`}
                 >
-                    {nextActionConfig.icon}
+                    {activeConfig.icon}
                 </div>
                 <div className="flex-1">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400">
                         Next Action Required
                     </p>
-                    <h2 className={`text-xl font-bold ${nextActionConfig.titleClass}`}>
-                        {nextActionConfig.label}
+                    <h2 className={`text-xl font-bold ${activeConfig.titleClass}`}>
+                        {activeConfig.label}
                     </h2>
                     <p className="text-sm text-gray-300 mt-1">{nextActionCopy}</p>
                     {nextActionMeta && (
@@ -237,9 +290,9 @@ export default function NextActionPanel({
                 </div>
                 <div className="sm:ml-auto">
                     <span
-                        className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${nextActionConfig.pillClass}`}
+                        className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${activeConfig.pillClass}`}
                     >
-                        {nextActionConfig.pillText}
+                        {activeConfig.pillText}
                     </span>
                 </div>
             </div>

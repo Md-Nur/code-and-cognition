@@ -15,6 +15,7 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
+        title: `${lead.service?.title || "Project"} - ${lead.clientName}`,
         scopeSummary: (lead.discovery as any)?.problemStatement || "",
         deliverables: ["Initial consultation", "Project roadmap"],
         milestones: ["Project Kickoff", "Final Delivery"],
@@ -80,6 +81,7 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
                 paymentTerms: formData.paymentTerms,
                 contractText: formData.contractText,
                 notes: formData.notes,
+                title: formData.title,
             });
 
             if (res.ok && res.proposal) {
@@ -130,15 +132,29 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
             <div className="glass-panel p-8 rounded-3xl border border-white/10 min-h-[500px] flex flex-col">
                 {step === 1 && (
                     <div className="space-y-6 animate-fade-in">
-                        <div>
-                            <h2 className="text-xl font-bold mb-2">Project Scope</h2>
-                            <p className="text-gray-400 text-sm mb-4">Define the high-level objectives and summary of the work.</p>
-                            <textarea
-                                className="input-field min-h-[200px] text-lg leading-relaxed"
-                                placeholder="Describe the project scope in detail..."
-                                value={formData.scopeSummary}
-                                onChange={(e) => setFormData({ ...formData, scopeSummary: e.target.value })}
-                            />
+                        <div className="space-y-4">
+                            <div>
+                                <h2 className="text-xl font-bold mb-2">Project Title</h2>
+                                <p className="text-gray-400 text-sm mb-4">Give this project a clear, recognizable name.</p>
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    placeholder="e.g. Website Redesign - Acme Corp"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                />
+                            </div>
+
+                            <div>
+                                <h2 className="text-xl font-bold mb-2">Project Scope</h2>
+                                <p className="text-gray-400 text-sm mb-4">Define the high-level objectives and summary of the work.</p>
+                                <textarea
+                                    className="input-field min-h-[200px] text-lg leading-relaxed"
+                                    placeholder="Describe the project scope in detail..."
+                                    value={formData.scopeSummary}
+                                    onChange={(e) => setFormData({ ...formData, scopeSummary: e.target.value })}
+                                />
+                            </div>
                         </div>
                     </div>
                 )}
