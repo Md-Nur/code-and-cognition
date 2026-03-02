@@ -114,10 +114,10 @@ export default function LedgerPage() {
             amountUSD: e.amountUSD ? -e.amountUSD : null,
             type: "EXPENSE" as const
         })) || []),
-        ...(data?.completedWithdrawals?.map(w => ({
+        ...(data?.completedWithdrawals?.filter(w => w.status === 'REJECTED').map(w => ({
             id: w.id,
             date: w.updatedAt || w.createdAt,
-            source: `Withdrawal ${w.status === 'REJECTED' ? '(Rejected)' : '(Completed)'}: ${w.user?.name || 'User'}`,
+            source: `Withdrawal (Rejected): ${w.user?.name || 'User'}`,
             amountBDT: w.currency === "BDT" ? (w.status === 'REJECTED' ? 0 : -w.amount) : null,
             amountUSD: w.currency === "USD" ? (w.status === 'REJECTED' ? 0 : -w.amount) : null,
             type: "WITHDRAWAL" as const
