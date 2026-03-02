@@ -125,19 +125,12 @@ export default function Navbar({ user }: NavbarProps) {
               <div className="flex-shrink-0 lg:flex-1 flex items-center justify-end gap-x-3 sm:gap-x-4 lg:gap-x-6">
                 {user && <span className="hidden md:block"><NotificationBell /></span>}
 
-                {user ? (
+                {user && (
                   <Link
                     href="/dashboard/profile"
                     className="hidden lg:inline-flex text-[11px] font-black uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors"
                   >
                     Account
-                  </Link>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="hidden lg:inline-flex text-[11px] font-black uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors"
-                  >
-                    Access
                   </Link>
                 )}
 

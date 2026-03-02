@@ -33,9 +33,6 @@ export default function DashboardProjectsPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold text-white">Project Pipeline</h1>
-                <Link href="/dashboard/projects/new" className="px-6 py-2.5 rounded-xl bg-agency-accent text-black font-bold hover:bg-agency-accent/90 transition-all shadow-lg shadow-agency-accent/20">
-                    + Launch New Project
-                </Link>
             </div>
 
             <div className="glass-panel overflow-hidden rounded-xl">

@@ -1,73 +1,17 @@
-Create dashboard route:
+In this website time used as GMT 0. Thats ok but in the UI (client side) it should be local time. you can access the request url and get the GMT offset.
 
-/dashboard/case-studies
+In the project breif add our company name "Code & Cognition" change the font with a premium font.
 
-Features:
+In project health when I set green to yellow and then set green again then in client side it became blue
 
-1. Case Studies Table View:
-- Title
-- Industry
-- Status (Draft / Published / Archived)
-- Published Date
-- Edit Button
-- Delete Button
-- Preview Button
+no need approve in payment
 
-2. Create / Edit Form:
-Fields:
-- Title
-- Slug (auto generate)
-- Industry
-- Client Name (optional)
-- Summary
-- Challenge (Rich text)
-- Approach (Rich text)
-- Solution (Rich text)
-- Results (Rich text)
-- Highlight Metric
-- Tech Stack (multi select tags)
-- Cover Image upload
-- Architecture Image upload
-- Status selector
-- Publish date
+contractor can't see ledgers
 
-Add:
-- Draft saving
-- Publish scheduling
-- Validation
-- Confirmation before delete
+remove add manual lead 
 
-----------------------------------------
+expense can't edit or remove after approvals, after approval expenses should reflect in the ledgers.
 
-BACKEND LOGIC
+ledger should have an option for filter by date range.
 
-- Use Prisma schema for CaseStudy
-- Slug must be unique
-- Only show Published case studies on public site
-- Protect dashboard with authentication
-- Add server actions for create/update/delete
-- Add optimistic UI update
-
-----------------------------------------
-
-UI DESIGN LANGUAGE
-
-- Minimal
-- Professional
-- No excessive gradients
-- Large whitespace
-- Subtle borders
-- Soft shadows
-- Rounded corners (lg)
-- Smooth hover transitions
-- Enterprise SaaS feeling
-
-----------------------------------------
-
-BONUS FEATURES
-
-- SEO metadata per case study
-- OpenGraph image
-- Structured data (JSON-LD)
-- Analytics hook
-- Featured case study toggle
+Improve the hero image design
