@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ChangeRequest, CRStatus } from "@prisma/client";
+import LocalTime from "@/app/components/shared/LocalTime";
 
 type CRWithUser = ChangeRequest & {
   requestedBy: { name: string; role: string };
@@ -179,11 +180,11 @@ export default function ChangeRequestsPanel({
                         💰 +{cr.estimatedBudgetImpact.toLocaleString()}
                       </span>
                     )}
-                    <span>{new Date(cr.createdAt).toLocaleDateString()}</span>
+                    <span><LocalTime date={cr.createdAt} /></span>
                     {cr.clientApprovalAt && (
                       <span>
                         Decided:{" "}
-                        {new Date(cr.clientApprovalAt).toLocaleDateString()}
+                        <LocalTime date={cr.clientApprovalAt} />
                       </span>
                     )}
                   </div>

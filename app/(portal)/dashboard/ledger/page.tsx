@@ -7,6 +7,7 @@ import {
     PlusCircle, ArrowUpRight, ArrowDownRight,
     Clock, Check, XCircle, Building2, Users
 } from "lucide-react";
+import LocalTime from "@/app/components/shared/LocalTime";
 
 
 type LedgerData = {
@@ -196,7 +197,7 @@ export default function LedgerPage() {
                                             return (
                                                 <tr key={entry.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                                     <td className="py-4 px-6 text-sm text-gray-500">
-                                                        {new Date(entry.date).toLocaleDateString()}
+                                                        <LocalTime date={entry.date} />
                                                     </td>
                                                     <td className="py-4 px-6 text-sm">
                                                         <div className="flex items-center gap-2">
@@ -236,7 +237,7 @@ export default function LedgerPage() {
                                                 <div className="flex justify-between items-start">
                                                     <div>
                                                         <div className="font-bold text-sm">{w.user.name}</div>
-                                                        <div className="text-[10px] text-gray-500">{new Date(w.createdAt).toLocaleString()}</div>
+                                                        <div className="text-[10px] text-gray-500"><LocalTime date={w.createdAt} showTime /></div>
                                                     </div>
                                                     <div className="font-mono font-bold text-amber-400">
                                                         {w.currency === "BDT" ? `৳${w.amount.toLocaleString()}` : `$${w.amount.toLocaleString()}`}

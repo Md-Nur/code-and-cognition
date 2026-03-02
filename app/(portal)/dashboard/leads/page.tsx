@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Booking, Service } from "@prisma/client";
 import Link from "next/link";
+import LocalTime from "@/app/components/shared/LocalTime";
 
 type BookingWithRelations = Booking & { service: Service | null; project: { id: string } | null; discovery: any };
 
@@ -188,7 +189,7 @@ export default function LeadsDatabasePage() {
                                 }`}>
                                 {booking.status.replace("_", " ")}
                             </span>
-                            <span className="text-[10px] text-gray-500">{new Date(booking.createdAt).toLocaleDateString()}</span>
+                            <span className="text-[10px] text-gray-500"><LocalTime date={booking.createdAt} /></span>
                         </div>
 
                         <h3 className="font-bold text-lg mb-1">

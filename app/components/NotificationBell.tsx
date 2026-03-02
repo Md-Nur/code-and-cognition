@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import LocalTime from "@/app/components/shared/LocalTime";
 
 interface Notification {
     id: string;
@@ -126,7 +127,7 @@ export default function NotificationBell() {
                                             </p>
                                         </div>
                                         <span className="text-[10px] text-gray-500 whitespace-nowrap pt-1">
-                                            {new Date(notification.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                                            <LocalTime date={notification.createdAt} formatStr="MMM d" />
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between mt-2">

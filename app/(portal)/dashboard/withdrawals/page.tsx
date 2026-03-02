@@ -13,6 +13,7 @@ import {
     Send,
     RefreshCw,
 } from "lucide-react";
+import LocalTime from "@/app/components/shared/LocalTime";
 
 type WalletData = {
     balance: { totalBDT: number; totalUSD: number };
@@ -308,14 +309,10 @@ export default function WithdrawalsPage() {
                                                     <tr key={w.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                                         <td className="py-4 px-6">
                                                             <div className="text-sm text-white">
-                                                                {new Date(w.createdAt).toLocaleDateString("en-US", {
-                                                                    year: "numeric", month: "short", day: "numeric"
-                                                                })}
+                                                                <LocalTime date={w.createdAt} />
                                                             </div>
                                                             <div className="text-[10px] text-gray-500">
-                                                                {new Date(w.createdAt).toLocaleTimeString("en-US", {
-                                                                    hour: "2-digit", minute: "2-digit"
-                                                                })}
+                                                                <LocalTime date={w.createdAt} showTime formatStr="" />
                                                             </div>
                                                         </td>
                                                         <td className="py-4 px-6 text-right">

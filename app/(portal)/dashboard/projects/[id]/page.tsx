@@ -14,6 +14,7 @@ import RevenueSplitsControl from "@/app/components/admin/RevenueSplitsControl";
 import EditableMilestones from "@/app/components/project/EditableMilestones";
 import ChangeRequestsPanel from "@/app/components/admin/ChangeRequestsPanel";
 import EditableProjectTitle from "@/app/components/project/EditableProjectTitle";
+import LocalTime from "@/app/components/shared/LocalTime";
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },
@@ -87,13 +88,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                             {project.startDate && (
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
                                     <Calendar className="w-3.5 h-3.5 text-agency-accent" />
-                                    <span>Started <span className="text-white font-medium">{format(new Date(project.startDate), "MMM d, yyyy")}</span></span>
+                                    <span>Started <span className="text-white font-medium"><LocalTime date={project.startDate} /></span></span>
                                 </div>
                             )}
                             {project.endDate && (
                                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
                                     <Calendar className="w-3.5 h-3.5 text-rose-400" />
-                                    <span>Deadline <span className="text-white font-medium">{format(new Date(project.endDate), "MMM d, yyyy")}</span></span>
+                                    <span>Deadline <span className="text-white font-medium"><LocalTime date={project.endDate} /></span></span>
                                 </div>
                             )}
                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
@@ -206,7 +207,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                                                     {log.user?.name ?? "System"}
                                                 </span>
                                                 <span className="text-[10px] text-gray-600 tabular-nums">
-                                                    {format(new Date(log.createdAt), "MMM d, h:mma")}
+                                                    <LocalTime date={log.createdAt} showTime />
                                                 </span>
                                             </div>
                                             <p className="text-xs text-white/70 leading-relaxed">{log.action}</p>

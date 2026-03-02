@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import ProgressBar from "@/app/components/ProgressBar";
+import LocalTime from "@/app/components/shared/LocalTime";
 import DownloadBriefButton from "./DownloadBriefButton";
 import ClientChangeRequestsPanel from "@/app/components/portal/ClientChangeRequestsPanel";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
@@ -140,7 +141,7 @@ export default async function ClientPortalPage(props: {
                                 </span>
                                 <span className="text-sm text-gray-500 flex items-center gap-1">
                                     <Calendar className="w-4 h-4" />
-                                    Started {format(new Date(project.createdAt), "MMM d, yyyy")}
+                                    Started <LocalTime date={project.createdAt} />
                                 </span>
                             </div>
                             <h2 className="text-3xl font-bold mb-6 tracking-tight">
@@ -208,10 +209,7 @@ export default async function ClientPortalPage(props: {
                                                             <span className="text-xs text-emerald-600 dark:text-emerald-400 mt-3 font-medium flex items-center gap-1 md:group-odd:justify-end">
                                                                 <CheckCircle2 className="w-3 h-3" />
                                                                 Completed{" "}
-                                                                {format(
-                                                                    new Date(milestone.completedAt),
-                                                                    "MMM d, yyyy",
-                                                                )}
+                                                                <LocalTime date={milestone.completedAt} />
                                                             </span>
                                                         )}
                                                     </div>
@@ -266,7 +264,7 @@ export default async function ClientPortalPage(props: {
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />
-                                                    {format(new Date(log.createdAt), "MMM d, h:mm a")}
+                                                    <LocalTime date={log.createdAt} showTime />
                                                 </p>
                                             </div>
                                         </div>

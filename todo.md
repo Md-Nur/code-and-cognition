@@ -1,5 +1,3 @@
-In the project breif add our company name "Code & Cognition" change the font with a premium font.
-
 In project health when I set green to yellow and then set green again then in client side it became blue
 
 no need approve in payment. CFO can direct add payments.

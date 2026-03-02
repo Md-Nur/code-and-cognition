@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CircleDollarSign, Wallet, ArrowDownCircle, ArrowUpCircle, History, Landmark, X, CheckCircle2 } from "lucide-react";
+import LocalTime from "@/app/components/shared/LocalTime";
 
 type Transaction = {
     id: string;
@@ -178,11 +179,7 @@ export default function WalletView() {
                                                     )}
                                                 </td>
                                                 <td className="py-4 px-6 text-sm text-gray-500">
-                                                    {new Date(tx.createdAt).toLocaleDateString(undefined, {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric'
-                                                    })}
+                                                    <LocalTime date={tx.createdAt} />
                                                 </td>
                                                 <td className="py-4 px-6 text-right font-mono">
                                                     <div className={isNegative ? 'text-red-400' : 'text-green-400'}>
