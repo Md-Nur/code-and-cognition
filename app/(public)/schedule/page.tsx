@@ -240,6 +240,7 @@ export default function SchedulePage() {
                                             }
                                         }}
                                     />
+                                    {errors.clientPhone && <p className="text-error text-xs">{errors.clientPhone.message}</p>}
                                 </div>
                             </div>
 
