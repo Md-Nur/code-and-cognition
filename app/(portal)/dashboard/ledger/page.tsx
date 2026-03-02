@@ -5,7 +5,7 @@ import { LedgerEntry, LedgerBalance, User, Role, Expense, Withdrawal } from "@pr
 import {
     CircleDollarSign, Wallet, X, CheckCircle2,
     PlusCircle, ArrowUpRight, ArrowDownRight,
-    Clock, Check, XCircle, Building2, Users
+    Clock, Check, XCircle, Building2, Users, Filter, Calendar
 } from "lucide-react";
 import LocalTime from "@/app/components/shared/LocalTime";
 
@@ -15,8 +15,8 @@ type LedgerData = {
         payment: { project: { title: string } | null } | null;
         user: User | null;
         withdrawal: Withdrawal | null;
+        expense: Expense | null;
     })[];
-    approvedExpenses: Expense[];
     userBalances: (LedgerBalance & { user: User })[];
     pendingWithdrawals: (Withdrawal & { user: User })[];
     completedWithdrawals?: (Withdrawal & { user: User })[];
@@ -28,8 +28,17 @@ export default function LedgerPage() {
     const [data, setData] = useState<LedgerData | null>(null);
     const [loading, setLoading] = useState(true);
     const [processingId, setProcessingId] = useState<string | null>(null);
-
     const [session, setSession] = useState<any>(null);
+
+    // Date filter state
+    type FilterMode = "all" | "month" | "range";
+    const [filterMode, setFilterMode] = useState<FilterMode>("all");
+    const [filterMonth, setFilterMonth] = useState<string>(() => {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    });
+    const [filterFrom, setFilterFrom] = useState<string>("");
+    const [filterTo, setFilterTo] = useState<string>("");
 
     async function fetchData() {
         const res = await fetch("/api/admin/ledger");
@@ -79,12 +88,15 @@ export default function LedgerPage() {
     const history = [
         ...(data?.transactions.map(e => {
             const isNegative = (e.amountBDT || 0) < 0 || (e.amountUSD || 0) < 0;
-            let type: "INCOME" | "WITHDRAWAL" = "INCOME";
+            let type: "INCOME" | "WITHDRAWAL" | "EXPENSE" = "INCOME";
             let source = e.payment?.project?.title || "System Transaction";
 
             if (e.type === "WITHDRAWAL") {
                 type = "WITHDRAWAL";
                 source = `Withdrawal: ${e.user?.name || 'User'}`;
+            } else if (e.type === "EXPENSE") {
+                type = "EXPENSE";
+                source = e.expense?.title ? `Expense: ${e.expense.title}` : (e.note || "Expense");
             } else if (e.type === "EXECUTION" || e.type === "FINDER_FEE") {
                 type = "INCOME";
                 source = `${e.type === 'FINDER_FEE' ? 'Finder' : 'Execution'} share: ${e.user?.name || 'User'} (${source})`;
@@ -102,14 +114,6 @@ export default function LedgerPage() {
                 type
             };
         }) || []),
-        ...(data?.approvedExpenses.map(e => ({
-            id: e.id,
-            date: e.date,
-            source: `Expense: ${e.title}`,
-            amountBDT: -e.amountBDT,
-            amountUSD: e.amountUSD ? -e.amountUSD : null,
-            type: "EXPENSE" as const
-        })) || []),
         ...(data?.completedWithdrawals?.filter(w => w.status === 'REJECTED').map(w => ({
             id: w.id,
             date: w.updatedAt || w.createdAt,
@@ -119,6 +123,20 @@ export default function LedgerPage() {
             type: "WITHDRAWAL" as const
         })) || [])
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    // Apply date filter
+    const filteredHistory = history.filter(entry => {
+        const d = new Date(entry.date);
+        if (filterMode === "month" && filterMonth) {
+            const [yr, mo] = filterMonth.split("-").map(Number);
+            return d.getFullYear() === yr && d.getMonth() + 1 === mo;
+        }
+        if (filterMode === "range") {
+            if (filterFrom && d < new Date(filterFrom)) return false;
+            if (filterTo && d > new Date(filterTo + "T23:59:59")) return false;
+        }
+        return true;
+    });
 
     return (
         <div className="space-y-12 pb-20">
@@ -176,8 +194,62 @@ export default function LedgerPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
                     {/* Consolidated Fund History */}
                     <div className="space-y-6 lg:col-span-2">
-                        <div className="flex items-center gap-3 px-2 border-l-4 border-blue-500">
+                        <div className="flex flex-wrap items-center justify-between gap-3 px-2 border-l-4 border-blue-500">
                             <h2 className="text-xl font-bold">🏛️ Company Transaction History</h2>
+                            {/* Filter Controls */}
+                            <div className="flex flex-wrap items-center gap-2">
+                                {/* Mode buttons */}
+                                <div className="flex rounded-xl overflow-hidden border border-white/10 text-[11px] font-semibold">
+                                    {(["all", "month", "range"] as const).map(m => (
+                                        <button
+                                            key={m}
+                                            onClick={() => setFilterMode(m)}
+                                            className={`px-3 py-1.5 transition-colors ${filterMode === m
+                                                    ? "bg-blue-500/30 text-blue-300"
+                                                    : "bg-white/5 text-gray-400 hover:bg-white/10"
+                                                }`}
+                                        >
+                                            {m === "all" ? "All" : m === "month" ? "Month" : "Range"}
+                                        </button>
+                                    ))}
+                                </div>
+                                {/* Month picker */}
+                                {filterMode === "month" && (
+                                    <input
+                                        type="month"
+                                        value={filterMonth}
+                                        onChange={e => setFilterMonth(e.target.value)}
+                                        className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
+                                    />
+                                )}
+                                {/* Date range picker */}
+                                {filterMode === "range" && (
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="date"
+                                            value={filterFrom}
+                                            onChange={e => setFilterFrom(e.target.value)}
+                                            className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
+                                        />
+                                        <span className="text-gray-500 text-xs">to</span>
+                                        <input
+                                            type="date"
+                                            value={filterTo}
+                                            onChange={e => setFilterTo(e.target.value)}
+                                            className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
+                                        />
+                                        {(filterFrom || filterTo) && (
+                                            <button
+                                                onClick={() => { setFilterFrom(""); setFilterTo(""); }}
+                                                className="text-gray-500 hover:text-gray-300 transition-colors"
+                                                title="Clear dates"
+                                            >
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="glass-panel overflow-hidden rounded-2xl border-white/5">
                             <div className="table-container">
@@ -190,9 +262,11 @@ export default function LedgerPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {history.length === 0 ? (
-                                            <tr><td colSpan={3} className="p-8 text-center text-gray-500">No entries yet.</td></tr>
-                                        ) : history.map((entry) => {
+                                        {filteredHistory.length === 0 ? (
+                                            <tr><td colSpan={3} className="p-8 text-center text-gray-500">
+                                                {history.length === 0 ? "No entries yet." : "No transactions match the selected filter."}
+                                            </td></tr>
+                                        ) : filteredHistory.map((entry) => {
                                             const isNegative = (entry.amountBDT || 0) < 0 || (entry.amountUSD || 0) < 0;
                                             return (
                                                 <tr key={entry.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">

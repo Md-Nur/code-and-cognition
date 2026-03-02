@@ -39,13 +39,27 @@ export const POST = withAuth(async (req: Request, { params }: { params: Promise<
 
         // 4. If everyone has approved → execute the expense
         if (approvedCount >= totalFounders) {
-            await prisma.expense.update({
-                where: { id },
-                data: {
-                    status: "APPROVED",
-                    executedAt: new Date()
-                }
-            });
+            const expense = await prisma.expense.findUnique({ where: { id } });
+            if (!expense) return ApiResponse.error("Expense not found", 404);
+
+            await prisma.$transaction([
+                prisma.expense.update({
+                    where: { id },
+                    data: {
+                        status: "APPROVED",
+                        executedAt: new Date()
+                    }
+                }),
+                prisma.ledgerEntry.create({
+                    data: {
+                        expenseId: id,
+                        type: "EXPENSE",
+                        amountBDT: -expense.amountBDT,
+                        amountUSD: expense.amountUSD ? -expense.amountUSD : null,
+                        note: `Expense: ${expense.title}${expense.note ? ` (${expense.note})` : ""}`
+                    }
+                })
+            ]);
 
             return ApiResponse.success({
                 message: "All founders have approved. Expense executed.",

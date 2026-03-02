@@ -321,10 +321,12 @@ model LedgerEntry {
   projectId    String?
   note         String?
   withdrawalId String?
+  expenseId    String?
   payment      Payment?    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   project      Project?    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user         User?       @relation(fields: [userId], references: [id])
   withdrawal   Withdrawal? @relation(fields: [withdrawalId], references: [id])
+  expense      Expense?    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }
 
 model Withdrawal {
@@ -377,20 +379,21 @@ model Client {
 
 /// Business expenses recorded for profit/revenue tracking.
 model Expense {
-  id           String            @id @default(cuid())
-  title        String
-  amountBDT    Float
-  amountUSD    Float?
-  category     String?
-  date         DateTime          @default(now())
-  note         String?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  executedAt   DateTime?
-  proposedById String?
-  status       ExpenseStatus     @default(PENDING)
-  proposedBy   User?             @relation("ExpenseProposer", fields: [proposedById], references: [id])
-  approvals    ExpenseApproval[]
+  id            String            @id @default(cuid())
+  title         String
+  amountBDT     Float
+  amountUSD     Float?
+  category      String?
+  date          DateTime          @default(now())
+  note          String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  executedAt    DateTime?
+  proposedById  String?
+  status        ExpenseStatus     @default(PENDING)
+  proposedBy    User?             @relation("ExpenseProposer", fields: [proposedById], references: [id])
+  approvals     ExpenseApproval[]
+  ledgerEntries LedgerEntry[]
 }
 
 model ExpenseApproval {
@@ -589,6 +592,7 @@ enum SplitType {
   FINDER_FEE
   EXECUTION
   WITHDRAWAL
+  EXPENSE
 }
 
 enum ProjectHealth {
@@ -618,32 +622,33 @@ enum VoteStatus {
   APPROVED
   REJECTED
 }
+
 enum CaseStudyStatus {
-    DRAFT
-    PUBLISHED
-    ARCHIVED
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 model CaseStudy {
-    id                String          @id @default(cuid())
-    title             String
-    slug              String          @unique
-    industry          String
-    clientName        String?
-    summary           String
-    challenge         String          @db.Text
-    approach          String          @db.Text
-    solution          String          @db.Text
-    results           String          @db.Text
-    highlightMetric   String?
-    techStack         String[]
-    coverImage        String?
-    architectureImage String?
-    status            CaseStudyStatus @default(DRAFT)
-    publishDate       DateTime?
-    isFeatured        Boolean         @default(false)
-    seoTitle          String?
-    seoDescription    String?
-    createdAt         DateTime        @default(now())
-    updatedAt         DateTime        @updatedAt
+  id                String          @id @default(cuid())
+  title             String
+  slug              String          @unique
+  industry          String
+  clientName        String?
+  summary           String
+  challenge         String          @db.Text
+  approach          String          @db.Text
+  solution          String          @db.Text
+  results           String          @db.Text
+  highlightMetric   String?
+  techStack         String[]
+  coverImage        String?
+  architectureImage String?
+  status            CaseStudyStatus @default(DRAFT)
+  publishDate       DateTime?
+  isFeatured        Boolean         @default(false)
+  seoTitle          String?
+  seoDescription    String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }

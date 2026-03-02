@@ -6,13 +6,10 @@ export const PATCH = withAuth(async (req: Request, { params }: { params: Promise
     try {
         const { id } = await params;
 
-        // Block edits on fully-approved expenses after 24 hours
-        const existing = await prisma.expense.findUnique({ where: { id }, select: { status: true, executedAt: true } });
+        // Block edits on approved expenses
+        const existing = await prisma.expense.findUnique({ where: { id }, select: { status: true } });
         if (existing?.status === "APPROVED") {
-            const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-            if (existing.executedAt && existing.executedAt < twentyFourHoursAgo) {
-                return ApiResponse.error("Cannot edit an expense that has been fully approved for more than 24 hours.", 403);
-            }
+            return ApiResponse.error("Cannot edit an expense that has been approved.", 403);
         }
 
         const body = await req.json();
@@ -41,13 +38,10 @@ export const DELETE = withAuth(async (req: Request, { params }: { params: Promis
     try {
         const { id } = await params;
 
-        // Block deletion of fully-approved expenses after 24 hours
-        const existing = await prisma.expense.findUnique({ where: { id }, select: { status: true, executedAt: true } });
+        // Block deletion of approved expenses
+        const existing = await prisma.expense.findUnique({ where: { id }, select: { status: true } });
         if (existing?.status === "APPROVED") {
-            const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-            if (existing.executedAt && existing.executedAt < twentyFourHoursAgo) {
-                return ApiResponse.error("Cannot delete an expense that has been fully approved for more than 24 hours.", 403);
-            }
+            return ApiResponse.error("Cannot delete an expense that has been approved.", 403);
         }
 
         await prisma.expense.delete({

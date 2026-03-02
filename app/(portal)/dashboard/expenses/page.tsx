@@ -207,9 +207,7 @@ export default function AdminExpensesPage() {
                                                     >Approve</button>
                                                 )}
                                                 {(() => {
-                                                    const isLocked = expense.status === "APPROVED" && (
-                                                        !expense.executedAt || new Date(expense.executedAt).getTime() < Date.now() - 24 * 60 * 60 * 1000
-                                                    );
+                                                    const isLocked = expense.status === "APPROVED";
 
                                                     if (isLocked) return null;
 
