@@ -74,24 +74,19 @@ export default function LedgerPage() {
     const isCFO = session?.user?.isCFO;
 
     // Consolidate income and expenses
-    // Consolidate income, expenses, payouts, and withdrawals
+    // Consolidate income, expenses, and withdrawals
     const history = [
         ...(data?.transactions.map(e => {
             const isNegative = (e.amountBDT || 0) < 0 || (e.amountUSD || 0) < 0;
-            let type: "INCOME" | "PAYOUT" | "WITHDRAWAL" = "INCOME";
+            let type: "INCOME" | "WITHDRAWAL" = "INCOME";
             let source = e.payment?.project?.title || "System Transaction";
 
             if (e.type === "WITHDRAWAL") {
                 type = "WITHDRAWAL";
                 source = `Withdrawal: ${e.user?.name || 'User'}`;
             } else if (e.type === "EXECUTION" || e.type === "FINDER_FEE") {
-                if (isNegative) {
-                    type = "PAYOUT";
-                    source = `Payout: ${e.user?.name || 'User'}`;
-                } else {
-                    type = "INCOME";
-                    source = `${e.type === 'FINDER_FEE' ? 'Finder' : 'Execution'} share: ${e.user?.name || 'User'} (${source})`;
-                }
+                type = "INCOME";
+                source = `${e.type === 'FINDER_FEE' ? 'Finder' : 'Execution'} share: ${e.user?.name || 'User'} (${source})`;
             } else if (e.type === "COMPANY_FUND") {
                 type = "INCOME";
                 source = `Project Share: ${source}`;

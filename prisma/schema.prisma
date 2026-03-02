@@ -14,23 +14,23 @@ model User {
   passwordHash       String
   role               Role                @default(CONTRACTOR)
   createdAt          DateTime            @default(now())
+  isCFO              Boolean             @default(false)
   activityLogs       ActivityLog[]
   changeRequests     ChangeRequest[]
+  coFounderApprovals CoFounderApproval[]
+  proposalsMade      CoFounderProposal[] @relation("Proposer")
+  coFounderProposals CoFounderProposal[] @relation("Proposee")
+  companyShares      CompanyShare[]
+  proposedExpenses   Expense[]           @relation("ExpenseProposer")
+  expenseApprovals   ExpenseApproval[]
   ledgerBalance      LedgerBalance?
   ledgerEntries      LedgerEntry[]
   notifications      Notification[]
+  paymentApprovals   PaymentApproval[]
   projects           Project[]           @relation("ClientProject")
   finderProjects     Project[]           @relation("ProjectFinder")
   memberProjects     ProjectMember[]
   withdrawals        Withdrawal[]
-  proposedExpenses   Expense[]           @relation("ExpenseProposer")
-  expenseApprovals   ExpenseApproval[]
-  companyShares      CompanyShare[]
-  coFounderProposals CoFounderProposal[] @relation("Proposee")
-  proposalsMade      CoFounderProposal[] @relation("Proposer")
-  coFounderApprovals CoFounderApproval[]
-  isCFO              Boolean             @default(false)
-  paymentApprovals   PaymentApproval[]
 }
 
 /// Tracks company ownership distribution and lock-in periods.
@@ -55,9 +55,9 @@ model CoFounderProposal {
   status      ProposalStatus      @default(DRAFT)
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
+  approvals   CoFounderApproval[]
   proposer    User                @relation("Proposer", fields: [proposerId], references: [id])
   user        User                @relation("Proposee", fields: [userId], references: [id])
-  approvals   CoFounderApproval[]
 
   @@index([userId])
 }
@@ -241,8 +241,6 @@ model ProjectMember {
 model Proposal {
   id                String           @id @default(cuid())
   projectId         String?
-  /// Custom project title for this proposal
-  title             String?
   /// Can reference an engagement model or be fully custom
   engagementModelId String?
   /// Detailed scope of work
@@ -254,7 +252,6 @@ model Proposal {
   currency          Currency         @default(BDT)
   /// Timeline estimate
   estimatedDays     Int?
-  endDate           DateTime?
   approved          Boolean          @default(false)
   approvedAt        DateTime?
   /// For proposal versioning
@@ -275,6 +272,9 @@ model Proposal {
   signedAt          DateTime?
   /// Public viewing token for clients
   viewToken         String?          @unique @default(uuid())
+  /// Custom project title for this proposal
+  title             String?
+  endDate           DateTime?
   booking           Booking?
   engagementModel   EngagementModel? @relation(fields: [engagementModelId], references: [id])
   project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -289,11 +289,11 @@ model Payment {
   currency   Currency          @default(BDT)
   note       String?
   paidAt     DateTime          @default(now())
-  status     ExpenseStatus     @default(PENDING)
   executedAt DateTime?
+  status     ExpenseStatus     @default(PENDING)
   splits     LedgerEntry[]
-  approvals  PaymentApproval[]
   project    Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  approvals  PaymentApproval[]
 }
 
 model PaymentApproval {
@@ -384,11 +384,11 @@ model Expense {
   category     String?
   date         DateTime          @default(now())
   note         String?
-  status       ExpenseStatus     @default(PENDING)
-  proposedById String?
-  executedAt   DateTime?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
+  executedAt   DateTime?
+  proposedById String?
+  status       ExpenseStatus     @default(PENDING)
   proposedBy   User?             @relation("ExpenseProposer", fields: [proposedById], references: [id])
   approvals    ExpenseApproval[]
 }

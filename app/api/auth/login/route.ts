@@ -128,7 +128,6 @@ export async function POST(req: Request) {
                     // Send Magic Link - Redirect directly to project if possible
                     const redirectPath = latestProject?.viewToken ? `/project/${latestProject.viewToken}` : '/dashboard';
                     const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com"}/api/auth/magic-verify-redirect?token=${token}&goto=${encodeURIComponent(redirectPath)}`;
-                    console.log(`[AUTH] Attempting to send magic link to ${user.email}`);
                     const mailSent = await sendMail(
                         user.email,
                         "Your Login Link - Code & Cognition",
@@ -142,8 +141,6 @@ export async function POST(req: Request) {
 
                     if (!mailSent) {
                         console.error(`[AUTH] FAILED to send magic link to ${user.email} - Check SMTP settings`);
-                    } else {
-                        console.log(`[AUTH] Magic link sent successfully to ${user.email}`);
                     }
                 } else if (!password) {
                     // Staff user, no password provided – return requirePassword hint
