@@ -56,7 +56,7 @@ export const POST = withAuth(async (req, context, session) => {
             return ApiResponse.error("Please add a finder and at least one executive member to this project before adding a payment.", 400);
         }
 
-        // Create Payment Record (Initially PENDING)
+        // Create Payment Record (Immediately APPROVED for CFO)
         const payment = await prisma.payment.create({
             data: {
                 projectId,
@@ -64,12 +64,13 @@ export const POST = withAuth(async (req, context, session) => {
                 amountBDT: currency === "BDT" ? amount : null,
                 amountUSD: currency === "USD" ? amount : null,
                 note,
-                status: "PENDING"
+                status: "APPROVED",
+                executedAt: new Date()
             },
         });
 
-        // Split Engine will be triggered after all approvals
-        // await processPaymentSplit(payment.id);
+        // Split Engine triggered immediately
+        await processPaymentSplit(payment.id);
 
         return ApiResponse.success(payment, 201);
     } catch (error) {

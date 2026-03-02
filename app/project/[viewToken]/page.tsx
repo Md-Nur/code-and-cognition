@@ -87,7 +87,30 @@ export default async function ClientPortalPage(props: {
         },
     };
 
+    const statusColors: Record<
+        string,
+        { bg: string; text: string }
+    > = {
+        ACTIVE: {
+            bg: "bg-blue-100 dark:bg-blue-500/10",
+            text: "text-blue-700 dark:text-blue-400",
+        },
+        COMPLETED: {
+            bg: "bg-emerald-100 dark:bg-emerald-500/10",
+            text: "text-emerald-700 dark:text-emerald-400",
+        },
+        DELIVERED: {
+            bg: "bg-amber-100 dark:bg-amber-500/10",
+            text: "text-amber-700 dark:text-amber-400",
+        },
+        CANCELLED: {
+            bg: "bg-gray-100 dark:bg-gray-500/10",
+            text: "text-gray-700 dark:text-gray-400",
+        },
+    };
+
     const currentHealth = healthColors[project.health] || healthColors.GREEN;
+    const currentStatusStyle = statusColors[project.status] || statusColors.ACTIVE;
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans">
@@ -136,7 +159,7 @@ export default async function ClientPortalPage(props: {
                         </div>
                         <div className="relative z-10">
                             <div className="flex items-center gap-3 mb-4">
-                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
+                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${currentStatusStyle.bg} ${currentStatusStyle.text}`}>
                                     {project.status.replace("_", " ")}
                                 </span>
                                 <span className="text-sm text-gray-500 flex items-center gap-1">

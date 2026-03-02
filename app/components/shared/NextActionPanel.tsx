@@ -90,12 +90,12 @@ const NEXT_ACTION_CONFIG: Record<
     },
     WAITING_FOR_CLIENT_APPROVAL: {
         label: "Waiting for Client Approval",
-        titleClass: "text-blue-300",
+        titleClass: "text-emerald-300",
         panelClass:
-            "border-blue-500/30 bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent",
-        iconClass: "bg-blue-500/15 text-blue-300",
-        pillClass: "border-blue-500/30 text-blue-300 bg-blue-500/15",
-        pillText: "Pending",
+            "border-emerald-500/30 bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent",
+        iconClass: "bg-emerald-500/15 text-emerald-300",
+        pillClass: "border-emerald-500/30 text-emerald-300 bg-emerald-500/15",
+        pillText: "Feedback Needed",
         roleCopy: {
             FOUNDER: "Latest milestone is complete and awaiting client sign-off.",
             CONTRACTOR:

@@ -188,27 +188,10 @@ export default function AdminPaymentsPage() {
                                                     }`}>
                                                     {payment.status === "APPROVED" ? "Split Processed" : "Pending Approval"}
                                                 </span>
-                                                {payment.status === "PENDING" && payment.approvals && (
-                                                    <div className="flex -space-x-1.5 mt-1">
-                                                        {payment.approvals.map(a => (
-                                                            <div key={a.id} title={a.user.name} className="w-4 h-4 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center text-[7px] text-brand uppercase font-bold">
-                                                                {a.user.name.charAt(0)}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
                                             </div>
                                         </td>
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end gap-2">
-                                                {payment.status === "PENDING" && isFounder && !hasVoted && (
-                                                    <button
-                                                        onClick={() => handleVote(payment.id)}
-                                                        className="text-[10px] font-bold text-green-400 hover:text-green-300 uppercase px-2 py-1 rounded bg-green-400/10 border border-green-400/20"
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                )}
                                                 {(() => {
                                                     const isLocked = payment.status === "APPROVED" && (
                                                         !payment.executedAt || new Date(payment.executedAt).getTime() < Date.now() - 24 * 60 * 60 * 1000
