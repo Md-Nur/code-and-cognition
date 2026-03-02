@@ -1,17 +1,27 @@
-import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
+
+// Register fonts
+Font.register({
+    family: 'Inter',
+    fonts: [
+        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2', fontWeight: 400 },
+        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hiA.woff2', fontWeight: 700 },
+    ],
+});
 import { format } from 'date-fns';
 
 const styles = StyleSheet.create({
     page: {
         padding: 40,
-        fontFamily: 'Helvetica',
+        fontFamily: 'Inter',
         fontSize: 10,
         color: '#000000',
         backgroundColor: '#ffffff'
     },
     header: {
         fontSize: 24,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
         marginBottom: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#000000',
@@ -32,7 +42,8 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 14,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
         marginBottom: 8,
         textTransform: 'uppercase',
     },
@@ -45,7 +56,8 @@ const styles = StyleSheet.create({
         marginBottom: 6,
     },
     label: {
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
         width: 120,
     },
     value: {
@@ -61,7 +73,8 @@ const styles = StyleSheet.create({
         borderBottomColor: '#000000',
         paddingBottom: 4,
         marginBottom: 8,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
     },
     milestoneRow: {
         flexDirection: 'row',

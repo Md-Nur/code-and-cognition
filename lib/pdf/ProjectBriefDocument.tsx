@@ -9,6 +9,15 @@ import {
   Font,
 } from "@react-pdf/renderer";
 
+// Register fonts
+Font.register({
+  family: 'Inter',
+  fonts: [
+    { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2', fontWeight: 400 },
+    { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hiA.woff2', fontWeight: 700 },
+  ],
+});
+
 // Define types for project data
 export interface ProjectBriefData {
   title: string;
@@ -35,7 +44,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     padding: 40,
-    fontFamily: "Helvetica",
+    fontFamily: "Inter",
   },
   header: {
     marginBottom: 30,
@@ -125,6 +134,7 @@ const styles = StyleSheet.create({
     color: "#999999",
     borderTop: "1 solid #EEEEEE",
     paddingTop: 10,
+    fontFamily: "Inter",
   },
 });
 
@@ -157,6 +167,7 @@ const ProjectBriefDocument: React.FC<ProjectBriefDocumentProps> = ({
           <View style={styles.headerContent}>
             <Text style={styles.title}>PROJECT BRIEF</Text>
             <Text style={styles.subtitle}>{data.title}</Text>
+            <Text style={styles.subtitle}>Code & Cognition</Text>
             <Text style={styles.subtitle}>
               Generated on {formatDate(new Date().toISOString())}
             </Text>
@@ -266,8 +277,7 @@ const ProjectBriefDocument: React.FC<ProjectBriefDocumentProps> = ({
         {/* Footer */}
         <View style={styles.footer}>
           <Text>
-            Project Created: {formatDate(data.createdAt)} | This is a
-            confidential document
+            Project Created: {formatDate(data.createdAt)} | Code & Cognition | Confidential
           </Text>
         </View>
       </Page>
