@@ -24,6 +24,7 @@ export default function AdminPaymentsPage() {
     });
     const [editingPaymentId, setEditingPaymentId] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [session, setSession] = useState<any>(null);
 
@@ -56,6 +57,7 @@ export default function AdminPaymentsPage() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        setIsSubmitting(true);
         try {
             const url = editingPaymentId
                 ? `/api/admin/payments/${editingPaymentId}`
@@ -82,6 +84,8 @@ export default function AdminPaymentsPage() {
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -313,12 +317,21 @@ export default function AdminPaymentsPage() {
                             </div>
 
                             <div className="flex gap-4 pt-4 border-t border-white/5">
-                                <button type="button" onClick={handleCloseModal} className="btn-outline flex-1 rounded-2xl py-3">
+                                <button type="button" onClick={handleCloseModal} disabled={isSubmitting} className="btn-outline flex-1 rounded-2xl py-3 disabled:opacity-50 disabled:cursor-not-allowed">
                                     Cancel
                                 </button>
-                                <button type="submit" className="btn-brand flex-1 rounded-2xl py-3 gap-2">
-                                    <CheckCircle2 className="w-4 h-4" />
-                                    {editingPaymentId ? "Update Payment Info" : "Process Split"}
+                                <button type="submit" disabled={isSubmitting} className="btn-brand flex-1 rounded-2xl py-3 gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                                    {isSubmitting ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            {editingPaymentId ? "Updating..." : "Processing..."}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CheckCircle2 className="w-4 h-4" />
+                                            {editingPaymentId ? "Update Payment Info" : "Process Split"}
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </form>
