@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useRef } from "react";
 
 interface ImageUploadProps {
@@ -83,7 +84,7 @@ export default function ImageUpload({ value, onChange, label, description }: Ima
 
                 {value && (
                     <div className="relative group rounded-xl overflow-hidden border border-white/10 aspect-video bg-white/5">
-                        <img
+                        <Image
                             src={value}
                             alt="Preview"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

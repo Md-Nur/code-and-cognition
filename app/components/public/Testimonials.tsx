@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Quote } from "lucide-react";
+import Image from "next/image";
 
 export default async function Testimonials() {
     const testimonials = await prisma.testimonial.findMany({
@@ -39,10 +40,12 @@ export default async function Testimonials() {
 
                             <div className="flex items-center gap-4">
                                 {t.avatarUrl ? (
-                                    <img
+                                    <Image
                                         src={t.avatarUrl}
                                         alt={t.name}
                                         className="w-14 h-14 rounded-full object-cover border border-white/10"
+                                        width={56}
+                                        height={56}
                                     />
                                 ) : (
                                     <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xl font-bold text-gray-500">

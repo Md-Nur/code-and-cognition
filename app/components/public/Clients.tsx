@@ -1,6 +1,7 @@
 "use client";
 
 import { Client } from "@prisma/client";
+import Image from "next/image";
 
 export default function Clients({ clients }: { clients: Client[] }) {
     if (clients.length === 0) return null;
@@ -29,14 +30,16 @@ export default function Clients({ clients }: { clients: Client[] }) {
                         >
                             {client.website ? (
                                 <a href={client.website} target="_blank" rel="noopener noreferrer" title={client.name}>
-                                    <img
+                                    <Image
                                         src={client.logoUrl}
                                         alt={client.name}
                                         className="max-h-20 w-auto object-contain"
+                                        width={200}
+                                        height={200}
                                     />
                                 </a>
                             ) : (
-                                <img
+                                <Image
                                     src={client.logoUrl}
                                     alt={client.name}
                                     className="max-h-20 w-auto object-contain"

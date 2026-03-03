@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import ImageUpload from "@/app/components/admin/ImageUpload";
 import { Testimonial } from "@prisma/client";
+import Image from "next/image";
 
 export default function AdminTestimonialsPage() {
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -121,7 +122,7 @@ export default function AdminTestimonialsPage() {
                     <div key={t.id} className="glass-panel p-6 rounded-xl border border-white/5 flex flex-col h-full bg-white/[0.02]">
                         <div className="flex items-center gap-4 mb-4">
                             {t.avatarUrl ? (
-                                <img src={t.avatarUrl} alt={t.name} className="w-12 h-12 rounded-full object-cover border border-white/10" />
+                                <Image src={t.avatarUrl} alt={t.name} className="w-12 h-12 rounded-full object-cover border border-white/10" />
                             ) : (
                                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl font-bold text-gray-500">
                                     {t.name.charAt(0)}

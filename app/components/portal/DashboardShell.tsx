@@ -20,7 +20,8 @@ import {
     X,
     User as UserIcon,
     Target,
-    Wallet
+    Wallet,
+    MessageSquare
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -66,6 +67,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 { name: "Payments", href: "/dashboard/payments", icon: CreditCard },
                 { name: "Withdrawals", href: "/dashboard/withdrawals", icon: Wallet },
                 { name: "Users", href: "/dashboard/users", icon: Users },
+                { name: "Testimonials", href: "/dashboard/testimonials", icon: MessageSquare },
                 { name: "Shares", href: "/dashboard/shares", icon: FileText },
                 { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
             ];

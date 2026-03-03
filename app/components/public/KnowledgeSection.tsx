@@ -1,6 +1,7 @@
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 
 export default async function KnowledgeSection() {
     const insights = await prisma.article.findMany({
@@ -43,7 +44,7 @@ export default async function KnowledgeSection() {
                         >
                             <div className="mb-8 overflow-hidden rounded-3xl aspect-[16/9] bg-white/5 border border-white/10 relative">
                                 {insight.thumbnailUrl ? (
-                                    <img
+                                    <Image
                                         src={insight.thumbnailUrl}
                                         alt={insight.title}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

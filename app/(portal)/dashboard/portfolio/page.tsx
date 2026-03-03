@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { PortfolioItem, Service } from "@prisma/client";
 import ImageUpload from "@/app/components/admin/ImageUpload";
+import Image from "next/image";
 
 type ItemWithService = PortfolioItem & {
     service: { title: string },
@@ -198,7 +199,7 @@ export default function AdminPortfolioPage() {
                     <div key={item.id} className="glass-panel p-4 rounded-xl flex flex-col gap-4 border border-white/5">
                         <div className="aspect-video bg-white/5 rounded-lg flex items-center justify-center text-gray-700 font-bold overflow-hidden relative">
                             {item.imageUrl ? (
-                                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                                <Image src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
                             ) : (
                                 <span>No Image</span>
                             )}

@@ -1,10 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 
 export default async function CaseStudies() {
-    const cases = await prisma.portfolioItem.findMany({
-        where: { isFeatured: true },
+    const cases = await prisma.caseStudy.findMany({
+        where: {
+            isFeatured: true,
+            status: "PUBLISHED"
+        },
         take: 3,
         orderBy: { createdAt: "desc" },
     });
@@ -41,18 +45,25 @@ export default async function CaseStudies() {
                     {cases.map((item) => (
                         <div key={item.id} className="group relative overflow-hidden rounded-[40px] border border-white/10 bg-white/[0.02]">
                             <div className="aspect-[4/3] overflow-hidden relative">
-                                <img
-                                    src={item.imageUrl || "/placeholder-case.jpg"}
-                                    alt={item.title}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
+                                {item.coverImage ? (
+                                    <Image
+                                        src={item.coverImage}
+                                        alt={item.title}
+                                        fill
+                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-white/5 flex items-center justify-center text-gray-500">
+                                        No Image
+                                    </div>
+                                )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60" />
 
                                 {/* Tech Stack Overlay on Hover */}
                                 <div className="absolute inset-0 bg-agency-black/90 p-10 flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                     <span className="text-agency-accent font-bold uppercase tracking-widest text-[10px] mb-6">Tech Stack</span>
                                     <div className="flex flex-wrap gap-3">
-                                        {item.technologies.map(tech => (
+                                        {item.techStack.map(tech => (
                                             <span key={tech} className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs text-white/70">
                                                 {tech}
                                             </span>
@@ -66,15 +77,15 @@ export default async function CaseStudies() {
                                     {item.title}
                                 </h3>
                                 <p className="text-gray-400 text-sm leading-relaxed mb-8 line-clamp-2">
-                                    {item.description}
+                                    {item.summary}
                                 </p>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="w-1.5 h-1.5 rounded-full bg-agency-accent" />
-                                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Growth Performance</span>
+                                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">{item.highlightMetric || "Growth Performance"}</span>
                                     </div>
                                     <Link
-                                        href={`/case-studies/${item.id}`}
+                                        href={`/case-studies/${item.slug}`}
                                         className="text-xs font-bold uppercase tracking-widest text-agency-accent hover:text-white transition-colors"
                                     >
                                         View Case
