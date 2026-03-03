@@ -10,9 +10,13 @@ export default function Clients({ clients }: { clients: Client[] }) {
 
     return (
         <section className="py-20 border-t border-white/5 bg-agency-black overflow-hidden">
-            <div className="container mx-auto px-4 mb-12 text-center lg:text-left">
-                <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-500 mb-2 block">Trusted by Ambitious Brands</span>
-                <h2 className="text-xl font-bold text-white/50">Our Official Partners</h2>
+            <div className="section-container text-center mb-20 animate-fade-in">
+                <span className="section-tag">
+                    Trusted by Ambitious Brands
+                </span>
+                <h2 className="text-5xl md:text-7xl font-extrabold text-white mb-8 tracking-tight">
+                    Our Official Partners
+                </h2>
             </div>
 
             <div className="relative flex overflow-hidden group">

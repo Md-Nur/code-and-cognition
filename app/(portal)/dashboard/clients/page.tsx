@@ -118,31 +118,33 @@ export default function AdminClientsPage() {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up">
-                        <div className="p-8 pb-4 border-b border-white/5">
+                    <div className="glass-panel w-full max-w-lg rounded-xl animate-fade-in-up max-h-[90vh] flex flex-col">
+                        <div className="p-8 pb-4 border-b border-white/5 shrink-0">
                             <h2 className="text-2xl font-bold">{editingClient ? "Edit Client" : "Add New Client"}</h2>
                         </div>
-                        <form id="client-form" onSubmit={handleSubmit} className="p-8 pt-4 space-y-4">
-                            <div>
-                                <label className="input-label">Client Name</label>
-                                <input type="text" required className="input-field" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                            </div>
-                            <div>
-                                <label className="input-label">Website (optional)</label>
-                                <input type="url" className="input-field" placeholder="https://" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} />
-                            </div>
-                            <ImageUpload
-                                label="Client Logo"
-                                value={form.logoUrl}
-                                onChange={(url) => setForm({ ...form, logoUrl: url })}
-                                description="Prefer PNG with transparent background."
-                            />
-                            <div>
-                                <label className="input-label">Display Order</label>
-                                <input type="number" className="input-field" value={form.order} onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) })} />
-                            </div>
-                        </form>
-                        <div className="p-8 pt-0 flex gap-4 mt-4">
+                        <div className="overflow-y-auto custom-scrollbar flex-1">
+                            <form id="client-form" onSubmit={handleSubmit} className="p-8 py-4 space-y-4">
+                                <div>
+                                    <label className="input-label">Client Name</label>
+                                    <input type="text" required className="input-field" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                                </div>
+                                <div>
+                                    <label className="input-label">Website (optional)</label>
+                                    <input type="url" className="input-field" placeholder="https://" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} />
+                                </div>
+                                <ImageUpload
+                                    label="Client Logo"
+                                    value={form.logoUrl}
+                                    onChange={(url) => setForm({ ...form, logoUrl: url })}
+                                    description="Prefer PNG with transparent background."
+                                />
+                                <div>
+                                    <label className="input-label">Display Order</label>
+                                    <input type="number" className="input-field" value={form.order} onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) })} />
+                                </div>
+                            </form>
+                        </div>
+                        <div className="p-8 pt-4 flex gap-4 border-t border-white/5 shrink-0">
                             <button type="button" onClick={() => { setIsModalOpen(false); setEditingClient(null); }} className="btn-outline flex-1">Cancel</button>
                             <button form="client-form" type="submit" className="btn-brand flex-1">
                                 {editingClient ? "Update" : "Create"}
