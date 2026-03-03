@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, Layers, Target, Shield, Cpu, Zap, BarChart3, ChevronRight } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { PremiumMarkdown } from "@/components/shared/PremiumMarkdown";
 
 export async function generateMetadata({
     params,
@@ -155,9 +155,9 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                                         <h2 className="text-3xl font-bold text-white tracking-tight">{section.title}</h2>
                                     </div>
 
-                                    <div className="prose prose-invert max-w-none">
+                                    <div className="max-w-none">
                                         <div className="text-lg text-gray-400 leading-relaxed">
-                                            <ReactMarkdown>{content}</ReactMarkdown>
+                                            <PremiumMarkdown content={content} />
                                         </div>
                                     </div>
 

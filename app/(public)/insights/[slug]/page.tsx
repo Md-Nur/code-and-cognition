@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { PremiumMarkdown } from "@/components/shared/PremiumMarkdown";
 
 export async function generateMetadata({
     params,
@@ -96,14 +96,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <section className="py-20">
                 <div className="section-container">
                     <div className="max-w-4xl mx-auto">
-                        <div className="prose prose-invert prose-lg max-w-none text-gray-400 leading-relaxed">
+                        <div>
                             {article.excerpt && (
                                 <p className="text-xl text-white font-medium mb-12 leading-relaxed">
                                     {article.excerpt}
                                 </p>
                             )}
                             <div className="mt-8">
-                                <ReactMarkdown>{article.content}</ReactMarkdown>
+                                <PremiumMarkdown content={article.content} />
                             </div>
                         </div>
                     </div>

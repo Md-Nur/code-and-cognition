@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
+import { PremiumMarkdown } from "@/components/shared/PremiumMarkdown";
 import { Bold, Italic, List, ListOrdered, Link, Eye, Code as CodeIcon, Type } from "lucide-react";
 
 interface MarkdownEditorProps {
@@ -99,9 +99,9 @@ export function MarkdownEditor({
                 )}
 
                 {isPreview ? (
-                    <div className={`p-4 prose prose-invert prose-sm max-w-none overflow-y-auto min-h-[${rows * 24}px] bg-black/40`}>
+                    <div className={`p-4 overflow-y-auto min-h-[${rows * 24}px] bg-black/40`}>
                         {value ? (
-                            <ReactMarkdown>{value}</ReactMarkdown>
+                            <PremiumMarkdown content={value} />
                         ) : (
                             <p className="text-gray-500 italic">Nothing to preview</p>
                         )}
