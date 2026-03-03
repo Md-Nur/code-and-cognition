@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
 import { PremiumMarkdown } from "@/components/shared/PremiumMarkdown";
+import { ShareButton } from "@/components/shared/ShareButton";
 
 export async function generateMetadata({
     params,
@@ -85,9 +86,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                                 <span className="text-gray-500 text-xs">Technical Strategy Team</span>
                             </div>
                         </div>
-                        <button className="ml-auto p-3 rounded-full bg-white/5 border border-white/10 text-white/40 hover:text-white transition-colors">
-                            <Share2 className="w-4 h-4" />
-                        </button>
+                        <ShareButton title={article.title} text={article.excerpt || "Read our latest insight"} />
                     </div>
                 </div>
             </div>

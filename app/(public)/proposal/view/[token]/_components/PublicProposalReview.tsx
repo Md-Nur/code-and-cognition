@@ -147,7 +147,6 @@ export default function PublicProposalReview({ proposal }: PublicProposalReviewP
                 setShowErrorModal(true);
             }
         } catch (err) {
-            console.error(err);
             setErrorMessage("An unexpected error occurred. Please try again.");
             setShowErrorModal(true);
         } finally {

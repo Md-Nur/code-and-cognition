@@ -157,25 +157,7 @@ export async function PATCH(
     if (status === "COMPLETED" || status === "DELIVERED") {
       const isCompleted = status === "COMPLETED";
 
-      // If COMPLETED, also move to Portfolio
-      if (isCompleted) {
-        const existing = await prisma.portfolioItem.findFirst({
-          where: { title: project.title },
-        });
 
-        if (!existing && project.booking?.serviceId) {
-          await prisma.portfolioItem.create({
-            data: {
-              title: project.title,
-              description:
-                (project.booking?.discovery as any)?.problemStatement || "Successfully completed project.",
-              serviceId: project.booking.serviceId,
-              technologies: [],
-              isFeatured: false,
-            },
-          });
-        }
-      }
 
       // Notify members and founders
       const members = await prisma.projectMember.findMany({

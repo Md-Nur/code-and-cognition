@@ -71,7 +71,7 @@ export default function LedgerPage() {
                 alert(`Failed to ${action} withdrawal`);
             }
         } catch (e) {
-            console.error(e);
+            alert(`Failed to ${action} withdrawal`);
         } finally {
             setProcessingId(null);
         }

@@ -35,7 +35,7 @@ export default function Navbar({ user }: NavbarProps) {
         setUnreadMessages(data.count);
       }
     } catch (error) {
-      console.error("Failed to fetch unread count:", error);
+      alert("Failed to fetch unread count");
     }
   }, []);
 

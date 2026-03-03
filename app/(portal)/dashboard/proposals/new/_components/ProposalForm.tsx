@@ -94,7 +94,6 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
                 return;
             }
         } catch (error) {
-            console.error("Error creating proposal:", error);
             showToast("An error occurred while creating the proposal");
             setLoading(false);
             return;
@@ -104,10 +103,10 @@ export default function ProposalForm({ lead }: ProposalFormProps) {
         try {
             const sendRes = await sendProposal({ proposalId: proposalId! });
             if (!sendRes.ok) {
-                console.error("Failed to send proposal email", sendRes.error);
+                showToast("Failed to send proposal email");
             }
         } catch (error) {
-            console.error("Error sending proposal email:", error);
+            showToast("An error occurred while sending the proposal email");
         } finally {
             // Always redirect after successful proposal creation
             router.push(`/dashboard/proposals/${proposalId}`);

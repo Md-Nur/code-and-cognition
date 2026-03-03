@@ -29,7 +29,6 @@ export default function ProposalReview({ proposal }: ProposalReviewProps) {
                 alert(`Error: ${res.error || "Failed to approve proposal"}`);
             }
         } catch (error) {
-            console.error(error);
             alert("An unexpected error occurred");
         } finally {
             setLoading(false);

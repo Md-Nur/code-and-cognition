@@ -69,7 +69,7 @@ export default function SharesView({
                 setTransitions(data.transitions);
             }
         } catch (err) {
-            console.error(err);
+            alert("Failed to fetch shares");
         } finally {
             setIsRefreshing(false);
         }
@@ -89,7 +89,7 @@ export default function SharesView({
                 fetchData();
             }
         } catch (err) {
-            console.error(err);
+            alert("Failed to approve proposal");
         }
     }
 

@@ -34,13 +34,6 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     const { slug } = await params;
     const service = await prisma.service.findUnique({
         where: { slug },
-        include: {
-            category: true,
-            engagementModels: {
-                where: { status: "ACTIVE" },
-                orderBy: { order: "asc" }
-            }
-        }
     });
 
     if (!service) {
@@ -66,7 +59,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
                         <div className="max-w-2xl">
                             <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">
-                                {service.category.name}
+                                Service Offering
                             </span>
                             <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-tight">
                                 {service.title}
@@ -110,25 +103,10 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                                 {service.overview || "We approach every engagement with a mindset focused on long-term scalability and immediate operational impact. Our methodology is designed to reduce technical debt while accelerating market readiness."}
                             </p>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {service.engagementModels.length > 0 ? service.engagementModels.map(model => (
-                                    <div key={model.id} className="p-10 rounded-[40px] border border-white/5 bg-agency-black group">
-                                        <h4 className="text-xl font-bold text-white mb-6 group-hover:text-agency-accent transition-colors">{model.name}</h4>
-                                        <p className="text-gray-500 text-sm mb-8 leading-relaxed">{model.description}</p>
-                                        <ul className="space-y-4">
-                                            {model.deliverables.map(item => (
-                                                <li key={item} className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/30">
-                                                    <CheckCircle2 className="w-4 h-4 text-agency-accent/40" />
-                                                    {item}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )) : (
-                                    <div className="md:col-span-2 p-10 rounded-[40px] border border-dashed border-white/10 text-center">
-                                        <p className="text-gray-500">Customized engagement models available upon consultation.</p>
-                                    </div>
-                                )}
+                            <div className="grid grid-cols-1 gap-8">
+                                <div className="p-10 rounded-[40px] border border-dashed border-white/10 text-center">
+                                    <p className="text-gray-500">Customized engagement models available upon consultation.</p>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -22,7 +22,6 @@ export default async function ProposalsPage() {
         orderBy: { createdAt: "desc" },
         include: {
             project: { select: { id: true, title: true } },
-            engagementModel: { select: { name: true, service: { select: { title: true } } } },
             booking: { include: { service: true } },
         },
     });
@@ -58,10 +57,10 @@ export default async function ProposalsPage() {
                                     <tr key={p.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                                         <td className="p-5">
                                             <p className="font-medium text-white line-clamp-1">{p.scopeSummary}</p>
-                                            {(p.engagementModel || p.booking?.service) && (
-                                                <p className="text-xs text-gray-500 mt-0.5">
-                                                    {p.engagementModel?.service.title || p.booking?.service?.title} {p.engagementModel ? `— ${p.engagementModel.name}` : ""}
-                                                </p>
+                                            {p.booking?.service && (
+                                                <span className="text-gray-400">
+                                                    {p.booking?.service?.title || "Custom Project"}
+                                                </span>
                                             )}
                                         </td>
                                         <td className="p-5 hidden md:table-cell">

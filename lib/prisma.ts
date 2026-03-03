@@ -20,7 +20,6 @@ export const prisma =
         });
         const adapter = new PrismaPg(pool);
         const client = new PrismaClient({ adapter });
-        console.log("New PrismaClient instantiated. Models:", Object.keys(client).filter(k => !k.startsWith("_")));
         return client;
     })();
 

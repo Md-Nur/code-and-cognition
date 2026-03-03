@@ -85,64 +85,23 @@ model MagicToken {
   @@index([email])
 }
 
-/// High-level service categories for organizing offerings (e.g., Digital Platforms, Brand Strategy)
-model ServiceCategory {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  description String
-  slug        String    @unique
-  order       Int       @default(0)
-  status      Status    @default(ACTIVE)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  services    Service[]
-}
-
 /// Main service offerings with business value positioning and overview
 model Service {
-  id               String            @id @default(cuid())
-  categoryId       String
-  title            String            @unique
-  slug             String            @unique
+  id              String    @id @default(cuid())
+  title           String    @unique
+  slug            String    @unique
   /// Technical description
-  description      String
+  description     String
   /// High-level service overview
-  overview         String?
+  overview        String?
   /// Business value and strategic positioning
-  positioningText  String?
-  status           Status            @default(ACTIVE)
-  thumbnailUrl     String?
-  order            Int               @default(0)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  bookings         Booking[]
-  engagementModels EngagementModel[]
-  category         ServiceCategory   @relation(fields: [categoryId], references: [id])
-}
-
-/// Flexible engagement models for services (Strategy | Implementation | Optimization | Retainer)
-model EngagementModel {
-  id            String     @id @default(cuid())
-  serviceId     String
-  /// e.g., Strategy, Implementation, Optimization, Retainer
-  name          String
-  description   String
-  /// Nullable for custom pricing
-  basePriceBDT  Float?
-  /// Nullable for custom pricing
-  basePriceUSD  Float?
-  /// List of key deliverables
-  deliverables  String[]
-  /// Estimated timeline in days
-  estimatedDays Int?
-  order         Int        @default(0)
-  status        Status     @default(ACTIVE)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  service       Service    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  proposals     Proposal[]
-
-  @@unique([serviceId, name])
+  positioningText String?
+  status          Status    @default(ACTIVE)
+  thumbnailUrl    String?
+  order           Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  bookings        Booking[]
 }
 
 /// Client bookings/leads submitted from the contact or service forms.
@@ -220,46 +179,44 @@ model ProjectMember {
 }
 
 /// Project proposals with custom scoping, budget, and approval workflow
+/// Project proposals with custom scoping, budget, and approval workflow
 model Proposal {
-  id                String           @id @default(cuid())
-  projectId         String?
-  /// Can reference an engagement model or be fully custom
-  engagementModelId String?
+  id            String         @id @default(cuid())
+  projectId     String?
   /// Detailed scope of work
-  scopeSummary      String
+  scopeSummary  String
   /// List of deliverables
-  deliverables      String[]
-  budgetBDT         Float?
-  budgetUSD         Float?
-  currency          Currency         @default(BDT)
+  deliverables  String[]
+  budgetBDT     Float?
+  budgetUSD     Float?
+  currency      Currency       @default(BDT)
   /// Timeline estimate
-  estimatedDays     Int?
-  approved          Boolean          @default(false)
-  approvedAt        DateTime?
+  estimatedDays Int?
+  approved      Boolean        @default(false)
+  approvedAt    DateTime?
   /// For proposal versioning
-  version           Int              @default(1)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  version       Int            @default(1)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   /// Milestones for delivery
-  milestones        String[]
+  milestones    String[]
   /// DRAFT -> SENT -> APPROVED | REJECTED
-  status            ProposalStatus   @default(DRAFT)
+  status        ProposalStatus @default(DRAFT)
   /// Full contract text or additional legal terms
-  contractText      String?
+  contractText  String?
   /// Payment terms and schedules
-  paymentTerms      String?
+  paymentTerms  String?
   /// Additional notes for the proposal
-  notes             String?
+  notes         String?
   /// When the client signed & paid
-  signedAt          DateTime?
+  signedAt      DateTime?
   /// Public viewing token for clients
-  viewToken         String?          @unique @default(uuid())
+  viewToken     String?        @unique @default(uuid())
   /// Custom project title for this proposal
-  title             String?
-  endDate           DateTime?
-  booking           Booking?
-  engagementModel   EngagementModel? @relation(fields: [engagementModelId], references: [id])
-  project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title         String?
+  endDate       DateTime?
+  booking       Booking?
+  project       Project?       @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 /// Financial payments received for a project.

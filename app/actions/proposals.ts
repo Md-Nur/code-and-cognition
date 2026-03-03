@@ -130,7 +130,7 @@ export const sendProposal = withProxyValidation(
           )
         );
       } catch (error) {
-        console.error("Failed to send proposal email:", error);
+        alert("Failed to send proposal email");
       }
     }
 
@@ -417,7 +417,7 @@ export const approveProposalByToken = async (token: string, email: string) => {
       });
     }
   } catch (error) {
-    console.error("Failed to create admin notification:", error);
+    alert("Failed to create admin notification");
   }
 
   // Send Magic Link to Client for Project Access
@@ -436,7 +436,7 @@ export const approveProposalByToken = async (token: string, email: string) => {
         </div>`
     );
   } catch (error) {
-    console.error("Failed to send project access magic link email:", error);
+    alert("Failed to send project access magic link email");
   }
 
   return { ok: true, ...result } as const;

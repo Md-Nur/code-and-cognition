@@ -34,7 +34,6 @@ export default function ProposeCoFounderModal({ onClose, onSuccess }: ProposeCoF
                     setContractors(eligible);
                 }
             } catch (err) {
-                console.error(err);
                 setError("Failed to fetch contractors");
             } finally {
                 setIsLoading(false);

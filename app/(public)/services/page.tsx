@@ -17,16 +17,20 @@ const IconMap: { [key: string]: any } = {
 export const dynamic = 'force-dynamic';
 
 export default async function ServicesPage() {
-    const categories = await prisma.serviceCategory.findMany({
+    const services = await prisma.service.findMany({
         where: { status: "ACTIVE" },
-        include: {
-            services: {
-                where: { status: "ACTIVE" },
-                orderBy: { order: "asc" }
-            }
-        },
         orderBy: { order: "asc" },
     });
+
+    const categories = [
+        {
+            id: "core-capabilities",
+            name: "Core Capabilities",
+            slug: "core",
+            description: "Architecting the technical foundation required to scale high-ticket operations with algorithmic precision.",
+            services: services,
+        }
+    ];
 
     return (
         <main className="bg-agency-black min-h-screen pb-32 selection:bg-agency-accent selection:text-white pt-40">

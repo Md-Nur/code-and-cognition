@@ -107,7 +107,7 @@ export async function createBookingAction(
       )
     );
   } catch (error) {
-    console.error("Failed to send SMTP emails:", error);
+    alert("Failed to send SMTP emails");
     // We don't fail the booking if emails fail
   }
 

@@ -35,7 +35,6 @@ export function withAuth(handler: ApiHandler, requiredRole?: RoleRequirement) {
 
       return handler(req, context, session);
     } catch (error) {
-      console.error("API Error:", error);
       return NextResponse.json(
         { error: "Internal Server Error" },
         { status: 500 },
@@ -78,7 +77,6 @@ export function withProjectAuth(
       context.project = project;
       return handler(req, context, session);
     } catch (error) {
-      console.error("Project Auth Error:", error);
       return ApiResponse.error("Internal Server Error", 500);
     }
   });

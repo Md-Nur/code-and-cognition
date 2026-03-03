@@ -36,7 +36,7 @@ export default function UserManagementView({
                 setInvitations(data);
             }
         } catch (err) {
-            console.error(err);
+            alert("Failed to fetch invitations");
         } finally {
             setIsLoadingInvites(false);
         }
@@ -52,7 +52,7 @@ export default function UserManagementView({
             const res = await fetch(`/api/admin/invitations?id=${id}`, { method: "DELETE" });
             if (res.ok) fetchInvitations();
         } catch (err) {
-            console.error(err);
+            alert("Failed to cancel invitation");
         }
     }
 

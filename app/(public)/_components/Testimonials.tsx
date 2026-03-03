@@ -53,6 +53,7 @@ export default async function Testimonials() {
                                         className="w-14 h-14 rounded-full object-cover border border-white/10"
                                         width={56}
                                         height={56}
+                                        sizes="(max-width: 768px) 56px, 56px"
                                     />
                                 ) : (
                                     <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xl font-bold text-gray-500">

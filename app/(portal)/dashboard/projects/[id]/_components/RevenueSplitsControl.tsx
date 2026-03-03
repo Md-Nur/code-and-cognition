@@ -132,7 +132,6 @@ export default function RevenueSplitsControl({
                 alert(error.message || "Failed to update revenue splits");
             }
         } catch (error) {
-            console.error(error);
             alert("An error occurred");
         } finally {
             setLoading(false);

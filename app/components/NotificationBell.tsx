@@ -30,7 +30,7 @@ export default function NotificationBell() {
                 setNotifications(data);
             }
         } catch (error) {
-            console.error("Failed to fetch notifications:", error);
+            alert("Failed to fetch notifications");
         }
     };
 
@@ -63,7 +63,7 @@ export default function NotificationBell() {
                 );
             }
         } catch (error) {
-            console.error("Failed to mark notification as read:", error);
+            alert("Failed to mark notification as read");
         }
     };
 

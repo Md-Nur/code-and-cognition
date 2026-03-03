@@ -87,7 +87,6 @@ function LoginForm() {
                 router.refresh();
             }
         } catch (err) {
-            console.error(err);
             setError("Something went wrong");
         } finally {
             setIsSubmitting(false);

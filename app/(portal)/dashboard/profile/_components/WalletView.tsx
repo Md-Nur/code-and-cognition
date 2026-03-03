@@ -46,7 +46,7 @@ export default function WalletView() {
                 setData(await res.json());
             }
         } catch (error) {
-            console.error("Failed to fetch wallet data", error);
+            alert("Failed to fetch wallet data");
         } finally {
             setLoading(false);
         }
@@ -80,7 +80,6 @@ export default function WalletView() {
                 alert(err.error || "Withdrawal failed");
             }
         } catch (error) {
-            console.error("Withdrawal error", error);
             alert("Something went wrong");
         } finally {
             setSubmitting(false);

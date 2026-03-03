@@ -74,7 +74,6 @@ export default function EditableProjectTitle({
                 alert(error.error || "Failed to update project title");
             }
         } catch (error) {
-            console.error("Error updating project title:", error);
             alert("An error occurred while updating the project title");
         } finally {
             setIsLoading(false);

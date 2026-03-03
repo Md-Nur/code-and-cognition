@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma";
 import { Layout, Cpu, TrendingUp, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
@@ -9,10 +8,11 @@ const STRATEGIC_MAP: { [key: string]: { label: string; icon: any } } = {
 };
 
 export default async function CorePillars() {
-    const categories = await prisma.serviceCategory.findMany({
-        where: { status: "ACTIVE" },
-        orderBy: { order: "asc" },
-    });
+    const categories = [
+        { id: "1", name: "Digital Platforms", description: "Industrial-grade web applications and digital ecosystems built for scale and performance.", slug: "digital-platforms" },
+        { id: "2", name: "Intelligent Automation", description: "Custom AI integrations and workflow automations to reduce operational overhead.", slug: "intelligent-automation" },
+        { id: "3", name: "Growth Systems", description: "Data-driven technical marketing and conversion optimization infrastructure.", slug: "growth-systems" }
+    ];
 
     return (
         <section className="py-40 bg-black relative">

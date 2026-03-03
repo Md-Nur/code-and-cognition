@@ -86,7 +86,7 @@ export default function SchedulePage() {
                     setCurrency('BDT');
                 }
             } catch (error) {
-                console.error("Failed to detect country:", error);
+                alert("Failed to detect country");
             }
         };
         detectCountry();

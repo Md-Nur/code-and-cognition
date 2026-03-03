@@ -33,7 +33,7 @@ export default function EditableMilestones({ projectId, initialMilestones, userR
                 setIsAdding(false);
             }
         } catch (error) {
-            console.error("Failed to add milestone:", error);
+            alert("Failed to add milestone");
         } finally {
             setIsSaving(false);
         }
@@ -52,7 +52,7 @@ export default function EditableMilestones({ projectId, initialMilestones, userR
                 setMilestones(milestones.map(m => m.id === id ? updated : m));
             }
         } catch (error) {
-            console.error("Failed to update status:", error);
+            alert("Failed to update status");
         }
     };
 
@@ -70,7 +70,7 @@ export default function EditableMilestones({ projectId, initialMilestones, userR
                 setEditingId(null);
             }
         } catch (error) {
-            console.error("Failed to save edit:", error);
+            alert("Failed to save edit");
         }
     };
 

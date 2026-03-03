@@ -35,7 +35,6 @@ export default function ImageUpload({ value, onChange, label, description }: Ima
                 alert("Failed to upload image");
             }
         } catch (error) {
-            console.error("Upload error:", error);
             alert("Error uploading image");
         } finally {
             setUploading(false);

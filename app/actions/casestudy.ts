@@ -19,7 +19,7 @@ const caseStudySchema = z.object({
     coverImage: z.string().optional(),
     architectureImage: z.string().optional(),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
-    publishDate: z.date().optional(),
+    publishDate: z.coerce.date().nullable().optional(),
     isFeatured: z.boolean().default(false),
     seoTitle: z.string().optional(),
     seoDescription: z.string().optional(),

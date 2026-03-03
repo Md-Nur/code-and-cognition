@@ -33,7 +33,6 @@ export default function ProjectAdminActions({ projectId, currentStatus, currentH
                 alert("Failed to update project");
             }
         } catch (error) {
-            console.error(error);
             alert("An error occurred");
         } finally {
             setLoading(false);

@@ -82,7 +82,7 @@ export default function AdminPaymentsPage() {
                 alert(errorData.error || `Failed to ${editingPaymentId ? 'update' : 'create'} payment`);
             }
         } catch (error) {
-            console.error(error);
+            alert(`Failed to ${editingPaymentId ? 'update' : 'create'} payment`);
         } finally {
             setIsSubmitting(false);
         }
@@ -114,7 +114,7 @@ export default function AdminPaymentsPage() {
                 alert(errorData.error || "Failed to delete payment");
             }
         } catch (error) {
-            console.error(error);
+            alert(`Failed to delete payment`);
         } finally {
             setIsDeleting(null);
         }

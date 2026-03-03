@@ -33,7 +33,7 @@ function RegisterForm() {
                     router.push("/login?error=Registration requires an invitation");
                 }
             } catch (err) {
-                console.error("Setup check failed", err);
+                setError("Something went wrong");
             } finally {
                 setIsLoading(false);
             }

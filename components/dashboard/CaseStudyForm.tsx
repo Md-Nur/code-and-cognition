@@ -25,6 +25,7 @@ const caseStudySchema = z.object({
     coverImage: z.string().optional(),
     architectureImage: z.string().optional(),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
+    publishDate: z.string().optional(),
     isFeatured: z.boolean().default(false),
 });
 
@@ -56,6 +57,7 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
             coverImage: initialData?.coverImage || "",
             architectureImage: initialData?.architectureImage || "",
             status: initialData?.status || "DRAFT",
+            publishDate: initialData?.publishDate ? new Date(initialData.publishDate).toISOString().split('T')[0] : "",
             isFeatured: initialData?.isFeatured || false,
         },
     });
@@ -74,10 +76,17 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
         setError(null);
         try {
             // Transform techStack string to array for the server
-            const payload = {
+            // Transform publishDate string to Date object
+            const payload: any = {
                 ...data,
-                techStack: data.techStack.split(",").map(s => s.trim()).filter(Boolean)
+                techStack: data.techStack.split(",").map(s => s.trim()).filter(Boolean),
             };
+
+            if (data.publishDate) {
+                payload.publishDate = new Date(data.publishDate);
+            } else {
+                payload.publishDate = null;
+            }
 
             if (isEditing && initialData?.id) {
                 const res = await updateCaseStudy(initialData.id, payload);
@@ -329,6 +338,19 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                                     <option value="PUBLISHED">Published — Public View</option>
                                     <option value="ARCHIVED">Archived — Hidden</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
+                                Published Date
+                            </label>
+                            <div className="relative group">
+                                <input
+                                    type="date"
+                                    {...form.register("publishDate")}
+                                    className="input-field px-4"
+                                />
                             </div>
                         </div>
 

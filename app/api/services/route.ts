@@ -61,14 +61,6 @@ export async function GET(request: Request) {
                 title: true,
                 description: true,
                 thumbnailUrl: true,
-                portfolioItems: {
-                    select: {
-                        id: true,
-                        title: true,
-                        imageUrl: true,
-                    },
-                    take: 3,
-                }
             },
             orderBy: { createdAt: "asc" },
         });

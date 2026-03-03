@@ -47,7 +47,9 @@ export default async function KnowledgeSection() {
                                     <Image
                                         src={insight.thumbnailUrl}
                                         alt={insight.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                        fill
+                                        sizes="(max-width: 1024px) 100vw, 33vw"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
                                     />
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
