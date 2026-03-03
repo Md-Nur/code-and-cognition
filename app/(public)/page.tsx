@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import HeroSection from "./_components/HeroSection";
 import CorePillars from "./_components/CorePillars";
 import HowWeWork from "./_components/HowWeWork";
-import CaseStudies from "@/app/components/public/CaseStudies";
+import CaseStudies from "./_components/CaseStudies";
 import Testimonials from "./_components/Testimonials";
 import KnowledgeSection from "./_components/KnowledgeSection";
 import Clients from "./_components/Clients";
