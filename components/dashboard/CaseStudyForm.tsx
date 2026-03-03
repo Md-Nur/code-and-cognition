@@ -57,7 +57,7 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
             coverImage: initialData?.coverImage || "",
             architectureImage: initialData?.architectureImage || "",
             status: initialData?.status || "DRAFT",
-            publishDate: initialData?.publishDate ? new Date(initialData.publishDate).toISOString().split('T')[0] : "",
+            publishDate: initialData?.publishDate ? new Date(initialData.publishDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             isFeatured: initialData?.isFeatured || false,
         },
     });
