@@ -11,13 +11,6 @@ export const GET = withAuth(async (req, context, session) => {
     const payments = await prisma.payment.findMany({
         include: {
             project: true,
-            approvals: {
-                include: {
-                    user: {
-                        select: { name: true, email: true }
-                    }
-                }
-            }
         },
         orderBy: { paidAt: "desc" },
     });

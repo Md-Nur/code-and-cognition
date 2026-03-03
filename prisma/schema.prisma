@@ -26,7 +26,6 @@ model User {
   ledgerBalance      LedgerBalance?
   ledgerEntries      LedgerEntry[]
   notifications      Notification[]
-  paymentApprovals   PaymentApproval[]
   projects           Project[]           @relation("ClientProject")
   finderProjects     Project[]           @relation("ProjectFinder")
   memberProjects     ProjectMember[]
@@ -118,7 +117,6 @@ model Service {
   updatedAt        DateTime          @updatedAt
   bookings         Booking[]
   engagementModels EngagementModel[]
-  portfolioItems   PortfolioItem[]
   category         ServiceCategory   @relation(fields: [categoryId], references: [id])
 }
 
@@ -145,21 +143,6 @@ model EngagementModel {
   proposals     Proposal[]
 
   @@unique([serviceId, name])
-}
-
-/// Individual portfolio pieces shown in the portfolio section.
-model PortfolioItem {
-  id           String   @id @default(cuid())
-  title        String
-  description  String
-  imageUrl     String?
-  projectUrl   String?
-  serviceId    String
-  technologies String[]
-  isFeatured   Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  service      Service  @relation(fields: [serviceId], references: [id])
 }
 
 /// Client bookings/leads submitted from the contact or service forms.
@@ -281,30 +264,17 @@ model Proposal {
 
 /// Financial payments received for a project.
 model Payment {
-  id         String            @id @default(cuid())
+  id         String        @id @default(cuid())
   projectId  String
   amountBDT  Float?
   amountUSD  Float?
-  currency   Currency          @default(BDT)
+  currency   Currency      @default(BDT)
   note       String?
-  paidAt     DateTime          @default(now())
+  paidAt     DateTime      @default(now())
   executedAt DateTime?
-  status     ExpenseStatus     @default(PENDING)
+  status     ExpenseStatus @default(PENDING)
   splits     LedgerEntry[]
-  project    Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  approvals  PaymentApproval[]
-}
-
-model PaymentApproval {
-  id        String     @id @default(cuid())
-  paymentId String
-  userId    String
-  status    VoteStatus @default(APPROVED)
-  createdAt DateTime   @default(now())
-  payment   Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([paymentId, userId])
+  project    Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 /// Detailed ledger entries for each payment split (e.g., Company, Finder Fee, Execution).

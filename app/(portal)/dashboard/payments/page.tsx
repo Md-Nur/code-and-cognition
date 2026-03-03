@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Payment, Project, PaymentApproval, Role } from "@prisma/client";
+import { Payment, Project } from "@prisma/client";
 import { Briefcase, CircleDollarSign, StickyNote, X, Plus, Trash2, Edit2, CheckCircle2 } from "lucide-react";
 
 type PaymentWithProject = Payment & {
     project: Project;
-    approvals: (PaymentApproval & { user: { name: string, email: string } })[];
 };
 
 export default function AdminPaymentsPage() {
@@ -127,15 +126,6 @@ export default function AdminPaymentsPage() {
         setFormData({ projectId: "", amount: "", currency: "BDT", note: "" });
     }
 
-    async function handleVote(id: string) {
-        const res = await fetch(`/api/admin/payments/${id}/approve`, { method: "POST" });
-        if (res.ok) {
-            fetchPayments();
-        } else {
-            const errorData = await res.json();
-            alert(errorData.error || `Failed to approve payment`);
-        }
-    }
 
     return (
         <div className="space-y-6">
@@ -171,9 +161,6 @@ export default function AdminPaymentsPage() {
                             {loading ? (
                                 <tr><td colSpan={6} className="text-center py-8">Loading...</td></tr>
                             ) : payments.map((payment) => {
-                                const hasVoted = payment.approvals?.some(a => a.userId === session?.user?.id);
-                                const isFounder = [Role.FOUNDER, Role.CO_FOUNDER].includes(session?.user?.role);
-
                                 return (
                                     <tr key={payment.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                         <td className="p-4 text-gray-400">
