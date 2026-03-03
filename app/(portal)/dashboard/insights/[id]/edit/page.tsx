@@ -5,14 +5,16 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
 interface EditInsightPageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 export default async function EditInsightPage({ params }: EditInsightPageProps) {
+    const { id } = await params;
+
     const article = await prisma.article.findUnique({
-        where: { id: params.id },
+        where: { id },
     });
 
     if (!article) {
