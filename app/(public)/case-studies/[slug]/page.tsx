@@ -1,23 +1,29 @@
-import { caseStudies } from "@/lib/data/case-studies";
+import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, Layers, Target, Shield, Cpu, Zap, BarChart3, ChevronRight } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const project = caseStudies.find(cs => cs.slug === slug);
+
+    const project = await prisma.caseStudy.findUnique({
+        where: {
+            slug,
+            status: "PUBLISHED"
+        }
+    });
 
     if (!project) {
         notFound();
     }
 
     const sections = [
-        { id: "overview", title: "Client Overview", icon: Target },
+        { id: "summary", title: "Overview", icon: Target },
         { id: "challenge", title: "The Challenge", icon: Shield },
         { id: "approach", title: "Our Approach", icon: Layers },
-        { id: "architecture", title: "Technical Architecture", icon: Cpu },
-        { id: "implementation", title: "Implementation", icon: Zap },
+        { id: "solution", title: "The Solution", icon: Zap },
         { id: "results", title: "Results & Impact", icon: BarChart3 },
     ];
 
@@ -26,13 +32,15 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             {/* Hero Section */}
             <section className="relative h-[80vh] min-h-[600px] flex items-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
-                    <Image
-                        src={project.coverImage}
-                        alt={project.title}
-                        fill
-                        className="object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-1000"
-                        priority
-                    />
+                    {project.coverImage && (
+                        <Image
+                            src={project.coverImage}
+                            alt={project.title}
+                            fill
+                            className="object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-1000"
+                            priority
+                        />
+                    )}
                     <div className="absolute inset-0 bg-linear-to-b from-black via-black/60 to-black" />
                 </div>
 
@@ -57,7 +65,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                         </h1>
 
                         <p className="text-xl md:text-2xl text-agency-accent font-medium leading-relaxed max-w-2xl border-l-2 border-agency-accent pl-8">
-                            {project.resultStatement}
+                            {project.summary}
                         </p>
                     </div>
                 </div>
@@ -107,7 +115,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                     <div className="lg:col-span-9 space-y-32">
                         {sections.map((section) => {
                             const content = (project as any)[section.id];
-                            if (!content) return null;
+                            if (!content && section.id !== "solution") return null; // Solution is mapped from implementation logic but exists in Prisma
                             const Icon = section.icon;
 
                             return (
@@ -120,12 +128,12 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                                     </div>
 
                                     <div className="prose prose-invert max-w-none">
-                                        <p className="text-lg text-gray-400 leading-relaxed whitespace-pre-line">
-                                            {content}
-                                        </p>
+                                        <div className="text-lg text-gray-400 leading-relaxed">
+                                            <ReactMarkdown>{content}</ReactMarkdown>
+                                        </div>
                                     </div>
 
-                                    {section.id === "architecture" && project.architectureImage && (
+                                    {section.id === "solution" && project.architectureImage && (
                                         <div className="mt-12 relative aspect-video rounded-3xl overflow-hidden border border-white/10 group">
                                             <Image
                                                 src={project.architectureImage}

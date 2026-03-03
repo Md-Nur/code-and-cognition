@@ -3,11 +3,15 @@
 import { useState, useMemo } from "react";
 import CaseStudyCard from "@/app/components/public/CaseStudyCard";
 import IndustryFilter from "@/app/components/public/IndustryFilter";
-import { caseStudies } from "@/lib/data/case-studies";
 import { MoveRight } from "lucide-react";
 
-export default function CaseStudiesListing() {
+interface CaseStudiesListingProps {
+    initialCaseStudies: any[];
+}
+
+export default function CaseStudiesListing({ initialCaseStudies }: CaseStudiesListingProps) {
     const [activeIndustry, setActiveIndustry] = useState<string | null>(null);
+    const [caseStudies] = useState(initialCaseStudies);
 
     const industries = useMemo(() => {
         const set = new Set(caseStudies.map((cs) => cs.industry));

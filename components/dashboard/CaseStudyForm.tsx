@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, ArrowLeft, Hash, Monitor, Shield, Trophy, Image, Layers, AtSign, LayoutGrid } from "lucide-react";
 import { createCaseStudy, updateCaseStudy } from "@/app/actions/casestudy";
+import { MarkdownEditor } from "./MarkdownEditor";
+import ImageUpload from "@/app/components/admin/ImageUpload";
 
 const caseStudySchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -196,63 +198,53 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-2 md:col-span-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                Executive Summary
-                            </label>
-                            <textarea
-                                {...form.register("summary")}
-                                placeholder="A concise overview of the case study and its impact..."
-                                rows={3}
-                                className="input-field py-4 resize-none min-h-[120px]"
-                            />
-                            {form.formState.errors.summary && (
-                                <p className="text-xs text-red-400 mt-2 ml-4">{form.formState.errors.summary.message}</p>
-                            )}
-                        </div>
+                        <MarkdownEditor
+                            value={form.watch("summary")}
+                            onChange={(val) => form.setValue("summary", val, { shouldValidate: true })}
+                            placeholder="A concise overview of the case study and its impact..."
+                            label="Executive Summary"
+                            rows={4}
+                            error={form.formState.errors.summary?.message}
+                        />
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                The Challenge
-                            </label>
-                            <textarea
-                                {...form.register("challenge")}
+                            <MarkdownEditor
+                                value={form.watch("challenge")}
+                                onChange={(val) => form.setValue("challenge", val, { shouldValidate: true })}
                                 placeholder="What problem were we solving?"
+                                label="The Challenge"
                                 rows={6}
-                                className="input-field py-4 resize-none min-h-[200px]"
+                                error={form.formState.errors.challenge?.message}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                Our Approach
-                            </label>
-                            <textarea
-                                {...form.register("approach")}
+                            <MarkdownEditor
+                                value={form.watch("approach")}
+                                onChange={(val) => form.setValue("approach", val, { shouldValidate: true })}
                                 placeholder="How did we tackle the problem?"
+                                label="Our Approach"
                                 rows={6}
-                                className="input-field py-4 resize-none min-h-[200px]"
+                                error={form.formState.errors.approach?.message}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                The Solution
-                            </label>
-                            <textarea
-                                {...form.register("solution")}
+                            <MarkdownEditor
+                                value={form.watch("solution")}
+                                onChange={(val) => form.setValue("solution", val, { shouldValidate: true })}
                                 placeholder="What did we build?"
+                                label="The Solution"
                                 rows={6}
-                                className="input-field py-4 resize-none min-h-[200px]"
+                                error={form.formState.errors.solution?.message}
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                The Results
-                            </label>
-                            <textarea
-                                {...form.register("results")}
+                            <MarkdownEditor
+                                value={form.watch("results")}
+                                onChange={(val) => form.setValue("results", val, { shouldValidate: true })}
                                 placeholder="What was the final impact?"
+                                label="The Results"
                                 rows={6}
-                                className="input-field py-4 resize-none min-h-[200px]"
+                                error={form.formState.errors.results?.message}
                             />
                         </div>
                     </div>
@@ -304,35 +296,21 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                Cover Image URL
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-agency-accent transition-colors">
-                                    <Image className="w-4 h-4" />
-                                </div>
-                                <input
-                                    {...form.register("coverImage")}
-                                    placeholder="https://images.unsplash.com/..."
-                                    className="input-field pl-14"
-                                />
-                            </div>
+                            <ImageUpload
+                                label="Cover Image"
+                                description="Upload a high-resolution cover image for the case study."
+                                value={form.watch("coverImage") || ""}
+                                onChange={(url) => form.setValue("coverImage", url, { shouldValidate: true })}
+                            />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                Architecture Image URL
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-agency-accent transition-colors">
-                                    <Layers className="w-4 h-4" />
-                                </div>
-                                <input
-                                    {...form.register("architectureImage")}
-                                    placeholder="https://..."
-                                    className="input-field pl-14"
-                                />
-                            </div>
+                            <ImageUpload
+                                label="Architecture Image"
+                                description="Upload a technical diagram or architecture overview."
+                                value={form.watch("architectureImage") || ""}
+                                onChange={(url) => form.setValue("architectureImage", url, { shouldValidate: true })}
+                            />
                         </div>
 
                         <div className="space-y-2">
