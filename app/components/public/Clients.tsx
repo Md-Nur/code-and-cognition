@@ -26,24 +26,34 @@ export default function Clients({ clients }: { clients: Client[] }) {
                     {displayClients.map((client, i) => (
                         <div
                             key={`${client.id}-${i}`}
-                            className="flex items-center justify-center mx-16 md:mx-24 min-w-[200px] h-32 opacity-30 hover:opacity-100 transition-opacity duration-500 grayscale hover:grayscale-0"
+                            className="flex flex-col items-center justify-center mx-16 md:mx-24 min-w-[200px] h-48 opacity-30 hover:opacity-100 transition-all duration-500 grayscale hover:grayscale-0"
                         >
                             {client.website ? (
-                                <a href={client.website} target="_blank" rel="noopener noreferrer" title={client.name}>
+                                <a href={client.website} target="_blank" rel="noopener noreferrer" title={client.name} className="flex flex-col items-center">
                                     <Image
                                         src={client.logoUrl}
                                         alt={client.name}
-                                        className="max-h-20 w-auto object-contain"
+                                        className="max-h-20 w-auto object-contain mb-4"
                                         width={200}
                                         height={200}
                                     />
+                                    <span className="text-white text-lg font-medium tracking-wide">
+                                        {client.name}
+                                    </span>
                                 </a>
                             ) : (
-                                <Image
-                                    src={client.logoUrl}
-                                    alt={client.name}
-                                    className="max-h-20 w-auto object-contain"
-                                />
+                                <div className="flex flex-col items-center">
+                                    <Image
+                                        src={client.logoUrl}
+                                        alt={client.name}
+                                        className="max-h-20 w-auto object-contain mb-4"
+                                        width={200}
+                                        height={200}
+                                    />
+                                    <span className="text-white text-lg font-medium tracking-wide">
+                                        {client.name}
+                                    </span>
+                                </div>
                             )}
                         </div>
                     ))}

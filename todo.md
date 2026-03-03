@@ -1,1 +1,0 @@
-Our Official Partners in home page show the company/client name with their respective logos
