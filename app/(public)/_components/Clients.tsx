@@ -1,5 +1,3 @@
-"use client";
-
 import { Client } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -64,19 +62,6 @@ export default function Clients({ clients }: { clients: Client[] }) {
                 <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-agency-black to-transparent z-10 pointers-none"></div>
                 <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-agency-black to-transparent z-10 pointers-none"></div>
             </div>
-
-            <style jsx>{`
-                @keyframes marquee {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-33.33%); }
-                }
-                .animate-marquee {
-                    animation: marquee 40s linear infinite;
-                }
-                .pause-marquee {
-                    animation-play-state: paused;
-                }
-            `}</style>
         </section>
     );
 }

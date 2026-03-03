@@ -1,9 +1,37 @@
+import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, Layers, Target, Shield, Cpu, Zap, BarChart3, ChevronRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+    const { slug } = await params;
+    const project = await prisma.caseStudy.findUnique({
+        where: { slug },
+    });
+
+    if (!project) {
+        return {
+            title: "Case Study Not Found | Code & Cognition",
+        };
+    }
+
+    return {
+        title: `${project.title} | Case Study | Code & Cognition`,
+        description: project.summary,
+        openGraph: {
+            title: project.title,
+            description: project.summary,
+            images: project.coverImage ? [project.coverImage] : [],
+        },
+    };
+}
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

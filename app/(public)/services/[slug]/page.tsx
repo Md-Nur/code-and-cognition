@@ -1,7 +1,34 @@
+import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, CheckCircle2, Shield, Zap, Target } from "lucide-react";
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+    const { slug } = await params;
+    const service = await prisma.service.findUnique({
+        where: { slug },
+    });
+
+    if (!service) {
+        return {
+            title: "Service Not Found | Code & Cognition",
+        };
+    }
+
+    return {
+        title: `${service.title} | Code & Cognition`,
+        description: service.description,
+        openGraph: {
+            title: service.title,
+            description: service.description,
+        },
+    };
+}
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

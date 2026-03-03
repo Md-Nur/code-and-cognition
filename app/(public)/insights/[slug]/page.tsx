@@ -1,7 +1,35 @@
+import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+    const { slug } = await params;
+    const article = await prisma.article.findUnique({
+        where: { slug },
+    });
+
+    if (!article) {
+        return {
+            title: "Article Not Found | Code & Cognition",
+        };
+    }
+
+    return {
+        title: `${article.title} | Code & Cognition`,
+        description: article.excerpt || `Read our latest insight: ${article.title}`,
+        openGraph: {
+            title: article.title,
+            description: article.excerpt || undefined,
+            images: article.thumbnailUrl ? [article.thumbnailUrl] : [],
+        },
+    };
+}
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
