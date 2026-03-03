@@ -85,6 +85,8 @@ export default function ImageUpload({ value, onChange, label, description }: Ima
                 {value && (
                     <div className="relative group rounded-xl overflow-hidden border border-white/10 aspect-video bg-white/5">
                         <Image
+                            width={600}
+                            height={400}
                             src={value}
                             alt="Preview"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

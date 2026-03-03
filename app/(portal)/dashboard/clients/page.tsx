@@ -99,7 +99,7 @@ export default function AdminClientsPage() {
                 ) : clients.map((c) => (
                     <div key={c.id} className="glass-panel p-4 rounded-xl border border-white/5 flex flex-col items-center bg-white/[0.02] group relative">
                         <div className="h-20 w-full flex items-center justify-center mb-2">
-                            <Image src={c.logoUrl} alt={c.name} className="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300" />
+                            <Image src={c.logoUrl} fill alt={c.name} className="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300" />
                         </div>
                         <div className="text-center">
                             <div className="text-xs font-bold truncate max-w-full">{c.name}</div>
@@ -135,6 +135,7 @@ export default function AdminClientsPage() {
                                 </div>
                                 <ImageUpload
                                     label="Client Logo"
+                                    
                                     value={form.logoUrl}
                                     onChange={(url) => setForm({ ...form, logoUrl: url })}
                                     description="Prefer PNG with transparent background."

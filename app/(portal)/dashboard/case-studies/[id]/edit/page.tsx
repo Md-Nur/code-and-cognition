@@ -4,9 +4,11 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 
-export default async function EditCaseStudyPage({ params }: { params: { id: string } }) {
+export default async function EditCaseStudyPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+
     const caseStudy = await prisma.caseStudy.findUnique({
-        where: { id: params.id },
+        where: { id },
     });
 
     if (!caseStudy) {

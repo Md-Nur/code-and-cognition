@@ -93,7 +93,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                         </h1>
 
                         <p className="text-xl md:text-2xl text-agency-accent font-medium leading-relaxed max-w-2xl border-l-2 border-agency-accent pl-8">
-                            {project.summary}
+                            {project.clientName}
                         </p>
                     </div>
                 </div>
@@ -114,14 +114,14 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                                 <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-6">Contents</h4>
                                 <nav className="flex flex-col gap-4">
                                     {sections.map((section) => (
-                                        <a
+                                        <Link
                                             key={section.id}
                                             href={`#${section.id}`}
                                             className="group flex items-center gap-3 text-sm text-gray-500 hover:text-white transition-colors"
                                         >
                                             <div className="w-2 h-2 rounded-full bg-agency-accent/0 group-hover:bg-agency-accent transition-all" />
                                             {section.title}
-                                        </a>
+                                        </Link>
                                     ))}
                                 </nav>
                             </div>
