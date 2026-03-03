@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Quote } from "lucide-react";
+import { Quote, Star } from "lucide-react";
 import Image from "next/image";
 
 export default async function Testimonials() {
@@ -30,8 +30,15 @@ export default async function Testimonials() {
                             key={t.id}
                             className="p-10 rounded-[40px] border border-white/10 bg-white/[0.02] flex flex-col items-start"
                         >
-                            <div className="w-12 h-12 rounded-2xl bg-agency-accent/10 flex items-center justify-center text-agency-accent mb-8">
-                                <Quote className="w-6 h-6" />
+                            <div className="flex justify-between items-start w-full mb-8">
+                                <div className="w-12 h-12 rounded-2xl bg-agency-accent/10 flex items-center justify-center text-agency-accent">
+                                    <Quote className="w-6 h-6" />
+                                </div>
+                                <div className="flex gap-1">
+                                    {[...Array(t.rating || 5)].map((_, i) => (
+                                        <Star key={i} className="w-4 h-4 fill-agency-accent text-agency-accent" />
+                                    ))}
+                                </div>
                             </div>
 
                             <blockquote className="text-lg text-white/90 leading-relaxed mb-10 flex-grow italic">
