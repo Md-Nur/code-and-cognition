@@ -84,6 +84,24 @@ export default function Footer() {
                             <div className="flex items-center gap-4">
                                 {[
                                     { icon: Linkedin, href: "https://linkedin.com/company/codencognition" },
+                                    {
+                                        icon: (props: any) => (
+                                            <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" />
+                                            </svg>
+                                        ),
+                                        href: "https://x.com/codencognition"
+                                    },
+                                    {
+                                        icon: (props: any) => (
+                                            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M19.25 12c0 4.418-3.246 8-7.25 8a7.03 7.03 0 0 1-4.715-1.785l-2.785.785.785-2.785A7.03 7.03 0 0 1 3 12c0-4.418 3.246-8 7.25-8s7.25 3.582 7.25 8z" />
+                                                <path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                <path d="M15 12c0 2.21-1.343 4-3 4s-3-1.79-3-4" />
+                                            </svg>
+                                        ),
+                                        href: "https://www.threads.com/@codencognition.bd"
+                                    },
                                     { icon: Facebook, href: "https://www.facebook.com/CodeNCognition" },
                                     { icon: Youtube, href: "https://www.youtube.com/@CodeNCognitionBD" },
                                     { icon: Instagram, href: "https://www.instagram.com/codencognition.bd/" }

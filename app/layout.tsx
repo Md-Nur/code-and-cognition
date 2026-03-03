@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     title: "Code & Cognition — Digital Agency",
     description: "We build digital products that think. Strategic web development, UI/UX design, and scalable products.",
     images: ["/og-image.png"],
+    site: "@codencognition",
   },
 };
 
