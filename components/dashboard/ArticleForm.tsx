@@ -8,6 +8,7 @@ import * as z from "zod";
 import { Loader2, ArrowLeft, Hash, Monitor, Image, Layers, LayoutGrid } from "lucide-react";
 import { createArticle, updateArticle } from "@/app/actions/articles";
 import { MarkdownEditor } from "./MarkdownEditor";
+import ImageUpload from "@/app/components/admin/ImageUpload";
 
 const articleSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -147,20 +148,13 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                Thumbnail URL
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-agency-accent transition-colors">
-                                    <Image className="w-4 h-4" />
-                                </div>
-                                <input
-                                    {...form.register("thumbnailUrl")}
-                                    placeholder="https://images.unsplash.com/..."
-                                    className="input-field pl-14"
-                                />
-                            </div>
+                        <div className="space-y-2 col-span-1 md:col-span-2 mt-4">
+                            <ImageUpload
+                                value={form.watch("thumbnailUrl") || ""}
+                                onChange={(url) => form.setValue("thumbnailUrl", url, { shouldValidate: true })}
+                                label="Thumbnail Image Requirements"
+                                description="Upload a high-quality cover image for the insight. Recommended aspect ratio is 16:9."
+                            />
                         </div>
                     </div>
                 </div>

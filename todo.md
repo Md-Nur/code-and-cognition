@@ -1,5 +1,3 @@
-In insight add/edit page make an thumbnail upload option
-
 Why do we need payment approval, portfolio item table in database? As there have no approval in payment and no portfolio item in UI
 
 Clean all the prisma schema which is not necessary
