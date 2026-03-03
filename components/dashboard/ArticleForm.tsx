@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, ArrowLeft, Hash, Monitor, Image, Layers, LayoutGrid } from "lucide-react";
 import { createArticle, updateArticle } from "@/app/actions/articles";
+import { MarkdownEditor } from "./MarkdownEditor";
 
 const articleSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -187,18 +188,14 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
-                                Full Article Content (Markdown)
-                            </label>
-                            <textarea
-                                {...form.register("content")}
+                            <MarkdownEditor
+                                value={form.watch("content")}
+                                onChange={(val) => form.setValue("content", val, { shouldValidate: true })}
                                 placeholder="Write your article content here..."
+                                label="Full Article Content (Markdown)"
                                 rows={15}
-                                className="input-field py-4 resize-none min-h-[400px] font-mono text-sm"
+                                error={form.formState.errors.content?.message}
                             />
-                            {form.formState.errors.content && (
-                                <p className="text-xs text-red-400 mt-2 ml-4">{form.formState.errors.content.message}</p>
-                            )}
                         </div>
 
                         <div className="flex items-center h-full pt-4">

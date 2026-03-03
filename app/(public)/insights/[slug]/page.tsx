@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 export async function generateMetadata({
     params,
@@ -96,31 +97,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <div className="section-container">
                     <div className="max-w-4xl mx-auto">
                         <div className="prose prose-invert prose-lg max-w-none text-gray-400 leading-relaxed">
-                            {/* In a real app we'd render markdown or HTML from the article.content */}
-                            <p className="text-xl text-white font-medium mb-12 leading-relaxed">
-                                {article.excerpt || "Architecting digital systems that truly move the needle requires more than just technical proficiency. It demands a deep understanding of business outcomes and operational scalability."}
-                            </p>
-
-                            {/* Placeholder for content since we don't have a content editor yet */}
-                            <div className="space-y-8">
-                                <p>
-                                    As digital operations become increasingly complex, the role of strategic architecture becomes paramount. We've identified several key pillars that define high-performing systems in 2026. The shift towards autonomous agents and integrated AI layers is no longer a luxury but a fundamental requirement for market leadership.
+                            {article.excerpt && (
+                                <p className="text-xl text-white font-medium mb-12 leading-relaxed">
+                                    {article.excerpt}
                                 </p>
-
-                                <h3 className="text-2xl font-bold text-white pt-8">The Convergence of Logic and Experience</h3>
-                                <p>
-                                    Technical debt is often viewed through the lens of code quality, but the most destructive form of debt is architectural mismatch. When a technical stack isn't aligned with the business's growth trajectory, it creates friction that slows down innovation.
-                                </p>
-
-                                <div className="bg-white/[0.03] border-l-4 border-agency-accent p-8 rounded-r-3xl my-12">
-                                    <p className="text-white italic text-lg mb-0">
-                                        "Strategy without execution is a hallucination. Execution without strategy is a nightmare. Architecture is the bridge that turns one into the other."
-                                    </p>
-                                </div>
-
-                                <p>
-                                    Moving forward, our focus continues to be on building foundationally sound platforms that allow for rapid iteration without sacrificing stability. This involves a rigorous process of discovery, architectural planning, and iterative deployment.
-                                </p>
+                            )}
+                            <div className="mt-8">
+                                <ReactMarkdown>{article.content}</ReactMarkdown>
                             </div>
                         </div>
                     </div>
