@@ -124,12 +124,11 @@ model Service {
 
 /// Flexible engagement models for services (Strategy | Implementation | Optimization | Retainer)
 model EngagementModel {
-  id            String      @id @default(cuid())
+  id            String     @id @default(cuid())
   serviceId     String
   /// e.g., Strategy, Implementation, Optimization, Retainer
   name          String
   description   String
-  pricingType   PricingType @default(CUSTOM)
   /// Nullable for custom pricing
   basePriceBDT  Float?
   /// Nullable for custom pricing
@@ -138,11 +137,11 @@ model EngagementModel {
   deliverables  String[]
   /// Estimated timeline in days
   estimatedDays Int?
-  order         Int         @default(0)
-  status        Status      @default(ACTIVE)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  service       Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  order         Int        @default(0)
+  status        Status     @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  service       Service    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   proposals     Proposal[]
 
   @@unique([serviceId, name])
@@ -514,6 +513,7 @@ model Notification {
   @@index([userId])
   @@index([isRead])
 }
+
 model CaseStudy {
   id                String          @id @default(cuid())
   title             String
@@ -560,15 +560,6 @@ enum Role {
 enum Status {
   ACTIVE
   INACTIVE
-}
-
-enum PricingType {
-  /// Fixed price engagement
-  FIXED
-  /// Custom pricing per project
-  CUSTOM
-  /// Monthly retainer model
-  RETAINER
 }
 
 enum ProposalStatus {
