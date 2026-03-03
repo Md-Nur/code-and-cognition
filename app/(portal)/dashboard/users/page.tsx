@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ShieldOff } from "lucide-react";
-import UserManagementView from "@/app/components/admin/UserManagementView";
+import UserManagementView from "./_components/UserManagementView";
 
 export default async function UsersPage() {
   const session = await auth();

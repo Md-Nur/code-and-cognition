@@ -9,11 +9,11 @@ import {
     Layers, Calendar, FileText
 } from "lucide-react";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
-import ProjectAdminActions from "@/app/components/admin/ProjectAdminActions";
-import RevenueSplitsControl from "@/app/components/admin/RevenueSplitsControl";
-import EditableMilestones from "@/app/components/project/EditableMilestones";
-import ChangeRequestsPanel from "@/app/components/admin/ChangeRequestsPanel";
-import EditableProjectTitle from "@/app/components/project/EditableProjectTitle";
+import ProjectAdminActions from "./_components/ProjectAdminActions";
+import RevenueSplitsControl from "./_components/RevenueSplitsControl";
+import EditableMilestones from "./_components/EditableMilestones";
+import ChangeRequestsPanel from "./_components/ChangeRequestsPanel";
+import EditableProjectTitle from "./_components/EditableProjectTitle";
 import LocalTime from "@/app/components/shared/LocalTime";
 import DownloadBriefButton from "@/app/project/[viewToken]/DownloadBriefButton";
 

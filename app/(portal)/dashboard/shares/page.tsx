@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ShieldOff } from "lucide-react";
-import SharesView from "@/app/components/admin/SharesView";
+import SharesView from "./_components/SharesView";
 
 export default async function SharesPage() {
     const session = await auth();

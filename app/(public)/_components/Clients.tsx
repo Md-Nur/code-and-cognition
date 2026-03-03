@@ -2,6 +2,7 @@
 
 import { Client } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Clients({ clients }: { clients: Client[] }) {
     if (clients.length === 0) return null;
@@ -29,7 +30,7 @@ export default function Clients({ clients }: { clients: Client[] }) {
                             className="flex flex-col items-center justify-center mx-16 md:mx-24 min-w-[200px] h-48 opacity-30 hover:opacity-100 transition-all duration-500 grayscale hover:grayscale-0"
                         >
                             {client.website ? (
-                                <a href={client.website} target="_blank" rel="noopener noreferrer" title={client.name} className="flex flex-col items-center">
+                                <Link href={client.website} target="_blank" rel="noopener noreferrer" title={client.name} className="flex flex-col items-center">
                                     <Image
                                         src={client.logoUrl}
                                         alt={client.name}
@@ -40,7 +41,7 @@ export default function Clients({ clients }: { clients: Client[] }) {
                                     <span className="text-white text-lg font-medium tracking-wide">
                                         {client.name}
                                     </span>
-                                </a>
+                                </Link>
                             ) : (
                                 <div className="flex flex-col items-center">
                                     <Image

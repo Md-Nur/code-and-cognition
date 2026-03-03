@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import CaseStudiesListing from "@/app/components/public/CaseStudiesListing";
+import CaseStudiesListing from "./_components/CaseStudiesListing";
 
 
 export const metadata: Metadata = {

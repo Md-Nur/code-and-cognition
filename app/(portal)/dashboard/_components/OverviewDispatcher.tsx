@@ -1,5 +1,5 @@
 import { Role, Prisma } from "@prisma/client";
-import { ExecutiveOverview } from "@/app/components/admin/ExecutiveOverview";
+import { ExecutiveOverview } from "./ExecutiveOverview";
 import { Suspense } from "react";
 import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";

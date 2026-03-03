@@ -12,10 +12,10 @@ import {
     Rocket,
 } from "lucide-react";
 import { format } from "date-fns";
-import ProgressBar from "@/app/components/ProgressBar";
+import ProgressBar from "./_components/ProgressBar";
 import LocalTime from "@/app/components/shared/LocalTime";
 import DownloadBriefButton from "./DownloadBriefButton";
-import ClientChangeRequestsPanel from "@/app/components/portal/ClientChangeRequestsPanel";
+import ClientChangeRequestsPanel from "./_components/ClientChangeRequestsPanel";
 import NextActionPanel from "@/app/components/shared/NextActionPanel";
 
 export default async function ClientPortalPage(props: {

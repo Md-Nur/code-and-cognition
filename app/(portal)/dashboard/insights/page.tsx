@@ -2,7 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
 import { Plus, Pencil, Eye } from "lucide-react";
-import { DeleteArticleButton } from "@/components/dashboard/DeleteArticleButton";
+import { DeleteArticleButton } from "./_components/DeleteArticleButton";
 
 export default async function InsightsDashboardPage() {
     const articles = await prisma.article.findMany({

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import Link from "next/link";
 import { FileText } from "lucide-react";
-import ProposalPDFLink from "@/app/components/portal/ProposalPDFLink";
+import ProposalPDFLink from "./_components/ProposalPDFLink";
 
 const statusConfig: Record<string, { label: string; cls: string }> = {
     DRAFT: { label: "Draft", cls: "bg-gray-500/10 text-gray-400 border-gray-500/20" },

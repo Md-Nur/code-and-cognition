@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getProposalByToken } from "@/app/actions/proposals";
-import PublicProposalReview from "@/app/components/public/PublicProposalReview";
+import PublicProposalReview from "./_components/PublicProposalReview";
 
 interface PageProps {
     params: Promise<{ token: string }>;

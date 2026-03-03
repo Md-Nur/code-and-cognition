@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import CaseStudyCard from "@/app/components/public/CaseStudyCard";
-import IndustryFilter from "@/app/components/public/IndustryFilter";
+import CaseStudyCard from "./CaseStudyCard";
+import IndustryFilter from "./IndustryFilter";
 import { MoveRight } from "lucide-react";
 
 interface CaseStudiesListingProps {

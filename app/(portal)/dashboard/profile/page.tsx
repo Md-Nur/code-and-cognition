@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ApiResponse } from "@/lib/api-handler";
 
-import WalletView from "@/app/components/dashboard/WalletView";
+import WalletView from "./_components/WalletView";
 
 export default function ProfilePage() {
     const [loading, setLoading] = useState(false);

@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import ProposalReview from "@/app/components/portal/ProposalReview";
+import ProposalReview from "./_components/ProposalReview";
 import { Role } from "@prisma/client";
 
 interface PageProps {

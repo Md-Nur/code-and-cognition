@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import OverviewDispatcher from "@/app/components/portal/OverviewDispatcher";
+import OverviewDispatcher from "./_components/OverviewDispatcher";
 
 export default async function DashboardPage() {
     const session = await auth();

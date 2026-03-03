@@ -3,7 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
 import { Plus, Pencil, Eye } from "lucide-react";
-import { DeleteCaseStudyButton } from "@/components/dashboard/DeleteCaseStudyButton";
+import { DeleteCaseStudyButton } from "./_components/DeleteCaseStudyButton";
 
 export default async function CaseStudiesPage() {
     const caseStudies = await prisma.caseStudy.findMany({

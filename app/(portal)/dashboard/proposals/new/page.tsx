@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
-import ProposalForm from "@/app/components/portal/ProposalForm";
+import ProposalForm from "./_components/ProposalForm";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import HeroSection from "@/app/components/public/HeroSection";
-import CorePillars from "@/app/components/public/CorePillars";
-import HowWeWork from "@/app/components/public/HowWeWork";
+import HeroSection from "./_components/HeroSection";
+import CorePillars from "./_components/CorePillars";
+import HowWeWork from "./_components/HowWeWork";
 import CaseStudies from "@/app/components/public/CaseStudies";
-import Testimonials from "@/app/components/public/Testimonials";
-import KnowledgeSection from "@/app/components/public/KnowledgeSection";
-import Clients from "@/app/components/public/Clients";
+import Testimonials from "./_components/Testimonials";
+import KnowledgeSection from "./_components/KnowledgeSection";
+import Clients from "./_components/Clients";
 import Link from "next/link";
 
 import { prisma } from "@/lib/prisma";
