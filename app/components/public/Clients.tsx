@@ -19,27 +19,27 @@ export default function Clients({ clients }: { clients: Client[] }) {
                 </h2>
             </div>
 
-            <div className="relative flex overflow-hidden group">
+            <div className="relative flex overflow-hidden group py-10">
                 {/* Horizontal Marquee Animation */}
-                <div className="flex animate-marquee group-hover:pause-marquee whitespace-nowrap">
+                <div className="flex animate-marquee group-hover:pause-marquee whitespace-nowrap justify-center">
                     {displayClients.map((client, i) => (
                         <div
                             key={`${client.id}-${i}`}
-                            className="flex items-center justify-center mx-12 md:mx-16 min-w-[120px] h-16 opacity-30 hover:opacity-100 transition-opacity duration-500 grayscale hover:grayscale-0"
+                            className="flex items-center justify-center mx-16 md:mx-24 min-w-[200px] h-32 opacity-30 hover:opacity-100 transition-opacity duration-500 grayscale hover:grayscale-0"
                         >
                             {client.website ? (
                                 <a href={client.website} target="_blank" rel="noopener noreferrer" title={client.name}>
                                     <img
                                         src={client.logoUrl}
                                         alt={client.name}
-                                        className="max-h-12 w-auto object-contain"
+                                        className="max-h-20 w-auto object-contain"
                                     />
                                 </a>
                             ) : (
                                 <img
                                     src={client.logoUrl}
                                     alt={client.name}
-                                    className="max-h-12 w-auto object-contain"
+                                    className="max-h-20 w-auto object-contain"
                                 />
                             )}
                         </div>

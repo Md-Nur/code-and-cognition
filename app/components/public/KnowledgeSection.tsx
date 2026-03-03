@@ -1,27 +1,18 @@
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-const INSIGHTS = [
-    {
-        category: "AI & Automation",
-        title: "The Architecture of Intelligent Systems: Scaling Beyond Human Limitations",
-        date: "Feb 15, 2026",
-    },
-    {
-        category: "Product Strategy",
-        title: "Outcome-Driven Execution: Why Tech Stack Choice is Only 20% of Success",
-        date: "Feb 10, 2026",
-    },
-    {
-        category: "Growth",
-        title: "Building Resilient Digital Operations for High-Ticket B2B Markets",
-        date: "Feb 05, 2026",
-    },
-];
+export default async function KnowledgeSection() {
+    const insights = await prisma.article.findMany({
+        orderBy: [
+            { isFeatured: 'desc' },
+            { publishedAt: 'desc' }
+        ],
+        take: 3
+    });
 
-export default function KnowledgeSection() {
     return (
-        <section className="py-32 bg-agency-black">
+        <section className="py-32 bg-agency-black" id="insights">
             <div className="section-container">
                 <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-20">
                     <div className="max-w-2xl">
@@ -44,13 +35,31 @@ export default function KnowledgeSection() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    {INSIGHTS.map((insight) => (
-                        <div key={insight.title} className="group cursor-pointer">
-                            <div className="mb-8 overflow-hidden rounded-3xl aspect-[16/9] bg-white/5 border border-white/10">
-                                {/* Mock Image Placeholder */}
-                                <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
-                                    <span className="text-white/10 font-bold uppercase tracking-[0.5em]">Cognition</span>
-                                </div>
+                    {insights.map((insight) => (
+                        <Link
+                            key={insight.id}
+                            href={`/insights/${insight.slug}`}
+                            className="group cursor-pointer block"
+                        >
+                            <div className="mb-8 overflow-hidden rounded-3xl aspect-[16/9] bg-white/5 border border-white/10 relative">
+                                {insight.thumbnailUrl ? (
+                                    <img
+                                        src={insight.thumbnailUrl}
+                                        alt={insight.title}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                                        <span className="text-white/10 font-bold uppercase tracking-[0.5em]">Cognition</span>
+                                    </div>
+                                )}
+                                {insight.isFeatured && (
+                                    <div className="absolute top-4 left-4">
+                                        <span className="px-3 py-1 rounded-full bg-agency-accent/10 border border-agency-accent/20 text-agency-accent text-[8px] font-bold uppercase tracking-widest backdrop-blur-sm">
+                                            Featured
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                             <span className="text-agency-accent font-bold uppercase tracking-widest text-[10px] mb-4 block">
                                 {insight.category}
@@ -59,12 +68,12 @@ export default function KnowledgeSection() {
                                 {insight.title}
                             </h3>
                             <div className="flex items-center justify-between text-gray-500 font-bold text-[10px] uppercase tracking-widest">
-                                <span>{insight.date}</span>
+                                <span>{insight.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                 <span className="flex items-center gap-2 group-hover:text-white transition-colors">
                                     Read Insight <MoveRight className="w-4 h-4" />
                                 </span>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>
