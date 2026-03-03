@@ -18,6 +18,13 @@ export default function Loading() {
                     <div className="absolute inset-0 rounded-full bg-white/5 blur-xl animate-pulse -z-10"></div>
                 </div>
 
+                {/* Company Name */}
+                <div className="mb-8 flex flex-col items-center animate-pulse">
+                    <h1 className="text-xl md:text-2xl font-bold tracking-[0.2em] text-white uppercase text-center">
+                        Code <span className="text-agency-accent">&amp;</span> Cognition
+                    </h1>
+                </div>
+
                 {/* Optional Loading Bar */}
                 <div className="w-48 h-[2px] bg-white/5 rounded-full overflow-hidden">
                     <div className="h-full bg-linear-to-r from-transparent via-agency-accent to-transparent w-full -translate-x-full animate-[shimmer_2s_infinite]"></div>
