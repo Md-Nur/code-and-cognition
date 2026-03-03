@@ -20,36 +20,38 @@ export default function Clients({ clients }: { clients: Client[] }) {
             </div>
 
             <div className="relative flex overflow-hidden group py-10">
-                {/* Horizontal Marquee Animation */}
-                <div className="flex animate-marquee group-hover:pause-marquee whitespace-nowrap justify-center">
+                <div className="flex animate-marquee group-hover:pause-marquee whitespace-nowrap justify-center items-center py-4">
                     {displayClients.map((client, i) => (
                         <div
                             key={`${client.id}-${i}`}
-                            className="flex flex-col items-center justify-center mx-16 md:mx-24 min-w-[200px] h-48 opacity-30 hover:opacity-100 transition-all duration-500 grayscale hover:grayscale-0"
+                            className="premium-card group/card flex flex-col items-center justify-center mx-6 md:mx-10 min-w-[240px] h-40 p-6 relative overflow-hidden"
                         >
+                            {/* Subtle hover gradient inside the card */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 rounded-3xl" />
+
                             {client.website ? (
-                                <Link href={client.website} target="_blank" rel="noopener noreferrer" title={client.name} className="flex flex-col items-center">
+                                <Link href={client.website} target="_blank" rel="noopener noreferrer" title={client.name} className="flex flex-col items-center justify-center w-full h-full relative z-10 gap-4">
                                     <Image
                                         src={client.logoUrl}
                                         alt={client.name}
-                                        className="max-h-20 w-auto object-contain mb-4"
+                                        className="max-h-[60px] w-auto object-contain brightness-0 invert opacity-50 group-hover/card:opacity-100 group-hover/card:scale-105 transition-all duration-500"
                                         width={200}
                                         height={200}
                                     />
-                                    <span className="text-white text-lg font-medium tracking-wide">
+                                    <span className="text-white/90 text-xs font-semibold tracking-widest uppercase text-center opacity-0 translate-y-2 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500">
                                         {client.name}
                                     </span>
                                 </Link>
                             ) : (
-                                <div className="flex flex-col items-center">
+                                <div className="flex flex-col items-center justify-center w-full h-full relative z-10 gap-4">
                                     <Image
                                         src={client.logoUrl}
                                         alt={client.name}
-                                        className="max-h-20 w-auto object-contain mb-4"
+                                        className="max-h-[60px] w-auto object-contain brightness-0 invert opacity-50 group-hover/card:opacity-100 group-hover/card:scale-105 transition-all duration-500"
                                         width={200}
                                         height={200}
                                     />
-                                    <span className="text-white text-lg font-medium tracking-wide">
+                                    <span className="text-white/90 text-xs font-semibold tracking-widest uppercase text-center opacity-0 translate-y-2 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500">
                                         {client.name}
                                     </span>
                                 </div>
