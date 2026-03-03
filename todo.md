@@ -1,4 +1,4 @@
-Event the ti
+Our Official Partners in home page show the company/client name with their respective logos
 
 In the add-case study page there have many section of textarea. I want to make some simple formating like use bullet points. Make a system (like md file) so that I can do this kind of basic formating. And image upload system with imgbb.
 

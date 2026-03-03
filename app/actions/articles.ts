@@ -12,7 +12,7 @@ const articleSchema = z.object({
     category: z.string().min(1, "Category is required"),
     thumbnailUrl: z.string().optional(),
     isFeatured: z.boolean().default(false),
-    publishedAt: z.date().default(new Date()),
+    publishedAt: z.date().optional(),
 });
 
 type ArticleInput = z.infer<typeof articleSchema>;
