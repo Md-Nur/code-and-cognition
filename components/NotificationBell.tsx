@@ -61,14 +61,17 @@ export default function NotificationBell() {
         try {
             const res = await fetch(`/api/notifications/${id}`, {
                 method: "PATCH",
+                keepalive: true,
             });
             if (res.ok) {
                 setNotifications((prev) =>
                     prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
                 );
+            } else {
+                console.error("Failed to mark notification as read:", await res.text());
             }
         } catch (error) {
-            alert("Failed to mark notification as read");
+            console.error("Network error marking notification as read:", error);
         }
     };
 
