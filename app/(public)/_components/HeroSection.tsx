@@ -1,375 +1,263 @@
 import Link from "next/link";
-import { MoveRight } from "lucide-react";
+import { MoveRight, Cpu, Activity } from "lucide-react";
 
 export default function HeroSection() {
     return (
-        <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-black">
-            {/* Architectural Ambience */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                {/* Core glows for depth */}
-                <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-agency-accent/10 rounded-full blur-[140px] opacity-70" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-white/[0.02] rounded-full blur-[120px] opacity-50" />
+        <section className="relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden bg-agency-black">
 
-                {/* High-tech Blueprint Grid */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_80%)]" />
+            {/* ── Architectural Ambience ─────────────────────────────────────── */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+                {/* Primary radial glow — top right */}
+                <div className="absolute -top-[20%] -right-[10%] w-[80vw] h-[80vw] max-w-[900px] max-h-[900px] rounded-full bg-agency-accent/15 blur-[180px] opacity-60" />
+                {/* Secondary soft glow — bottom left */}
+                <div className="absolute -bottom-[20%] -left-[10%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-white/[0.03] blur-[140px]" />
 
-                {/* Sub-grid for precision feel */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:16px_16px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_80%)]" />
+                {/* Digital grid — fades at edges */}
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        backgroundImage: `
+                            linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)
+                        `,
+                        backgroundSize: "56px 56px",
+                        WebkitMaskImage: "radial-gradient(ellipse 90% 90% at 50% 50%, #000 20%, transparent 85%)",
+                        maskImage: "radial-gradient(ellipse 90% 90% at 50% 50%, #000 20%, transparent 85%)",
+                    }}
+                />
 
-                {/* Vertical Structural Beams */}
-                <div className="absolute top-0 left-[15%] w-[1px] h-full bg-linear-to-b from-transparent via-agency-accent/20 to-transparent" />
-                <div className="absolute top-0 left-[25%] w-[1px] h-full bg-linear-to-b from-transparent via-white/10 to-transparent" />
-                <div className="absolute top-0 right-[25%] w-[1px] h-full bg-linear-to-b from-transparent via-agency-accent/10 to-transparent" />
-                <div className="absolute top-0 right-[10%] w-[1px] h-full bg-linear-to-b from-transparent via-white/5 to-transparent" />
+                {/* Vertical light beams */}
+                <div className="absolute top-0 left-[18%] w-px h-full bg-gradient-to-b from-transparent via-agency-accent/25 to-transparent" />
+                <div className="absolute top-0 right-[22%] w-px h-full bg-gradient-to-b from-transparent via-white/10 to-transparent" />
 
-                {/* Diffused geometric light rays */}
-                <div className="absolute top-[-10%] left-[20%] w-[800px] h-[120%] bg-linear-to-b from-transparent via-agency-accent/5 to-transparent rotate-[-45deg] blur-3xl opacity-50" />
-                <div className="absolute top-[-10%] right-[20%] w-[600px] h-[120%] bg-linear-to-b from-transparent via-white/5 to-transparent rotate-[45deg] blur-2xl opacity-30" />
+                {/* Angled volumetric rays */}
+                <div className="absolute -top-32 left-[10%] w-[600px] h-[150%] bg-gradient-to-b from-transparent via-agency-accent/5 to-transparent -rotate-[35deg] blur-3xl" />
+                <div className="absolute -top-32 right-[5%] w-[400px] h-[120%] bg-gradient-to-b from-transparent via-white/[0.03] to-transparent rotate-[35deg] blur-2xl" />
 
-                {/* Floating Data Nodes (Data ambience) */}
-                <div className="absolute top-[30%] left-[15%] w-1.5 h-1.5 bg-agency-accent rounded-full shadow-[0_0_10px_#3b82f6] animate-pulse" />
-                <div className="absolute top-[60%] left-[25%] w-1 h-1 bg-white rounded-full shadow-[0_0_5px_#fff] animate-pulse animation-delay-500" />
-                <div className="absolute top-[20%] right-[30%] w-2 h-2 bg-agency-accent/80 rounded-full shadow-[0_0_8px_#3b82f6] animate-pulse animation-delay-200" />
-                <div className="absolute bottom-[20%] right-[15%] w-1 h-1 bg-white/60 rounded-full shadow-[0_0_5px_#fff] animate-pulse animation-delay-700" />
-
-                {/* Ambient structural indicators */}
-                <div className="absolute top-[20%] left-[8%] font-mono text-[10px] sm:text-xs text-zinc-500/30 tracking-[0.3em] rotate-[-90deg]">SYS.CORE.01</div>
-                <div className="absolute bottom-[30%] right-[5%] font-mono text-[10px] sm:text-xs text-agency-accent/30 tracking-[0.3em] rotate-[90deg]">EXEC.ENGINE.V4</div>
+                {/* Horizon line */}
+                <div className="absolute top-[62%] left-0 w-full h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
             </div>
 
-            <div className="section-container relative z-10">
-                <div className="flex flex-col lg:flex-row items-center gap-20">
-                    <div className="flex-1 text-center lg:text-left">
-                        <div className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.4em] text-agency-accent mb-6 sm:mb-10 animate-fade-in text-center">
-                            <span className="h-1 w-1 shrink-0 rounded-full bg-agency-accent shadow-[0_0_8px_#3b82f6]" />
-                            <span className="truncate whitespace-normal leading-tight">Strategic Intelligence &amp; Execution</span>
+            {/* ── Main Content ──────────────────────────────────────────────── */}
+            <div className="section-container relative z-10 w-full">
+                <div className="flex flex-col xl:flex-row items-center gap-16 xl:gap-20">
+
+                    {/* Left — Copy & CTA */}
+                    <div className="flex-1 text-center xl:text-left max-w-3xl mx-auto xl:mx-0">
+
+                        {/* Status badge */}
+                        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-agency-accent/10 border border-agency-accent/20 backdrop-blur-lg mb-8 animate-fade-in">
+                            <span className="relative flex h-2 w-2 shrink-0">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-agency-accent opacity-60" />
+                                <span className="relative inline-flex h-2 w-2 rounded-full bg-agency-accent" />
+                            </span>
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-agency-accent">
+                                Strategic Intelligence &amp; Execution
+                            </span>
                         </div>
 
-                        <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold strategic-heading text-white mb-6 sm:mb-8 animate-slide-up leading-tight">
-                            Architecting the <br className="hidden sm:block" />
-                            <span className="text-gradient">Future of Execution</span>
+                        {/* Headline */}
+                        <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl font-extrabold strategic-heading text-white leading-[1.04] mb-7 animate-slide-up">
+                            Architecting the
+                            <br className="hidden sm:block" />
+                            <span
+                                className="bg-clip-text text-transparent"
+                                style={{
+                                    backgroundImage: "linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%)",
+                                }}
+                            >
+                                Future of&nbsp;Execution
+                            </span>
                         </h1>
 
-                        <p className="text-gray-400 text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl px-2 sm:px-0 mb-10 sm:mb-14 animate-slide-up animation-delay-200 mx-auto lg:mx-0">
-                            We build high-performance digital ecosystems for growth-focused enterprises, transforming technical complexity into sustainable competitive advantage.
+                        {/* Sub-copy */}
+                        <p className="text-gray-400 text-lg sm:text-xl leading-relaxed max-w-2xl mb-11 animate-slide-up animation-delay-200 mx-auto xl:mx-0 px-2 sm:px-0">
+                            We build high-performance digital ecosystems for growth-focused enterprises — transforming technical complexity into{" "}
+                            <span className="text-white/80 font-medium">sustainable competitive advantage.</span>
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6 animate-slide-up animation-delay-300 w-full px-4 sm:px-0">
-                            <Link href="/schedule" className="btn-brand group w-full sm:w-auto">
-                                <span className="flex items-center justify-center gap-3">
-                                    Start Strategic Consultation
-                                    <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                </span>
+                        {/* CTAs */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center xl:justify-start gap-4 sm:gap-5 animate-slide-up animation-delay-300 px-4 sm:px-0">
+                            <Link
+                                href="/schedule"
+                                className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-sm sm:text-base transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(255,255,255,0.25)] active:scale-[0.98] w-full sm:w-auto overflow-hidden"
+                            >
+                                Start Strategic Consultation
+                                <MoveRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
                             </Link>
-                            <Link href="/case-studies" className="btn-outline w-full sm:w-auto">
+                            <Link
+                                href="/case-studies"
+                                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full border border-white/10 text-white font-bold text-sm sm:text-base transition-all duration-300 hover:bg-white/5 hover:border-white/25 w-full sm:w-auto backdrop-blur-sm"
+                            >
+                                <Activity className="w-4 h-4 text-agency-accent" />
                                 View Engagements
                             </Link>
                         </div>
+
+                        {/* Stats row */}
+                        <div className="mt-14 pt-8 border-t border-white/[0.07] grid grid-cols-3 gap-4 sm:gap-8 animate-fade-in animation-delay-500 max-w-lg mx-auto xl:mx-0">
+                            {[
+                                { value: "99.98%", label: "Uptime SLA" },
+                                { value: "3.4×", label: "Yield Velocity" },
+                                { value: "< 48h", label: "Time to Deploy" },
+                            ].map((stat) => (
+                                <div key={stat.label} className="text-center xl:text-left">
+                                    <div className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-none">
+                                        {stat.value}
+                                    </div>
+                                    <div className="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase tracking-[0.15em] mt-1">
+                                        {stat.label}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* ─── Hero Graphic ─────────────────────────────────────────────── */}
-                    <div className="flex-1 relative w-full aspect-square max-w-[580px] animate-fade-in animation-delay-500 mt-10 lg:mt-0 px-4 sm:px-0">
-                        <div className="relative w-full h-full premium-card overflow-hidden flex items-center justify-center group rounded-3xl">
-                            {/* Subtle gradient overlay */}
-                            <div className="absolute inset-0 bg-linear-to-br from-agency-accent/10 via-transparent to-white/[0.02]" />
+                    {/* Right — Execution Engine Visual */}
+                    <div className="flex-1 relative w-full max-w-[560px] xl:max-w-[620px] animate-fade-in animation-delay-300 px-4 sm:px-0">
 
-                            {/* ── SVG Network Visualization ── */}
-                            <svg
-                                viewBox="0 0 480 480"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-[85%] h-[85%] relative z-10"
+                        {/* Corner bracket decorations */}
+                        <div className="absolute -top-3 -left-3 w-5 h-5 border-t-2 border-l-2 border-agency-accent/40 rounded-tl-sm z-20" />
+                        <div className="absolute -top-3 -right-3 w-5 h-5 border-t-2 border-r-2 border-agency-accent/40 rounded-tr-sm z-20" />
+                        <div className="absolute -bottom-3 -left-3 w-5 h-5 border-b-2 border-l-2 border-white/20 rounded-bl-sm z-20" />
+                        <div className="absolute -bottom-3 -right-3 w-5 h-5 border-b-2 border-r-2 border-white/20 rounded-br-sm z-20" />
+
+                        {/* Main glassmorphic card */}
+                        <div className="relative aspect-square rounded-3xl bg-white/[0.02] border border-white/[0.07] backdrop-blur-2xl shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden group">
+
+                            {/* Card inner glow */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-agency-accent/8 via-transparent to-transparent" />
+                            <div className="absolute -top-24 -right-24 w-56 h-56 bg-agency-accent/20 rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                            {/* Code texture watermark */}
+                            <div
+                                className="absolute inset-0 p-8 font-mono text-[10px] text-agency-accent/[0.06] leading-[1.8] pointer-events-none select-none overflow-hidden whitespace-pre"
                                 aria-hidden="true"
-                            >
-                                <defs>
-                                    {/* Accent gradient */}
-                                    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-                                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.6" />
-                                        <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                                    </radialGradient>
-                                    <radialGradient id="nodeGlowA" cx="50%" cy="50%" r="50%">
-                                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.9" />
-                                        <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                                    </radialGradient>
-                                    {/* Line gradient */}
-                                    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0" />
-                                        <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.5" />
-                                        <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                                    </linearGradient>
-                                    <linearGradient id="lineGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-                                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-                                        <stop offset="50%" stopColor="#ffffff" stopOpacity="0.1" />
-                                        <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-                                    </linearGradient>
-                                    {/* Animated dash pattern */}
-                                    <filter id="glow">
-                                        <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                                        <feMerge>
-                                            <feMergeNode in="coloredBlur" />
-                                            <feMergeNode in="SourceGraphic" />
-                                        </feMerge>
-                                    </filter>
-                                    <filter id="glowStrong">
-                                        <feGaussianBlur stdDeviation="5" result="coloredBlur" />
-                                        <feMerge>
-                                            <feMergeNode in="coloredBlur" />
-                                            <feMergeNode in="SourceGraphic" />
-                                        </feMerge>
-                                    </filter>
-                                </defs>
+                            >{`const engine = new ExecutionCore({
+  topology: "mesh",
+  resilience: 0.9999,
+  nodes: spawn.all(),
+});
+engine.on("signal", handleEvent);
+await engine.init();
+// [OK] Core ready — 0x7FA3C2`}</div>
 
-                                {/* ── Outer orbit ring ── */}
-                                <circle
-                                    cx="240" cy="240" r="210"
-                                    stroke="rgba(255,255,255,0.04)"
-                                    strokeWidth="1"
-                                    strokeDasharray="4 10"
-                                >
-                                    <animateTransform
-                                        attributeName="transform"
-                                        type="rotate"
-                                        from="0 240 240"
-                                        to="360 240 240"
-                                        dur="60s"
-                                        repeatCount="indefinite"
-                                    />
-                                </circle>
+                            {/* ── Central SVG network ── */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="relative w-72 h-72 flex items-center justify-center">
 
-                                {/* ── Mid orbit ring ── */}
-                                <circle
-                                    cx="240" cy="240" r="160"
-                                    stroke="rgba(59,130,246,0.12)"
-                                    strokeWidth="1"
-                                    strokeDasharray="2 14"
-                                >
-                                    <animateTransform
-                                        attributeName="transform"
-                                        type="rotate"
-                                        from="360 240 240"
-                                        to="0 240 240"
-                                        dur="40s"
-                                        repeatCount="indefinite"
-                                    />
-                                </circle>
+                                    {/* Orbit rings */}
+                                    <div className="absolute inset-0 rounded-full border border-white/[0.06] border-dashed animate-[spin_30s_linear_infinite]" />
+                                    <div className="absolute inset-4 rounded-full border border-agency-accent/15 animate-[spin_20s_linear_infinite_reverse]" />
+                                    <div className="absolute inset-10 rounded-full border border-white/[0.08] border-dashed animate-[spin_12s_linear_infinite]" />
 
-                                {/* ── Inner orbit ring ── */}
-                                <circle
-                                    cx="240" cy="240" r="105"
-                                    stroke="rgba(59,130,246,0.2)"
-                                    strokeWidth="0.5"
-                                    strokeDasharray="6 8"
-                                >
-                                    <animateTransform
-                                        attributeName="transform"
-                                        type="rotate"
-                                        from="0 240 240"
-                                        to="360 240 240"
-                                        dur="25s"
-                                        repeatCount="indefinite"
-                                    />
-                                </circle>
-
-                                {/* ── Connection lines (spokes) ── */}
-                                {/* Top-right node to center */}
-                                <line x1="240" y1="240" x2="348" y2="114" stroke="url(#lineGrad)" strokeWidth="0.8">
-                                    <animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite" />
-                                </line>
-                                {/* Bottom-right node to center */}
-                                <line x1="240" y1="240" x2="370" y2="340" stroke="url(#lineGrad)" strokeWidth="0.8">
-                                    <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" begin="0.6s" />
-                                </line>
-                                {/* Left node to center */}
-                                <line x1="240" y1="240" x2="100" y2="290" stroke="url(#lineGrad)" strokeWidth="0.8">
-                                    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="4s" repeatCount="indefinite" begin="1s" />
-                                </line>
-                                {/* Top-left node to center */}
-                                <line x1="240" y1="240" x2="130" y2="130" stroke="url(#lineGrad2)" strokeWidth="0.8">
-                                    <animate attributeName="opacity" values="0.2;0.7;0.2" dur="3.5s" repeatCount="indefinite" begin="0.4s" />
-                                </line>
-                                {/* Bottom node to center */}
-                                <line x1="240" y1="240" x2="240" y2="400" stroke="url(#lineGrad2)" strokeWidth="0.8">
-                                    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.8s" repeatCount="indefinite" begin="1.2s" />
-                                </line>
-                                {/* Cross connections between nodes */}
-                                <line x1="130" y1="130" x2="348" y2="114" stroke="rgba(59,130,246,0.08)" strokeWidth="0.5">
-                                    <animate attributeName="opacity" values="0.1;0.4;0.1" dur="5s" repeatCount="indefinite" />
-                                </line>
-                                <line x1="100" y1="290" x2="240" y2="400" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5">
-                                    <animate attributeName="opacity" values="0.1;0.3;0.1" dur="6s" repeatCount="indefinite" begin="1s" />
-                                </line>
-                                <line x1="370" y1="340" x2="240" y2="400" stroke="rgba(59,130,246,0.07)" strokeWidth="0.5">
-                                    <animate attributeName="opacity" values="0.1;0.5;0.1" dur="4s" repeatCount="indefinite" begin="0.8s" />
-                                </line>
-
-                                {/* ── Traveling pulses on lines ── */}
-                                {/* Pulse on line to top-right node */}
-                                <circle r="2" fill="#3b82f6" opacity="0" filter="url(#glow)">
-                                    <animateMotion
-                                        dur="2.5s"
-                                        repeatCount="indefinite"
-                                        path="M240,240 L348,114"
-                                    />
-                                    <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite" />
-                                </circle>
-                                {/* Pulse on line to bottom-right */}
-                                <circle r="2" fill="#3b82f6" opacity="0" filter="url(#glow)">
-                                    <animateMotion
-                                        dur="2s"
-                                        repeatCount="indefinite"
-                                        begin="0.8s"
-                                        path="M240,240 L370,340"
-                                    />
-                                    <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.8s" />
-                                </circle>
-                                {/* Pulse on line to left */}
-                                <circle r="1.5" fill="#ffffff" opacity="0" filter="url(#glow)">
-                                    <animateMotion
-                                        dur="3.2s"
-                                        repeatCount="indefinite"
-                                        begin="1.4s"
-                                        path="M240,240 L100,290"
-                                    />
-                                    <animate attributeName="opacity" values="0;0.7;0.7;0" dur="3.2s" repeatCount="indefinite" begin="1.4s" />
-                                </circle>
-                                {/* Pulse going bottom */}
-                                <circle r="1.5" fill="#3b82f6" opacity="0" filter="url(#glow)">
-                                    <animateMotion
-                                        dur="2.8s"
-                                        repeatCount="indefinite"
-                                        begin="0.3s"
-                                        path="M240,240 L240,400"
-                                    />
-                                    <animate attributeName="opacity" values="0;0.9;0.9;0" dur="2.8s" repeatCount="indefinite" begin="0.3s" />
-                                </circle>
-
-                                {/* ── Core glow ── */}
-                                <circle cx="240" cy="240" r="55" fill="url(#coreGlow)">
-                                    <animate attributeName="r" values="50;60;50" dur="4s" repeatCount="indefinite" />
-                                    <animate attributeName="opacity" values="0.7;1;0.7" dur="4s" repeatCount="indefinite" />
-                                </circle>
-
-                                {/* ── Hexagonal grid pattern (inner decoration) ── */}
-                                <g opacity="0.12" stroke="#3b82f6" strokeWidth="0.5">
-                                    <polygon points="240,200 265,213 265,240 240,253 215,240 215,213" fill="none" />
-                                    <polygon points="240,175 278,197 278,240 240,262 202,240 202,197" fill="none" />
-                                </g>
-
-                                {/* ── Core center ── */}
-                                <circle cx="240" cy="240" r="20" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.6)" strokeWidth="0.8" filter="url(#glow)">
-                                    <animate attributeName="r" values="18;22;18" dur="3s" repeatCount="indefinite" />
-                                </circle>
-                                <circle cx="240" cy="240" r="6" fill="#3b82f6" filter="url(#glowStrong)">
-                                    <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite" />
-                                </circle>
-                                <circle cx="240" cy="240" r="2.5" fill="#ffffff" />
-
-                                {/* ── Outer nodes ── */}
-                                {/* Top-right node */}
-                                <g filter="url(#glow)">
-                                    <circle cx="348" cy="114" r="12" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.5)" strokeWidth="0.8">
-                                        <animate attributeName="r" values="11;14;11" dur="3s" repeatCount="indefinite" />
-                                    </circle>
-                                    <circle cx="348" cy="114" r="4" fill="#3b82f6">
-                                        <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite" />
-                                    </circle>
-                                </g>
-
-                                {/* Bottom-right node */}
-                                <g filter="url(#glow)">
-                                    <circle cx="370" cy="340" r="10" fill="rgba(59,130,246,0.12)" stroke="rgba(59,130,246,0.4)" strokeWidth="0.8">
-                                        <animate attributeName="r" values="9;13;9" dur="3.5s" repeatCount="indefinite" begin="0.5s" />
-                                    </circle>
-                                    <circle cx="370" cy="340" r="3.5" fill="#3b82f6">
-                                        <animate attributeName="opacity" values="0.6;1;0.6" dur="3.5s" repeatCount="indefinite" begin="0.5s" />
-                                    </circle>
-                                </g>
-
-                                {/* Left node */}
-                                <g filter="url(#glow)">
-                                    <circle cx="100" cy="290" r="9" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="0.8">
-                                        <animate attributeName="r" values="8;11;8" dur="4s" repeatCount="indefinite" begin="1s" />
-                                    </circle>
-                                    <circle cx="100" cy="290" r="3" fill="rgba(255,255,255,0.7)">
-                                        <animate attributeName="opacity" values="0.5;0.9;0.5" dur="4s" repeatCount="indefinite" begin="1s" />
-                                    </circle>
-                                </g>
-
-                                {/* Top-left node */}
-                                <g filter="url(#glow)">
-                                    <circle cx="130" cy="130" r="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8">
-                                        <animate attributeName="r" values="7;10;7" dur="4.5s" repeatCount="indefinite" begin="0.3s" />
-                                    </circle>
-                                    <circle cx="130" cy="130" r="2.5" fill="rgba(255,255,255,0.5)">
-                                        <animate attributeName="opacity" values="0.4;0.8;0.4" dur="4.5s" repeatCount="indefinite" begin="0.3s" />
-                                    </circle>
-                                </g>
-
-                                {/* Bottom node */}
-                                <g filter="url(#glow)">
-                                    <circle cx="240" cy="400" r="10" fill="rgba(59,130,246,0.12)" stroke="rgba(59,130,246,0.35)" strokeWidth="0.8">
-                                        <animate attributeName="r" values="9;12;9" dur="3s" repeatCount="indefinite" begin="1.2s" />
-                                    </circle>
-                                    <circle cx="240" cy="400" r="3.5" fill="#3b82f6">
-                                        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" begin="1.2s" />
-                                    </circle>
-                                </g>
-
-                                {/* ── Grid texture (bottom-right corner) ── */}
-                                <g opacity="0.06" stroke="white" strokeWidth="0.5">
-                                    {[0, 1, 2, 3, 4].map(row =>
-                                        [0, 1, 2, 3, 4].map(col => (
-                                            <rect
-                                                key={`${row}-${col}`}
-                                                x={340 + col * 16}
-                                                y={350 + row * 16}
-                                                width="12"
-                                                height="12"
-                                                rx="1"
+                                    {/* Spoke lines */}
+                                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 288 288" fill="none">
+                                        {[0, 51.4, 102.8, 154.3, 205.7, 257.1, 308.6].map((deg, i) => (
+                                            <line
+                                                key={i}
+                                                x1="144" y1="144"
+                                                x2={144 + 130 * Math.cos((deg - 90) * Math.PI / 180)}
+                                                y2={144 + 130 * Math.sin((deg - 90) * Math.PI / 180)}
+                                                stroke="rgba(59,130,246,0.12)"
+                                                strokeWidth="1"
+                                                strokeDasharray="3 6"
                                             />
-                                        ))
-                                    )}
-                                </g>
+                                        ))}
+                                        {/* Outer node dots */}
+                                        {[0, 51.4, 102.8, 154.3, 205.7, 257.1, 308.6].map((deg, i) => (
+                                            <circle
+                                                key={`dot-${i}`}
+                                                cx={144 + 130 * Math.cos((deg - 90) * Math.PI / 180)}
+                                                cy={144 + 130 * Math.sin((deg - 90) * Math.PI / 180)}
+                                                r="3.5"
+                                                fill="#3b82f6"
+                                                opacity="0.5"
+                                            >
+                                                <animate
+                                                    attributeName="opacity"
+                                                    values="0.3;0.9;0.3"
+                                                    dur={`${2.5 + i * 0.4}s`}
+                                                    repeatCount="indefinite"
+                                                    begin={`${i * 0.3}s`}
+                                                />
+                                                <animate
+                                                    attributeName="r"
+                                                    values="3;5;3"
+                                                    dur={`${2.5 + i * 0.4}s`}
+                                                    repeatCount="indefinite"
+                                                    begin={`${i * 0.3}s`}
+                                                />
+                                            </circle>
+                                        ))}
+                                    </svg>
 
-                                {/* ── Scatter dots (top area) ── */}
-                                {[
-                                    { cx: 70, cy: 80, r: 1.5, delay: "0s" },
-                                    { cx: 95, cy: 55, r: 1, delay: "0.4s" },
-                                    { cx: 420, cy: 75, r: 1.5, delay: "0.8s" },
-                                    { cx: 440, cy: 105, r: 1, delay: "1s" },
-                                    { cx: 55, cy: 400, r: 1.5, delay: "0.6s" },
-                                    { cx: 410, cy: 420, r: 1, delay: "1.4s" },
-                                ].map((dot, i) => (
-                                    <circle key={i} cx={dot.cx} cy={dot.cy} r={dot.r} fill="rgba(59,130,246,0.6)">
-                                        <animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite" begin={dot.delay} />
-                                    </circle>
-                                ))}
-                            </svg>
+                                    {/* Pulsing core aura */}
+                                    <div className="absolute w-28 h-28 rounded-full bg-agency-accent/10 animate-ping" style={{ animationDuration: "3s" }} />
+                                    <div className="absolute w-20 h-20 rounded-full bg-agency-accent/20 animate-ping" style={{ animationDuration: "2s", animationDelay: "0.5s" }} />
 
-                            {/* ── Floating Metadata Panels ── */}
-                            <div className="absolute top-6 left-4 sm:top-10 sm:left-8 glass-panel px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl animate-float">
-                                <div className="flex items-center gap-2 mb-0.5">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-green-400 shadow-[0_0_6px_#4ade80]" />
-                                    <div className="text-[7px] sm:text-[9px] text-agency-accent font-black uppercase tracking-widest opacity-70">System Uptime</div>
+                                    {/* Core orb */}
+                                    <div
+                                        className="relative w-16 h-16 rounded-full flex items-center justify-center border border-agency-accent/40 shadow-[0_0_40px_rgba(59,130,246,0.5),inset_0_0_20px_rgba(59,130,246,0.1)]"
+                                        style={{
+                                            background: "radial-gradient(circle at 40% 35%, rgba(147,197,253,0.25) 0%, rgba(59,130,246,0.15) 50%, rgba(29,78,216,0.2) 100%)",
+                                        }}
+                                    >
+                                        <Cpu className="w-7 h-7 text-white/90" />
+                                    </div>
                                 </div>
-                                <div className="text-sm sm:text-base font-bold text-white tracking-tight">99.98%</div>
                             </div>
 
-                            <div className="absolute bottom-8 right-4 sm:bottom-12 sm:right-8 glass-panel px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl animate-float animation-delay-500">
-                                <div className="text-[7px] sm:text-[9px] text-agency-accent font-black uppercase tracking-widest opacity-70 mb-0.5">Yield Velocity</div>
-                                <div className="text-sm sm:text-base font-bold text-white tracking-tight">3.4× YoY</div>
+                            {/* ── Floating UI Panels ── */}
+
+                            {/* Top-left: Deploy log */}
+                            <div className="absolute top-6 left-5 sm:top-9 sm:left-8 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 animate-float shadow-xl w-44 sm:w-52">
+                                <div className="flex items-center gap-2 mb-2.5">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-green-400 shadow-[0_0_6px_#4ade80]" />
+                                    <span className="text-[9px] font-bold text-agency-accent uppercase tracking-widest opacity-80">Deploy.Log</span>
+                                </div>
+                                <div className="space-y-1 font-mono text-[9px] sm:text-[10px]">
+                                    <div className="text-gray-500"><span className="text-gray-600">&gt;</span> Init core... <span className="text-green-400">✓ OK</span></div>
+                                    <div className="text-gray-500"><span className="text-gray-600">&gt;</span> Sync nodes... <span className="text-green-400">✓ OK</span></div>
+                                    <div className="text-agency-accent"><span className="text-agency-accent/50">&gt;</span> Scaling...</div>
+                                </div>
                             </div>
 
-                            <div className="absolute top-1/2 -translate-y-1/2 right-3 sm:right-6 glass-panel px-2.5 py-2 sm:px-3.5 sm:py-2.5 rounded-xl animate-float animation-delay-200">
-                                <div className="text-[7px] sm:text-[9px] text-agency-accent font-black uppercase tracking-widest opacity-70 mb-0.5">Entropy</div>
-                                <div className="text-xs sm:text-sm font-bold text-white tracking-tight">0.042%</div>
+                            {/* Bottom-right: Velocity metric */}
+                            <div className="absolute bottom-6 right-5 sm:bottom-9 sm:right-8 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 animate-float animation-delay-500 shadow-xl w-40 sm:w-48">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Velocity</span>
+                                    <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_6px_#22c55e]" />
+                                </div>
+                                <div className="text-2xl sm:text-3xl font-extrabold text-white leading-none tracking-tight mb-2.5">
+                                    3.4<span className="text-base text-agency-accent font-bold">×</span>
+                                </div>
+                                {/* Progress bar */}
+                                <div className="h-1 w-full rounded-full bg-white/[0.08] overflow-hidden">
+                                    <div className="h-full w-[84%] rounded-full bg-gradient-to-r from-blue-600 to-agency-accent relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-white/30 -translate-x-full animate-[marquee-right_2s_linear_infinite]" />
+                                    </div>
+                                </div>
+                                <div className="text-[9px] text-gray-500 mt-1.5 font-medium">YoY Growth Index</div>
+                            </div>
+
+                            {/* Right edge: Uptime tag */}
+                            <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-7 bg-agency-accent/10 backdrop-blur-xl border border-agency-accent/25 rounded-xl px-3 py-2 animate-float animation-delay-200 shadow-lg">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-1 h-4 rounded-full bg-agency-accent animate-pulse" />
+                                    <div>
+                                        <div className="text-[9px] text-agency-accent/70 font-bold uppercase tracking-widest leading-none mb-0.5">SLA</div>
+                                        <div className="text-xs font-extrabold text-white tracking-tight">99.98%</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        {/* External accent glow */}
-                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-agency-accent/10 rounded-full blur-3xl" />
-                        <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-agency-accent/5 rounded-full blur-2xl" />
+                        {/* External ambient glows */}
+                        <div className="absolute -top-12 -right-12 w-48 h-48 bg-agency-accent/10 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-agency-accent/5 rounded-full blur-2xl pointer-events-none" />
                     </div>
+
                 </div>
             </div>
         </section>
