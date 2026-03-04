@@ -11,8 +11,28 @@ export default function TrackingProvider() {
 
     const [hasConsent, setHasConsent] = useState<boolean | null>(null);
 
-    // Load initial consent state
+    // Load initial consent state & intercept UTMs
     useEffect(() => {
+        // Intercept and store UTMs
+        if (searchParams) {
+            const utm_source = searchParams.get("utm_source");
+            const utm_medium = searchParams.get("utm_medium");
+            const utm_campaign = searchParams.get("utm_campaign");
+            const utm_term = searchParams.get("utm_term");
+            const utm_content = searchParams.get("utm_content");
+
+            if (utm_source || utm_medium || utm_campaign) {
+                const utms = {
+                    ...(utm_source && { utm_source }),
+                    ...(utm_medium && { utm_medium }),
+                    ...(utm_campaign && { utm_campaign }),
+                    ...(utm_term && { utm_term }),
+                    ...(utm_content && { utm_content }),
+                };
+                localStorage.setItem("analytics_utms", JSON.stringify(utms));
+            }
+        }
+
         const storedConsent = localStorage.getItem("analytics_consent");
         if (storedConsent === "true") {
             setHasConsent(true);
@@ -22,7 +42,7 @@ export default function TrackingProvider() {
             // Show banner if no consent is recorded
             setHasConsent(null);
         }
-    }, []);
+    }, [searchParams]);
 
     // Track page views on route change if consent is given
     useEffect(() => {
@@ -99,7 +119,7 @@ export default function TrackingProvider() {
                 <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 bg-agency-black/95 backdrop-blur-md border-t border-white/10 shadow-2xl animate-fade-in">
                     <div className="container mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-6">
                         <div className="text-sm text-gray-400">
-                            We use functional and analytical tracking (Google Analytics and Meta Pixel) to improve your experience and measure engagement.
+                            We use tracking technologies to improve your experience and measure engagement.
                             You can review our <a href="/privacy" className="text-agency-accent hover:underline">Privacy Policy</a> to learn more.
                         </div>
                         <div className="flex items-center gap-3 shrink-0">

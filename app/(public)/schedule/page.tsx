@@ -109,7 +109,11 @@ export default function SchedulePage() {
         try {
             const result = await createBookingAction(data);
             if (result.ok) {
-                trackLead();
+                trackLead({
+                    service_name: "Strategic Consultation",
+                    page_category: "Booking",
+                    industry: data.discovery.industry,
+                });
                 setIsSuccess(true);
             } else {
                 setServerError("Failed to submit request. Please try again.");

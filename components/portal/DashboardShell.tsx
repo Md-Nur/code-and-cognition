@@ -7,7 +7,6 @@ import Image from "next/image";
 import { Role } from "@prisma/client";
 import {
     LayoutDashboard,
-    Settings,
     Users,
     FolderKanban,
     FileText,
@@ -22,7 +21,6 @@ import {
     Target,
     Wallet,
     MessageSquare,
-    Mail
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -186,13 +184,6 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                 </nav>
 
                 <div className="mt-6 pt-6 border-t border-white/5 space-y-4">
-                    <div className="px-4 py-3 mx-2 rounded-xl bg-white/[0.02] border border-white/5">
-                        <p className="text-xs text-gray-400 mb-2">Need assistance?</p>
-                        <a href="mailto:support@codencognition.com" className="text-sm font-medium text-white hover:text-agency-accent transition-colors flex items-center gap-2">
-                            <Mail className="w-4 h-4" /> support@codencognition.com
-                        </a>
-                    </div>
-
                     <div className="flex items-center gap-3 px-4 py-2">
                         <div className="w-8 h-8 rounded-full bg-agency-accent/20 flex items-center justify-center text-agency-accent font-bold text-[10px]">
                             {(user?.name || "U").split(" ").map(n => n[0]).join("")}
