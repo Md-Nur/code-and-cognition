@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import HeroSection from "./_components/HeroSection";
 import CorePillars from "./_components/CorePillars";
-import HowWeWork from "./_components/HowWeWork";
 import CaseStudies from "./_components/CaseStudies";
 import Testimonials from "./_components/Testimonials";
 import KnowledgeSection from "./_components/KnowledgeSection";
@@ -33,9 +32,6 @@ export default async function LandingPage() {
 
       {/* Core Capabilities */}
       <CorePillars />
-
-      {/* Process Methodology */}
-      <HowWeWork />
 
       {/* Featured Engagements */}
       <CaseStudies />

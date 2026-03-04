@@ -1,1 +1,1 @@
-Remove login button, message in mobile view nabar.
+When a new insights publish all the subcriber should be emailed.    
