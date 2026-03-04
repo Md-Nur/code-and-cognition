@@ -144,7 +144,8 @@ export default function WalletView() {
                 </div>
 
                 <div className="glass-panel overflow-hidden rounded-2xl border-white/5">
-                    <div className="table-container">
+                    {/* Desktop View Table */}
+                    <div className="hidden md:block table-container">
                         <table className="data-table w-full">
                             <thead>
                                 <tr>
@@ -194,6 +195,47 @@ export default function WalletView() {
                                 )}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* Mobile View List */}
+                    <div className="md:hidden divide-y divide-white/5">
+                        {transactions.length === 0 ? (
+                            <div className="py-12 text-center text-gray-500">
+                                No transactions yet.
+                            </div>
+                        ) : (
+                            transactions.map((tx) => {
+                                const isNegative = (tx.amountBDT || 0) < 0 || (tx.amountUSD || 0) < 0;
+                                return (
+                                    <div key={tx.id} className="p-4 space-y-3 hover:bg-white/5 transition-colors">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex gap-3">
+                                                <div className={`p-2 rounded-full h-fit ${isNegative ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'}`}>
+                                                    {isNegative ? <ArrowUpCircle className="w-4 h-4" /> : <ArrowDownCircle className="w-4 h-4" />}
+                                                </div>
+                                                <div>
+                                                    <div className="font-medium text-white text-sm">{tx.note || (isNegative ? 'Withdrawal' : 'Payment')}</div>
+                                                    {tx.payment?.project && (
+                                                        <div className="text-[10px] text-gray-500 mt-0.5">{tx.payment.project.title}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className={`font-mono text-sm font-bold ${isNegative ? 'text-red-400' : 'text-green-400'}`}>
+                                                    {tx.amountBDT !== null ?
+                                                        `${isNegative ? '-' : '+'} ৳${Math.abs(tx.amountBDT).toLocaleString()}` :
+                                                        `${isNegative ? '-' : '+'} $${Math.abs(tx.amountUSD || 0).toLocaleString()}`
+                                                    }
+                                                </div>
+                                                <div className="text-[10px] text-gray-500 mt-1">
+                                                    <LocalTime date={tx.createdAt} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             </div>

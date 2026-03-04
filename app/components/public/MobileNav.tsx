@@ -76,46 +76,20 @@ export function MobileNav({
                     <div className="mt-auto pt-10 flex flex-col gap-y-4">
                         {user && (
                             <Link
-                                href="/dashboard/messages"
+                                href="/dashboard/profile"
                                 onClick={() => setIsOpen(false)}
-                                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm font-medium text-white/90 transition-colors hover:bg-white/[0.04]"
+                                className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
                             >
-                                Messages
-                                {unreadMessages > 0 && (
-                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-agency-accent text-[10px] font-bold text-white shadow-sm">
-                                        {unreadMessages}
-                                    </span>
-                                )}
+                                Profile
                             </Link>
                         )}
-
-                        <div className="grid grid-cols-2 gap-x-4">
-                            {user ? (
-                                <Link
-                                    href="/dashboard/profile"
-                                    onClick={() => setIsOpen(false)}
-                                    className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
-                                >
-                                    Profile
-                                </Link>
-                            ) : (
-                                <Link
-                                    href="/login"
-                                    onClick={() => setIsOpen(false)}
-                                    className="flex items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors"
-                                >
-                                    Login
-                                </Link>
-                            )}
-
-                            <Link
-                                href="/schedule"
-                                onClick={() => setIsOpen(false)}
-                                className="flex items-center justify-center text-center rounded-xl bg-white text-agency-black px-4 py-3.5 text-sm font-semibold shadow-sm transition-transform active:scale-95 whitespace-nowrap overflow-hidden text-ellipsis"
-                            >
-                                Book Consultation
-                            </Link>
-                        </div>
+                        <Link
+                            href="/schedule"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center justify-center text-center rounded-xl bg-white text-agency-black px-4 py-3.5 text-sm font-semibold shadow-sm transition-transform active:scale-95 whitespace-nowrap overflow-hidden text-ellipsis"
+                        >
+                            Book Consultation
+                        </Link>
                     </div>
                 </div>
             </div>

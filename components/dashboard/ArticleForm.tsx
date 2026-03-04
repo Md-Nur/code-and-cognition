@@ -32,6 +32,12 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
     const router = useRouter();
     const [error, setError] = useState<string | null>(null);
 
+    const toDateTimeLocal = (date: Date | string) => {
+        const d = new Date(date);
+        const offset = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - offset).toISOString().slice(0, 16);
+    };
+
     const form = useForm<ArticleFormValues>({
         resolver: zodResolver(articleSchema) as any,
         defaultValues: {
@@ -42,7 +48,7 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
             content: initialData?.content || "",
             thumbnailUrl: initialData?.thumbnailUrl || "",
             isFeatured: initialData?.isFeatured || false,
-            publishedAt: initialData?.publishedAt ? new Date(initialData.publishedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            publishedAt: toDateTimeLocal(initialData?.publishedAt || new Date()),
         },
     });
 
@@ -170,7 +176,7 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
                             </label>
                             <div className="relative group">
                                 <input
-                                    type="date"
+                                    type="datetime-local"
                                     {...form.register("publishedAt")}
                                     className="input-field px-4"
                                 />
