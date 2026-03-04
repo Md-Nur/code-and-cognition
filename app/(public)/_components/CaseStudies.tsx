@@ -10,7 +10,10 @@ export default async function CaseStudies() {
             status: "PUBLISHED"
         },
         take: 3,
-        orderBy: { createdAt: "desc" },
+        orderBy: [
+            { publishDate: "desc" },
+            { createdAt: "desc" }
+        ],
     });
 
     if (cases.length === 0) return null;

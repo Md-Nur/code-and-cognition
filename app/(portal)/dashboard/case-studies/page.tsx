@@ -7,7 +7,10 @@ import { DeleteCaseStudyButton } from "./_components/DeleteCaseStudyButton";
 
 export default async function CaseStudiesPage() {
     const caseStudies = await prisma.caseStudy.findMany({
-        orderBy: { createdAt: "desc" },
+        orderBy: [
+            { publishDate: "desc" },
+            { createdAt: "desc" }
+        ],
     });
 
     return (

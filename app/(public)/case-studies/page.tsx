@@ -6,7 +6,10 @@ import CaseStudiesListing from "./_components/CaseStudiesListing";
 export async function generateMetadata(): Promise<Metadata> {
     const latestCaseStudy = await prisma.caseStudy.findFirst({
         where: { status: "PUBLISHED" },
-        orderBy: { createdAt: "desc" },
+        orderBy: [
+            { publishDate: "desc" },
+            { createdAt: "desc" }
+        ],
     });
 
     return {
@@ -25,7 +28,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CaseStudiesPage() {
     const caseStudies = await prisma.caseStudy.findMany({
         where: { status: "PUBLISHED" },
-        orderBy: { createdAt: "desc" },
+        orderBy: [
+            { publishDate: "desc" },
+            { createdAt: "desc" }
+        ],
     });
 
     return (
