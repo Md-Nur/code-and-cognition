@@ -107,8 +107,9 @@ export const sendProposal = withProxyValidation(
     });
 
     if (proposal.booking) {
+      const booking = proposal.booking;
       const clientUser = await prisma.user.findUnique({
-        where: { email: proposal.booking.clientEmail },
+        where: { email: booking.clientEmail },
       });
 
       if (clientUser) {
@@ -116,17 +117,17 @@ export const sendProposal = withProxyValidation(
       }
 
       await prisma.booking.update({
-        where: { id: proposal.booking.id },
+        where: { id: booking.id },
         data: { status: "PROPOSAL_SENT" },
       });
 
       (async () => {
         try {
           await sendMail(
-            proposal.booking.clientEmail,
+            booking.clientEmail,
             "Proposal Ready for Review - Code & Cognition",
             proposalEmailHtml(
-              proposal.booking.clientName,
+              booking.clientName,
               `${process.env.NEXT_PUBLIC_APP_URL || "https://www.codencognition.com"}/proposal/view/${proposal.viewToken}`
             )
           );
