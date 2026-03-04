@@ -127,8 +127,12 @@ export function withProxyValidation<T extends (...args: any[]) => Promise<any>>(
 }
 
 export const ApiResponse = {
-  success: (data: any, status: number = 200) =>
-    NextResponse.json(data, { status }),
+  success: (data: any, status: number = 200) => {
+    if (status === 204) {
+      return new NextResponse(null, { status });
+    }
+    return NextResponse.json(data, { status });
+  },
   error: (message: string, status: number = 400) =>
     NextResponse.json({ error: message }, { status }),
   unauthorized: () =>
