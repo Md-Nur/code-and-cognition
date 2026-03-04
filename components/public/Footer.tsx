@@ -58,7 +58,7 @@ export default function Footer() {
                                 <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:bg-agency-accent group-hover:text-white transition-all duration-500">
                                     <Mail className="w-4 h-4" />
                                 </div>
-                                Inquiry
+                                hello@codencognition.com
                             </a>
                             <Link href="/schedule" className="group flex items-center gap-4 text-gray-500 hover:text-white transition-all text-xs font-semibold">
                                 <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:bg-agency-accent group-hover:text-white transition-all duration-500">
