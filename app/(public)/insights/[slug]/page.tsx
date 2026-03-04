@@ -9,6 +9,7 @@ import { calculateReadingTime } from "@/lib/utils/reading-time";
 import { ReadingProgressBar } from "@/components/shared/ReadingProgressBar";
 import { TableOfContents } from "@/components/shared/TableOfContents";
 import Image from "next/image";
+import SimpleNewsletterForm from "../_components/SimpleNewsletterForm";
 
 export async function generateMetadata({
     params,
@@ -177,14 +178,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                         <p className="text-gray-400 mb-10">
                             Join our monthly mailing list for exclusive strategic insights on AI, automation, and enterprise digital operations.
                         </p>
-                        <form className="flex flex-col sm:flex-row gap-4">
-                            <input
-                                type="email"
-                                placeholder="Enter your business email"
-                                className="input-field grow bg-white/5 border-white/10"
-                            />
-                            <button className="btn-brand whitespace-nowrap px-8">Subscribe</button>
-                        </form>
+                        <SimpleNewsletterForm />
                     </div>
                 </div>
             </section>

@@ -353,6 +353,12 @@ model Article {
   updatedAt    DateTime @updatedAt
 }
 
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
 model Invitation {
   id        String   @id @default(cuid())
   email     String   @unique

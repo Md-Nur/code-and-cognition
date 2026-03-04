@@ -1,20 +1,30 @@
 'use client';
 
+import { useState, useTransition } from 'react';
 import { Send, CheckCircle2 } from 'lucide-react';
-import { useState } from 'react';
+import { subscribeToNewsletter } from '@/app/actions/subscribers';
 
 export default function InsightsNewsletter() {
     const [email, setEmail] = useState('');
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [message, setMessage] = useState<{ success?: string; error?: string } | null>(null);
+    const [isPending, startTransition] = useTransition();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (email) {
-            // Simulate submission
-            setIsSubmitted(true);
-            setEmail('');
-            setTimeout(() => setIsSubmitted(false), 5000);
-        }
+        setMessage(null);
+
+        startTransition(async () => {
+            const formData = new FormData();
+            formData.append('email', email);
+            const result = await subscribeToNewsletter(formData);
+
+            if (result.success) {
+                setEmail('');
+                setMessage({ success: result.success });
+            } else {
+                setMessage({ error: result.error });
+            }
+        });
     };
 
     return (
@@ -38,29 +48,37 @@ export default function InsightsNewsletter() {
                             Join a community of digital leaders. Subscribe to receive our curated analysis on automation, technical strategy, and enterprise growth.
                         </p>
 
-                        {isSubmitted ? (
+                        {message?.success ? (
                             <div className="flex flex-col items-center gap-4 animate-fade-in">
                                 <CheckCircle2 className="w-12 h-12 text-agency-accent" />
-                                <p className="text-white font-bold">You're on the list! Welcome aboard.</p>
+                                <p className="text-white font-bold">{message.success}</p>
                             </div>
                         ) : (
-                            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                                <input
-                                    type="email"
-                                    required
-                                    placeholder="Enter your email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-agency-accent/50 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 focus:bg-white/[0.08]"
-                                />
-                                <button
-                                    type="submit"
-                                    className="group relative flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 active:scale-95 transition-all duration-300"
-                                >
-                                    Subscribe
-                                    <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                                </button>
-                            </form>
+                            <div className="max-w-md mx-auto">
+                                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
+                                    <input
+                                        type="email"
+                                        required
+                                        name="email"
+                                        disabled={isPending}
+                                        placeholder="Enter your email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-agency-accent/50 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 focus:bg-white/[0.08] disabled:opacity-50"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={isPending}
+                                        className="group relative flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
+                                    >
+                                        {isPending ? 'Subscribing...' : 'Subscribe'}
+                                        {!isPending && <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />}
+                                    </button>
+                                </form>
+                                {message?.error && (
+                                    <p className="mt-4 text-red-500 text-sm font-medium animate-fade-in">{message.error}</p>
+                                )}
+                            </div>
                         )}
 
                         <p className="mt-8 text-gray-600 text-[10px] uppercase tracking-widest font-medium">

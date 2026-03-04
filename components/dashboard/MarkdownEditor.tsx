@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PremiumMarkdown } from "@/components/shared/PremiumMarkdown";
-import { Bold, Italic, List, ListOrdered, Link, Eye, Code as CodeIcon, Type } from "lucide-react";
+import { List, ListOrdered, Link, Eye, Code as CodeIcon, Type } from "lucide-react";
 
 interface MarkdownEditorProps {
     value: string;
@@ -46,8 +46,6 @@ export function MarkdownEditor({
     };
 
     const formatActions = [
-        { icon: Bold, action: () => insertText("**", "**"), label: "Bold" },
-        { icon: Italic, action: () => insertText("_", "_"), label: "Italic" },
         { icon: List, action: () => insertText("- "), label: "Bullet List" },
         { icon: ListOrdered, action: () => insertText("1. "), label: "Numbered List" },
         { icon: Link, action: () => insertText("[", "](url)"), label: "Link" },
