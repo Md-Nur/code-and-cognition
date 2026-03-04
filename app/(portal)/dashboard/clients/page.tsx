@@ -59,7 +59,7 @@ export default function AdminClientsPage() {
         const res = await fetch(url, {
             method,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form),
+            body: JSON.stringify({ ...form, website: form.website || null }),
         });
         if (res.ok) {
             setIsModalOpen(false);
