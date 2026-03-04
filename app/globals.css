@@ -68,6 +68,22 @@ h6 {
     @apply max-w-7xl mx-auto px-4 xs:px-6 sm:px-8 lg:px-12;
 }
 
+.table-container {
+    @apply w-full overflow-x-auto custom-scrollbar;
+}
+
+.data-table {
+    @apply w-full border-collapse;
+}
+
+.data-table th {
+    @apply text-gray-500 font-semibold text-sm border-b border-white/5;
+}
+
+.data-table td {
+    @apply border-b border-white/5;
+}
+
 .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
