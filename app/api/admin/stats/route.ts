@@ -26,9 +26,9 @@ export const GET = withAuth(async () => {
             prisma.booking.count({
                 where: { status: BookingStatus.NEW }
             }),
-            // Company Fund (Sum of LedgerEntry with type COMPANY_FUND)
+            // Company Fund (Sum of LedgerEntry with type COMPANY_FUND and EXPENSE)
             prisma.ledgerEntry.aggregate({
-                where: { type: SplitType.COMPANY_FUND },
+                where: { type: { in: [SplitType.COMPANY_FUND, SplitType.EXPENSE] } },
                 _sum: {
                     amountBDT: true,
                     amountUSD: true,

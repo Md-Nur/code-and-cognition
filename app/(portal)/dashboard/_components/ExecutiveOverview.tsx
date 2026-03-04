@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { SplitType } from "@prisma/client";
 import { DashboardCard } from "./DashboardCard";
 import {
     DollarSign,
@@ -22,7 +23,7 @@ export async function ExecutiveOverview() {
             _sum: { amountBDT: true, amountUSD: true },
         }),
         prisma.ledgerEntry.aggregate({
-            where: { type: "COMPANY_FUND" },
+            where: { type: { in: [SplitType.COMPANY_FUND, SplitType.EXPENSE] } },
             _sum: { amountBDT: true, amountUSD: true },
         }),
         prisma.project.count({
