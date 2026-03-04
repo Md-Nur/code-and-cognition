@@ -1,7 +1,8 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
-import { Quote, Sparkles, CheckCircle2 } from "lucide-react";
+import { Quote, Sparkles, CheckCircle2, Copy, Check } from "lucide-react";
+import { useState } from "react";
 import remarkGfm from "remark-gfm";
 
 interface PremiumMarkdownProps {
@@ -67,18 +68,50 @@ export function PremiumMarkdown({ content, className = "" }: PremiumMarkdownProp
                             <code className="text-[0.9em] font-mono leading-loose text-gray-300" {...props} />
                         );
                     },
-                    pre: ({ node, ...props }) => (
-                        <div className="my-10 relative group rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
-                            {/* Mac-style window controls */}
-                            <div className="flex items-center gap-2 px-4 py-3 bg-white/[0.02] border-b border-white/5">
-                                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-                                <div className="ml-2 text-xs text-gray-500 font-mono">Code Snippet</div>
+                    pre: ({ node, ...props }) => {
+                        const [copied, setCopied] = useState(false);
+                        const codeString = node?.children?.[0]?.children?.[0]?.value || "";
+
+                        const handleCopy = () => {
+                            if (typeof window !== "undefined" && props.children) {
+                                // Extract text content from children
+                                const text = document.getElementById(`code-${node?.position?.start?.line}`)?.textContent || "";
+                                navigator.clipboard.writeText(text);
+                                setCopied(true);
+                                setTimeout(() => setCopied(false), 2000);
+                            }
+                        };
+
+                        return (
+                            <div className="my-10 relative group rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
+                                {/* Mac-style window controls */}
+                                <div className="flex items-center justify-between px-4 py-3 bg-white/[0.02] border-b border-white/5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                        <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                        <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                                        <div className="ml-2 text-xs text-gray-500 font-mono">Code Snippet</div>
+                                    </div>
+                                    <button
+                                        onClick={(e) => {
+                                            const pre = e.currentTarget.parentElement?.nextElementSibling;
+                                            const code = pre?.querySelector('code');
+                                            if (code) {
+                                                navigator.clipboard.writeText(code.textContent || "");
+                                                setCopied(true);
+                                                setTimeout(() => setCopied(false), 2000);
+                                            }
+                                        }}
+                                        className="text-gray-500 hover:text-white transition-colors p-1"
+                                        title="Copy code"
+                                    >
+                                        {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                                    </button>
+                                </div>
+                                <pre className="p-6 overflow-x-auto custom-scrollbar" {...props} />
                             </div>
-                            <pre className="p-6 overflow-x-auto custom-scrollbar" {...props} />
-                        </div>
-                    ),
+                        );
+                    },
                     ul: ({ node, ...props }) => (
                         <ul className="my-8 space-y-4" {...props} />
                     ),
