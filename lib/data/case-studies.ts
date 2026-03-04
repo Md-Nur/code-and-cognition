@@ -15,6 +15,7 @@ export interface CaseStudy {
     results: string;
     techStack: string[];
     resultStatement: string;
+    projectUrl?: string;
 }
 
 export const caseStudies: CaseStudy[] = [

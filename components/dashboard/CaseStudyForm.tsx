@@ -24,6 +24,7 @@ const caseStudySchema = z.object({
     techStack: z.string().min(1, "Tech stack is required"),
     coverImage: z.string().optional(),
     architectureImage: z.string().optional(),
+    projectUrl: z.string().url().optional().or(z.literal("")),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
     publishDate: z.string().optional(),
     isFeatured: z.boolean().default(false),
@@ -56,6 +57,7 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
             techStack: initialData?.techStack?.join(", ") || "",
             coverImage: initialData?.coverImage || "",
             architectureImage: initialData?.architectureImage || "",
+            projectUrl: initialData?.projectUrl || "",
             status: initialData?.status || "DRAFT",
             publishDate: initialData?.publishDate ? new Date(initialData.publishDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             isFeatured: initialData?.isFeatured || false,
@@ -192,6 +194,24 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                                     placeholder="e.g. Global Tech Solutions"
                                     className="input-field pl-14"
                                 />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
+                                Project URL
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-agency-accent transition-colors">
+                                    <Monitor className="w-4 h-4" />
+                                </div>
+                                <input
+                                    {...form.register("projectUrl")}
+                                    placeholder="e.g. https://project-demo.com"
+                                    className="input-field pl-14"
+                                />
+                                {form.formState.errors.projectUrl && (
+                                    <p className="text-xs text-red-400 mt-2 ml-4">{form.formState.errors.projectUrl.message}</p>
+                                )}
                             </div>
                         </div>
                     </div>

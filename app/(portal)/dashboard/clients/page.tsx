@@ -98,7 +98,7 @@ export default function AdminClientsPage() {
                     <div className="col-span-full text-center py-20 text-gray-500">No clients yet.</div>
                 ) : clients.map((c) => (
                     <div key={c.id} className="glass-panel p-4 rounded-xl border border-white/5 flex flex-col items-center bg-white/[0.02] group relative">
-                        <div className="h-20 w-full flex items-center justify-center mb-2">
+                        <div className="h-24 w-full flex items-center justify-center mb-2">
                             <Image src={c.logoUrl} fill alt={c.name} className="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300" />
                         </div>
                         <div className="text-center">

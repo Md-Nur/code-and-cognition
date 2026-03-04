@@ -18,6 +18,7 @@ const caseStudySchema = z.object({
     techStack: z.array(z.string()).min(1, "At least one tech stack is required"),
     coverImage: z.string().optional(),
     architectureImage: z.string().optional(),
+    projectUrl: z.string().url().optional().or(z.literal("")),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
     publishDate: z.coerce.date().nullable().optional(),
     isFeatured: z.boolean().default(false),

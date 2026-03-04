@@ -70,17 +70,6 @@ export function PremiumMarkdown({ content, className = "" }: PremiumMarkdownProp
                     },
                     pre: ({ node, ...props }) => {
                         const [copied, setCopied] = useState(false);
-                        const codeString = node?.children?.[0]?.children?.[0]?.value || "";
-
-                        const handleCopy = () => {
-                            if (typeof window !== "undefined" && props.children) {
-                                // Extract text content from children
-                                const text = document.getElementById(`code-${node?.position?.start?.line}`)?.textContent || "";
-                                navigator.clipboard.writeText(text);
-                                setCopied(true);
-                                setTimeout(() => setCopied(false), 2000);
-                            }
-                        };
 
                         return (
                             <div className="my-10 relative group rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-[0_8px_30px_rgb(0,0,0,0.5)]">

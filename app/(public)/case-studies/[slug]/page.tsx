@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, MoveRight, Layers, Target, Shield, Cpu, Zap, BarChart3, ChevronRight } from "lucide-react";
+import { ArrowLeft, MoveRight, Layers, Target, Shield, Cpu, Zap, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { PremiumMarkdown } from "@/components/shared/PremiumMarkdown";
 
 export async function generateMetadata({
@@ -92,9 +92,22 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                             {project.title}
                         </h1>
 
-                        <p className="text-xl md:text-2xl text-agency-accent font-medium leading-relaxed max-w-2xl border-l-2 border-agency-accent pl-8">
-                            {project.clientName}
-                        </p>
+                        <div className="flex flex-col md:flex-row md:items-center gap-6 border-l-2 border-agency-accent pl-8">
+                            <p className="text-xl md:text-2xl text-agency-accent font-medium leading-relaxed max-w-2xl">
+                                {project.clientName}
+                            </p>
+                            {project.projectUrl && (
+                                <a
+                                    href={project.projectUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-sm font-bold text-white hover:text-agency-accent transition-colors uppercase tracking-[0.2em] group/link"
+                                >
+                                    Visit Project
+                                    <ExternalLink className="w-4 h-4 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
+                                </a>
+                            )}
+                        </div>
                     </div>
                 </div>
 
