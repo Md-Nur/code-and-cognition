@@ -336,6 +336,14 @@ export default function PublicProposalReview({ proposal }: PublicProposalReviewP
                                 Upon authorization, our core engineering team is mobilized and your secure infrastructure is provisioned within 24 hours.
                             </p>
                         </div>
+
+                        <div className="glass-panel mt-8 p-8 rounded-3xl border border-white/5 bg-white/[0.02] relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-gray-500" />
+                            <p className="text-[10px] text-gray-400 leading-relaxed font-medium">
+                                <span className="text-white font-bold uppercase block mb-2">Technical Support</span>
+                                Facing technical issues or have questions about this proposal? Contact our support team at <a href="mailto:support@codencognition.com" className="text-agency-accent hover:underline">support@codencognition.com</a> for immediate assistance.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

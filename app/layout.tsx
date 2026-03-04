@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import TrackingProvider from "@/components/TrackingProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
+        <TrackingProvider />
         {children}
       </body>
     </html>

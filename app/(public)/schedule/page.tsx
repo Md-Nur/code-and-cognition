@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createBookingAction } from "@/app/actions/bookings";
 import { getUserCountry } from "@/app/actions/geo";
+import { trackLead } from "@/lib/analytics";
 import CalendlyEmbed from "./_components/CalendlyEmbed";
 import { ArrowRight, Building2, CheckCircle2, ChevronRight, Mail, Phone, Target, User } from "lucide-react";
 import Link from "next/link";
@@ -108,6 +109,7 @@ export default function SchedulePage() {
         try {
             const result = await createBookingAction(data);
             if (result.ok) {
+                trackLead();
                 setIsSuccess(true);
             } else {
                 setServerError("Failed to submit request. Please try again.");

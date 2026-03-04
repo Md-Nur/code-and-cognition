@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, MessageSquare, Globe } from "lucide-react";
+import WhatsAppLink from "@/components/shared/WhatsAppLink";
 
 export default function ContactPage() {
     return (
@@ -45,7 +46,7 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-1">WhatsApp</span>
-                                            <a href="https://wa.me/8801603012448" className="text-white font-medium hover:text-agency-accent transition-colors">+880 1603012448</a>
+                                            <WhatsAppLink href="https://wa.me/8801603012448" className="text-white font-medium hover:text-agency-accent transition-colors">+880 1603012448</WhatsAppLink>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-6 group">

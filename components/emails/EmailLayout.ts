@@ -116,7 +116,7 @@ export const withEmailLayout = (title: string, content: string) => `
                 <p>&copy; ${new Date().getFullYear()} Code & Cognition. All rights reserved.</p>
                 <p>
                     <a href="https://www.codencognition.com">Website</a> &bull; 
-                    <a href="mailto:codencognition.bd@gmail.com">Support</a>
+                    <a href="mailto:support@codencognition.com">Support</a>
                 </p>
                 <p style="font-size: 12px; color: #a0aec0; margin-top: 16px;">
                     Empowering businesses with intelligent digital solutions.

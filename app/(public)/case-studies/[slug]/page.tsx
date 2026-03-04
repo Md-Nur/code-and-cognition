@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, MoveRight, Layers, Target, Shield, Cpu, Zap, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { PremiumMarkdown } from "@/components/shared/PremiumMarkdown";
+import CaseStudyTracker from "@/components/case-studies/CaseStudyTracker";
 
 export async function generateMetadata({
     params,
@@ -63,6 +64,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
     return (
         <main className="bg-black min-h-screen pt-32 selection:bg-agency-accent selection:text-white pb-24">
+            <CaseStudyTracker slug={project.slug} />
             {/* Hero Section */}
             <section className="relative h-[80vh] min-h-[600px] flex items-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
