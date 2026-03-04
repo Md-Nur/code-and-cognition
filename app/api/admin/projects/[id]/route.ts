@@ -184,6 +184,15 @@ export async function PATCH(
       for (const user of uniqueUsers) {
         // Notification removed
       }
+
+      // Automation: Add client email to subscribers if completed
+      if (isCompleted && project.booking?.clientEmail) {
+        await prisma.subscriber.upsert({
+          where: { email: project.booking.clientEmail },
+          update: {},
+          create: { email: project.booking.clientEmail },
+        });
+      }
     }
 
     return NextResponse.json(project);
