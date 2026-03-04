@@ -36,18 +36,24 @@ export const PATCH = withAuth(async (req) => {
             // Notification removed
         }
 
-        // 3. Email Automation
-        const service = await prisma.service.findUnique({
-            where: { id: booking.serviceId || "" }
-        });
+        // 3. Email Automation (Non-blocking)
+        (async () => {
+            try {
+                const service = await prisma.service.findUnique({
+                    where: { id: booking.serviceId || "" }
+                });
 
-        const { triggerStatusEmail } = await import("@/lib/automation");
-        await triggerStatusEmail(
-            status,
-            booking.clientEmail,
-            booking.clientName,
-            service?.title || "Requested Service"
-        );
+                const { triggerStatusEmail } = await import("@/lib/automation");
+                await triggerStatusEmail(
+                    status,
+                    booking.clientEmail,
+                    booking.clientName,
+                    service?.title || "Requested Service"
+                );
+            } catch (err) {
+                console.error(`[LEAD_STATUS] Failed to trigger automation email for ${booking.clientEmail}`, err);
+            }
+        })();
 
         return ApiResponse.success(booking);
     } catch (error) {

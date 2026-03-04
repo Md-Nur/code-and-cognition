@@ -76,27 +76,33 @@ export const POST = withAuth(async (req) => {
                         }
                     });
 
-                    // 3. Send Onboarding Email (Token-based Link-only Access)
-                    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com";
-                    const directAccessUrl = `${appUrl}/project/${project.viewToken}`;
+                    // 3. Send Onboarding Email (Token-based Link-only Access) - Non-blocking
+                    (async () => {
+                        try {
+                            const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://codencognition.com";
+                            const directAccessUrl = `${appUrl}/project/${project.viewToken}`;
 
-                    await sendMail(
-                        booking.clientEmail,
-                        "Welcome to Your Project Workspace - Code & Cognition",
-                        `<div style="font-family: sans-serif; padding: 20px; color: #333;">
-                            <h2 style="color: #000;">Welcome, ${booking.clientName}!</h2>
-                            <p>We've set up your project workspace for <strong>${project.title}</strong>.</p>
-                            <p>You can track milestones, view deliverables, and message the team directly through our portal.</p>
-                            
-                            <div style="margin: 30px 0;">
-                                <a href="${directAccessUrl}" style="display: inline-block; padding: 12px 24px; background-color: #E6FF00; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px; margin-right: 10px;">Access Project Dashboard</a>
-                            </div>
+                            await sendMail(
+                                booking.clientEmail,
+                                "Welcome to Your Project Workspace - Code & Cognition",
+                                `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+                                    <h2 style="color: #000;">Welcome, ${booking.clientName}!</h2>
+                                    <p>We've set up your project workspace for <strong>${project.title}</strong>.</p>
+                                    <p>You can track milestones, view deliverables, and message the team directly through our portal.</p>
+                                    
+                                    <div style="margin: 30px 0;">
+                                        <a href="${directAccessUrl}" style="display: inline-block; padding: 12px 24px; background-color: #E6FF00; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px; margin-right: 10px;">Access Project Dashboard</a>
+                                    </div>
 
-                            <p style="font-size: 14px; color: #666;">This link is secure and provides direct access to your workspace. Once opened, your session will stay active for 7 days.</p>
-                            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-                            <p style="font-size: 12px; color: #999;">If you have any questions, simply reply to this email.</p>
-                        </div>`
-                    );
+                                    <p style="font-size: 14px; color: #666;">This link is secure and provides direct access to your workspace. Once opened, your session will stay active for 7 days.</p>
+                                    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                                    <p style="font-size: 12px; color: #999;">If you have any questions, simply reply to this email.</p>
+                                </div>`
+                            );
+                        } catch (err) {
+                            console.error(`[ONBOARDING] Failed to send email to ${booking.clientEmail}`, err);
+                        }
+                    })();
 
                     // Log the event
                     await prisma.activityLog.create({

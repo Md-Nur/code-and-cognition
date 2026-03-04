@@ -30,3 +30,23 @@ export async function createNotification({
         return null;
     }
 }
+
+export async function createNotificationsBatch(notifications: {
+    userId: string;
+    title: string;
+    message: string;
+    type: NotificationType;
+    link?: string;
+}[]) {
+    if (notifications.length === 0) return [];
+
+    try {
+        const result = await prisma.notification.createMany({
+            data: notifications,
+        });
+        return result;
+    } catch (error) {
+        console.error("Error creating notifications batch:", error);
+        return null;
+    }
+}

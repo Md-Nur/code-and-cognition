@@ -66,8 +66,8 @@ export async function createBookingAction(
     where: { role: "FOUNDER" },
   });
 
-  // 1. In-App Notifications
-  await Promise.all(
+  // 1. In-App Notifications (Non-blocking)
+  Promise.all(
     founders.map((founder) =>
       createNotification({
         userId: founder.id,
@@ -77,39 +77,41 @@ export async function createBookingAction(
         link: `/dashboard/leads`,
       }),
     ),
-  );
+  ).catch(err => console.error("Notification trigger error:", err));
 
   // 2. Email Delivery (Non-blocking)
-  try {
-    // Send Confirmation to Client
-    await sendMail(
-      clientEmail,
-      "Consultation Request Received - Code & Cognition",
-      clientConfirmationEmailHtml(clientName)
-    );
-
-    // Send Notification to Founders
-    const founderEmails = founders.map(f => f.email).join(",");
-    const notificationTo = process.env.FOUNDER_EMAIL || founderEmails || "codencognition.bd@gmail.com";
-
-    await sendMail(
-      notificationTo,
-      `New Lead: ${discovery?.companyName || clientName}`,
-      founderNotificationEmailHtml(
-        clientName,
+  // Send emails without awaiting to return response faster
+  (async () => {
+    try {
+      // Send Confirmation to Client
+      await sendMail(
         clientEmail,
-        discovery?.companyName || "N/A",
-        discovery?.industry || "N/A",
-        discovery?.revenueRange || "N/A",
-        discovery?.budgetRange || "N/A",
-        discovery?.timeline || "N/A",
-        discovery?.problemStatement || "N/A"
-      )
-    );
-  } catch (error) {
-    alert("Failed to send SMTP emails");
-    // We don't fail the booking if emails fail
-  }
+        "Consultation Request Received - Code & Cognition",
+        clientConfirmationEmailHtml(clientName)
+      );
+
+      // Send Notification to Founders
+      const founderEmails = founders.map(f => f.email).join(",");
+      const notificationTo = process.env.FOUNDER_EMAIL || founderEmails || "codencognition.bd@gmail.com";
+
+      await sendMail(
+        notificationTo,
+        `New Lead: ${discovery?.companyName || clientName}`,
+        founderNotificationEmailHtml(
+          clientName,
+          clientEmail,
+          discovery?.companyName || "N/A",
+          discovery?.industry || "N/A",
+          discovery?.revenueRange || "N/A",
+          discovery?.budgetRange || "N/A",
+          discovery?.timeline || "N/A",
+          discovery?.problemStatement || "N/A"
+        )
+      );
+    } catch (error) {
+      console.error("Delayed email delivery failed:", error);
+    }
+  })();
 
   return { ok: true, booking } as const;
 }

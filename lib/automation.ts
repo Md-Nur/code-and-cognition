@@ -22,12 +22,21 @@ export async function triggerNewInsightEmail(
         const subject = `New Insight: ${title}`;
         const html = newInsightEmailHtml(title, excerpt, slug);
 
-        // Send emails in batches or concurrently
-        const emailPromises = subscribers.map(sub =>
-            sendMail(sub.email, subject, html)
-        );
+        // Send emails in batches to avoid overwhelming the SMTP server
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
+            const batch = subscribers.slice(i, i + BATCH_SIZE);
+            const emailPromises = batch.map(sub =>
+                sendMail(sub.email, subject, html)
+            );
+            await Promise.all(emailPromises);
 
-        await Promise.all(emailPromises);
+            // Subtle delay between batches if list is large
+            if (subscribers.length > BATCH_SIZE && i + BATCH_SIZE < subscribers.length) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+
         console.log(`[AUTOMATION] New insight notification sent to ${subscribers.length} subscribers.`);
     } catch (error) {
         console.error("[AUTOMATION] Failed to send new insight notifications:", error);
