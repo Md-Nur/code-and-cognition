@@ -5,9 +5,36 @@ export default function HeroSection() {
     return (
         <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-black">
             {/* Architectural Ambience */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-agency-accent/5 rounded-full blur-[140px]" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-white/[0.02] rounded-full blur-[120px]" />
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {/* Core glows for depth */}
+                <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-agency-accent/10 rounded-full blur-[140px] opacity-70" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-white/[0.02] rounded-full blur-[120px] opacity-50" />
+
+                {/* High-tech Blueprint Grid */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_80%)]" />
+
+                {/* Sub-grid for precision feel */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:16px_16px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_80%)]" />
+
+                {/* Vertical Structural Beams */}
+                <div className="absolute top-0 left-[15%] w-[1px] h-full bg-linear-to-b from-transparent via-agency-accent/20 to-transparent" />
+                <div className="absolute top-0 left-[25%] w-[1px] h-full bg-linear-to-b from-transparent via-white/10 to-transparent" />
+                <div className="absolute top-0 right-[25%] w-[1px] h-full bg-linear-to-b from-transparent via-agency-accent/10 to-transparent" />
+                <div className="absolute top-0 right-[10%] w-[1px] h-full bg-linear-to-b from-transparent via-white/5 to-transparent" />
+
+                {/* Diffused geometric light rays */}
+                <div className="absolute top-[-10%] left-[20%] w-[800px] h-[120%] bg-linear-to-b from-transparent via-agency-accent/5 to-transparent rotate-[-45deg] blur-3xl opacity-50" />
+                <div className="absolute top-[-10%] right-[20%] w-[600px] h-[120%] bg-linear-to-b from-transparent via-white/5 to-transparent rotate-[45deg] blur-2xl opacity-30" />
+
+                {/* Floating Data Nodes (Data ambience) */}
+                <div className="absolute top-[30%] left-[15%] w-1.5 h-1.5 bg-agency-accent rounded-full shadow-[0_0_10px_#3b82f6] animate-pulse" />
+                <div className="absolute top-[60%] left-[25%] w-1 h-1 bg-white rounded-full shadow-[0_0_5px_#fff] animate-pulse animation-delay-500" />
+                <div className="absolute top-[20%] right-[30%] w-2 h-2 bg-agency-accent/80 rounded-full shadow-[0_0_8px_#3b82f6] animate-pulse animation-delay-200" />
+                <div className="absolute bottom-[20%] right-[15%] w-1 h-1 bg-white/60 rounded-full shadow-[0_0_5px_#fff] animate-pulse animation-delay-700" />
+
+                {/* Ambient structural indicators */}
+                <div className="absolute top-[20%] left-[8%] font-mono text-[10px] sm:text-xs text-zinc-500/30 tracking-[0.3em] rotate-[-90deg]">SYS.CORE.01</div>
+                <div className="absolute bottom-[30%] right-[5%] font-mono text-[10px] sm:text-xs text-agency-accent/30 tracking-[0.3em] rotate-[90deg]">EXEC.ENGINE.V4</div>
             </div>
 
             <div className="section-container relative z-10">
