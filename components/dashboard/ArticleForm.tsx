@@ -18,6 +18,7 @@ const articleSchema = z.object({
     content: z.string().min(1, "Content is required"),
     thumbnailUrl: z.string().optional(),
     isFeatured: z.boolean().default(false),
+    publishedAt: z.string().optional(),
 });
 
 type ArticleFormValues = z.infer<typeof articleSchema>;
@@ -41,6 +42,7 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
             content: initialData?.content || "",
             thumbnailUrl: initialData?.thumbnailUrl || "",
             isFeatured: initialData?.isFeatured || false,
+            publishedAt: initialData?.publishedAt ? new Date(initialData.publishedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         },
     });
 
@@ -57,11 +59,16 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
     async function onSubmit(data: ArticleFormValues) {
         setError(null);
         try {
+            const payload = {
+                ...data,
+                publishedAt: data.publishedAt ? new Date(data.publishedAt) : new Date(),
+            };
+
             if (isEditing && initialData?.id) {
-                const res = await updateArticle(initialData.id, data);
+                const res = await updateArticle(initialData.id, payload);
                 if (!res.success) throw new Error(res.error);
             } else {
-                const res = await createArticle(data);
+                const res = await createArticle(payload);
                 if (!res.success) throw new Error(res.error);
             }
             router.push("/dashboard/insights");
@@ -155,6 +162,19 @@ export function ArticleForm({ initialData, isEditing }: ArticleFormProps) {
                                 label="Thumbnail Image Requirements"
                                 description="Upload a high-quality cover image for the insight. Recommended aspect ratio is 16:9."
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-4">
+                                Published Date
+                            </label>
+                            <div className="relative group">
+                                <input
+                                    type="date"
+                                    {...form.register("publishedAt")}
+                                    className="input-field px-4"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

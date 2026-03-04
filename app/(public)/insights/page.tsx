@@ -5,7 +5,29 @@ import Image from "next/image";
 import ArticleGrid from "./_components/ArticleGrid";
 import InsightsNewsletter from "./_components/InsightsNewsletter";
 
+import { Metadata } from "next";
+
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata(): Promise<Metadata> {
+    const articles = await prisma.article.findMany({
+        orderBy: { publishedAt: "desc" },
+    });
+
+    const featuredArticle = articles.find(a => a.isFeatured) || articles[0];
+
+    return {
+        title: "Insights | Code & Cognition",
+        description: "Deep dives into technical excellence, enterprise automation, and the future of digital-first business operations.",
+        openGraph: {
+            images: featuredArticle?.thumbnailUrl ? [featuredArticle.thumbnailUrl] : [],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: featuredArticle?.thumbnailUrl ? [featuredArticle.thumbnailUrl] : [],
+        },
+    };
+}
 
 export default async function InsightsPage() {
     const articles = await prisma.article.findMany({

@@ -34,6 +34,12 @@ export async function generateMetadata({
             description: article.excerpt || undefined,
             images: article.thumbnailUrl ? [article.thumbnailUrl] : [],
         },
+        twitter: {
+            card: "summary_large_image",
+            title: article.title,
+            description: article.excerpt || undefined,
+            images: article.thumbnailUrl ? [article.thumbnailUrl] : [],
+        },
     };
 }
 
