@@ -39,7 +39,7 @@ export async function generateMetadata({
             card: "summary_large_image",
             title: article.title,
             description: article.excerpt || undefined,
-            images: article.thumbnailUrl ? [article.thumbnailUrl] : [],
+            images: article.thumbnailUrl ? [article.thumbnailUrl] : ["/og-image.png"],
         },
     };
 }
