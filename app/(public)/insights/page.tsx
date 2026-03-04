@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { MoveRight, Clock, User } from "lucide-react";
+import { MoveRight, Clock, Sparkles } from "lucide-react";
 import Image from "next/image";
+import ArticleGrid from "./_components/ArticleGrid";
+import InsightsNewsletter from "./_components/InsightsNewsletter";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,22 +13,33 @@ export default async function InsightsPage() {
     });
 
     const featuredArticle = articles.find(a => a.isFeatured) || articles[0];
-    const regularArticles = articles.filter(a => a.id !== featuredArticle?.id);
+    const regularArticles = articles; // Pass all to ArticleGrid for better filtering
+
+    const calculateReadTime = (content: string) => {
+        const wordsPerMinute = 200;
+        const words = content.split(/\s+/).length;
+        return Math.ceil(words / wordsPerMinute);
+    };
 
     return (
         <main className="bg-agency-black min-h-screen pb-32 selection:bg-agency-accent selection:text-white">
             {/* Header Section */}
-            <section className="pt-40 pb-20 border-b border-white/5 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-agency-accent/5 rounded-full blur-[120px] opacity-20" />
+            <section className="pt-40 pb-20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-agency-accent/10 rounded-full blur-[120px] opacity-20 animate-pulse" />
+                <div className="absolute -bottom-20 -left-20 w-[30%] h-[30%] bg-agency-accent/5 rounded-full blur-[100px] opacity-10" />
+
                 <div className="section-container relative z-10">
-                    <div className="max-w-3xl">
-                        <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">
-                            Knowledge & Perspectives
-                        </span>
-                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-tight">
-                            Strategic Intelligence <br /> for Digital Leaders
+                    <div className="max-w-4xl">
+                        <div className="flex items-center gap-3 mb-6 animate-slide-up">
+                            <span className="w-8 h-px bg-agency-accent" />
+                            <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] block">
+                                Knowledge & Perspectives
+                            </span>
+                        </div>
+                        <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white mb-8 leading-[0.9] animate-slide-up animation-delay-100">
+                            Strategic <br /> Intelligence <span className="text-white/20 italic">for</span> <br /> Digital Leaders
                         </h1>
-                        <p className="text-gray-400 text-xl leading-relaxed">
+                        <p className="text-gray-400 text-xl md:text-2xl leading-relaxed max-w-2xl animate-slide-up animation-delay-200">
                             Deep dives into technical excellence, enterprise automation, and the future of digital-first business operations.
                         </p>
                     </div>
@@ -35,31 +48,37 @@ export default async function InsightsPage() {
 
             {/* Featured Article */}
             {featuredArticle && (
-                <section className="py-20">
+                <section className="py-20 relative">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-agency-accent/5 blur-[150px] pointer-events-none rounded-full opacity-30" />
                     <div className="section-container">
                         <Link
                             href={`/insights/${featuredArticle.slug}`}
-                            className="group block relative overflow-hidden rounded-[40px] border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-700"
+                            className="group block relative overflow-hidden rounded-[40px] border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-700 glass-panel"
                         >
                             <div className="grid grid-cols-1 lg:grid-cols-2">
-                                <div className="p-12 md:p-16 flex flex-col justify-center">
+                                <div className="p-10 md:p-16 flex flex-col justify-center">
                                     <div className="flex items-center gap-4 mb-8">
-                                        <span className="px-4 py-1 rounded-full bg-agency-accent/10 text-agency-accent text-[10px] font-bold uppercase tracking-widest">
+                                        <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-agency-accent/10 text-agency-accent text-[10px] font-bold uppercase tracking-widest border border-agency-accent/20">
+                                            <Sparkles className="w-3 h-3" />
                                             Featured Insight
                                         </span>
                                         <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                                             <Clock className="w-3 h-3" />
+                                            {calculateReadTime(featuredArticle.content)} min read
+                                        </span>
+                                        <span className="w-1 h-1 bg-white/20 rounded-full" />
+                                        <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">
                                             {featuredArticle.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </span>
                                     </div>
-                                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 group-hover:text-agency-accent transition-colors leading-tight">
+                                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 group-hover:text-agency-accent transition-colors leading-tight tracking-tight">
                                         {featuredArticle.title}
                                     </h2>
-                                    <p className="text-gray-400 text-lg leading-relaxed mb-12 line-clamp-3">
+                                    <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-12 line-clamp-3 font-medium">
                                         {featuredArticle.excerpt || "Strategic perspectives on architecting digital success through technical leadership and operational excellence."}
                                     </p>
-                                    <div className="flex items-center gap-3 text-white/40 group-hover:text-white transition-colors text-xs font-bold uppercase tracking-widest">
-                                        Read Full Analysis <MoveRight className="w-4 h-4" />
+                                    <div className="flex items-center gap-3 text-white/40 group-hover:text-white transition-all text-xs font-bold uppercase tracking-[0.2em]">
+                                        Explore Full Analysis <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
                                     </div>
                                 </div>
                                 <div className="relative aspect-square lg:aspect-auto min-h-[400px] overflow-hidden">
@@ -75,6 +94,7 @@ export default async function InsightsPage() {
                                             <span className="text-white/5 font-bold uppercase tracking-[1em] text-4xl -rotate-12">Cognition</span>
                                         </div>
                                     )}
+                                    <div className="absolute inset-0 bg-linear-to-r from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                 </div>
                             </div>
                         </Link>
@@ -82,47 +102,19 @@ export default async function InsightsPage() {
                 </section>
             )}
 
-            {/* Article Grid */}
-            <section className="py-20 border-t border-white/5">
+            {/* Content Explorer Section */}
+            <section className="py-24 border-t border-white/5">
                 <div className="section-container">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                        {regularArticles.length > 0 ? regularArticles.map((article) => (
-                            <Link key={article.id} href={`/insights/${article.slug}`} className="group block">
-                                <div className="mb-8 overflow-hidden rounded-3xl aspect-[16/9] bg-white/5 border border-white/10 relative">
-                                    {article.thumbnailUrl ? (
-                                        <Image
-                                            src={article.thumbnailUrl}
-                                            alt={article.title}
-                                            fill
-                                            className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center">
-                                            <span className="text-white/5 font-bold uppercase tracking-[0.5em] text-xs">Insight</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <span className="text-agency-accent font-bold uppercase tracking-widest text-[10px] mb-4 block">
-                                    {article.category}
-                                </span>
-                                <h3 className="text-2xl font-bold text-white mb-6 leading-snug group-hover:text-agency-accent transition-colors">
-                                    {article.title}
-                                </h3>
-                                <div className="flex items-center justify-between text-gray-500 font-bold text-[10px] uppercase tracking-widest">
-                                    <span>{article.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                                    <span className="flex items-center gap-2 group-hover:text-white transition-colors">
-                                        Details <MoveRight className="w-4 h-4" />
-                                    </span>
-                                </div>
-                            </Link>
-                        )) : (
-                            <div className="lg:col-span-3 text-center py-20 border-2 border-dashed border-white/5 rounded-[40px]">
-                                <p className="text-gray-500">No additional insights available yet. Check back soon for new analysis.</p>
-                            </div>
-                        )}
+                    <div className="mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Latest Insights</h2>
+                        <p className="text-gray-500">Explore our knowledge base by category or search for specific topics.</p>
                     </div>
+
+                    <ArticleGrid initialArticles={regularArticles} />
                 </div>
             </section>
+
+            <InsightsNewsletter />
         </main>
     );
 }
