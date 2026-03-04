@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { MoveRight, Clock, Search } from "lucide-react";
 import Image from "next/image";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import CategoryFilter from "./CategoryFilter";
 
 interface Article {
@@ -44,9 +44,9 @@ export default function ArticleGrid({ initialArticles }: ArticleGridProps) {
         return Math.ceil(words / wordsPerMinute);
     };
 
-    const onFilterChange = (category: string, search: string) => {
+    const onFilterChange = useCallback((category: string, search: string) => {
         setFilter({ category, search });
-    };
+    }, []);
 
     return (
         <>
