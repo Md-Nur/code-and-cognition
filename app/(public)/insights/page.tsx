@@ -99,9 +99,9 @@ export default async function InsightsPage() {
                                     <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-12 line-clamp-3 font-medium">
                                         {featuredArticle.excerpt || "Strategic perspectives on architecting digital success through technical leadership and operational excellence."}
                                     </p>
-                                    <div className="flex items-center gap-3 text-white/40 group-hover:text-white transition-all text-xs font-bold uppercase tracking-[0.2em]">
+                                    <Link href={`/insights/${featuredArticle.slug}`} className="flex items-center gap-3 text-white/40 group-hover:text-white transition-all text-xs font-bold uppercase tracking-[0.2em]">
                                         Explore Full Analysis <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
-                                    </div>
+                                    </Link>
                                 </div>
                                 <div className="relative aspect-square lg:aspect-auto min-h-[400px] overflow-hidden">
                                     {featuredArticle.thumbnailUrl ? (

@@ -97,9 +97,9 @@ export default function ArticleGrid({ initialArticles }: ArticleGridProps) {
                                 {article.excerpt || "Exploring technical excellence and strategic digital transformation."}
                             </p>
 
-                            <div className="flex items-center gap-2 text-white/40 group-hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest pt-4 border-t border-white/5">
+                            <Link href={`/insights/${article.slug}`} className="flex items-center gap-2 text-white/40 group-hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest pt-4 border-t border-white/5">
                                 Full Analysis <MoveRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-                            </div>
+                            </Link>
                         </div>
                     </Link>
                 )) : (
