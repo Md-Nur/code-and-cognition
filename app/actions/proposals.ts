@@ -8,7 +8,7 @@ import { auth } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
 import { withProxyValidation } from "@/lib/api-handler";
 import { sendMail } from "@/lib/mailer";
-import { proposalEmailHtml } from "@/app/components/emails/ConsultationEmails";
+import { proposalEmailHtml } from "@/components/emails/ConsultationEmails";
 import { createNotification } from "@/lib/notifications";
 
 const proposalCreateSchema = z.object({

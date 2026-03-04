@@ -8,7 +8,7 @@ import * as z from "zod";
 import { Loader2, ArrowLeft, Hash, Monitor, Shield, Trophy, Image, Layers, AtSign, LayoutGrid } from "lucide-react";
 import { createCaseStudy, updateCaseStudy } from "@/app/actions/casestudy";
 import { MarkdownEditor } from "./MarkdownEditor";
-import ImageUpload from "@/app/components/admin/ImageUpload";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 const caseStudySchema = z.object({
     title: z.string().min(1, "Title is required"),

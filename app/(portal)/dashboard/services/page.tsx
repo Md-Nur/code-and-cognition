@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Service } from "@prisma/client";
-import ImageUpload from "@/app/components/admin/ImageUpload";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 const emptySubForm = {
     title: "",

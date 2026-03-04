@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Booking, Service } from "@prisma/client";
 import Link from "next/link";
-import LocalTime from "@/app/components/shared/LocalTime";
+import LocalTime from "@/components/shared/LocalTime";
 
 type BookingWithRelations = Booking & { service: Service | null; project: { id: string } | null; discovery: any };
 

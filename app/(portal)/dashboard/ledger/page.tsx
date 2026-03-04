@@ -7,7 +7,7 @@ import {
     PlusCircle, ArrowUpRight, ArrowDownRight,
     Clock, Check, XCircle, Building2, Users, Filter, Calendar
 } from "lucide-react";
-import LocalTime from "@/app/components/shared/LocalTime";
+import LocalTime from "@/components/shared/LocalTime";
 
 
 type LedgerData = {

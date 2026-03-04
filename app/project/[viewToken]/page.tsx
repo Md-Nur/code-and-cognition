@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import ProgressBar from "./_components/ProgressBar";
-import LocalTime from "@/app/components/shared/LocalTime";
+import LocalTime from "@/components/shared/LocalTime";
 import DownloadBriefButton from "./DownloadBriefButton";
 import ClientChangeRequestsPanel from "./_components/ClientChangeRequestsPanel";
-import NextActionPanel from "@/app/components/shared/NextActionPanel";
+import NextActionPanel from "@/components/shared/NextActionPanel";
 
 export default async function ClientPortalPage(props: {
     params: Promise<{ viewToken: string }>;

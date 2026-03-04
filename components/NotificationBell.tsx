@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import LocalTime from "@/app/components/shared/LocalTime";
+import LocalTime from "@/components/shared/LocalTime";
 
 interface Notification {
     id: string;

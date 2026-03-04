@@ -26,7 +26,7 @@ import {
 
 import dynamic from "next/dynamic";
 
-const NotificationBell = dynamic(() => import("@/app/components/NotificationBell"), { ssr: false });
+const NotificationBell = dynamic(() => import("@/components/NotificationBell"), { ssr: false });
 
 interface DashboardShellProps {
     children: React.ReactNode;

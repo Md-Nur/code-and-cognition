@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Download } from "lucide-react";
-import { ProposalPDF } from "@/app/components/pdf/ProposalPDF";
+import { ProposalPDF } from "@/components/pdf/ProposalPDF";
 
 // Dynamically import PDFDownloadLink to avoid SSR issues
 const PDFDownloadLink = dynamic(

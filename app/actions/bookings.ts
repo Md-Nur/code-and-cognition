@@ -38,7 +38,7 @@ const bookingActionSchema = z.object({
 });
 
 import { sendMail } from "@/lib/mailer";
-import { clientConfirmationEmailHtml, founderNotificationEmailHtml } from "@/app/components/emails/ConsultationEmails";
+import { clientConfirmationEmailHtml, founderNotificationEmailHtml } from "@/components/emails/ConsultationEmails";
 
 export async function createBookingAction(
   input: z.infer<typeof bookingActionSchema>,

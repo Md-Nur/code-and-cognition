@@ -13,7 +13,7 @@ import {
     Send,
     RefreshCw,
 } from "lucide-react";
-import LocalTime from "@/app/components/shared/LocalTime";
+import LocalTime from "@/components/shared/LocalTime";
 
 type WalletData = {
     balance: { totalBDT: number; totalUSD: number };

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CircleDollarSign, Wallet, ArrowDownCircle, ArrowUpCircle, History, Landmark, X, CheckCircle2 } from "lucide-react";
-import LocalTime from "@/app/components/shared/LocalTime";
+import LocalTime from "@/components/shared/LocalTime";
 
 type Transaction = {
     id: string;

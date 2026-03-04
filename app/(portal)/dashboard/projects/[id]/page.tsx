@@ -4,18 +4,15 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Role } from "@prisma/client";
 import { format } from "date-fns";
-import {
-    ArrowLeft, CheckCircle2, Clock, AlertCircle, Activity,
-    Layers, Calendar, FileText
-} from "lucide-react";
-import NextActionPanel from "@/app/components/shared/NextActionPanel";
+import { ArrowLeft, AlertCircle, Activity, Layers, Calendar, Clock, CheckCircle2 } from "lucide-react";
 import ProjectAdminActions from "./_components/ProjectAdminActions";
 import RevenueSplitsControl from "./_components/RevenueSplitsControl";
 import EditableMilestones from "./_components/EditableMilestones";
 import ChangeRequestsPanel from "./_components/ChangeRequestsPanel";
 import EditableProjectTitle from "./_components/EditableProjectTitle";
-import LocalTime from "@/app/components/shared/LocalTime";
 import DownloadBriefButton from "@/app/project/[viewToken]/DownloadBriefButton";
+import NextActionPanel from "@/components/shared/NextActionPanel"
+import LocalTime from "@/components/shared/LocalTime"
 
 const healthConfig: Record<string, { bg: string; text: string; icon: any; label: string }> = {
     GREEN: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: CheckCircle2, label: "On Track" },

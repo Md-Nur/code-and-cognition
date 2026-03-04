@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ImageUpload from "@/app/components/admin/ImageUpload";
+import ImageUpload from "@/components/admin/ImageUpload";
 import { Testimonial } from "@prisma/client";
 import Image from "next/image";
 

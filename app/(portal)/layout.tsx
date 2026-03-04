@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import DashboardShell from "@/app/components/portal/DashboardShell";
+import DashboardShell from "@/components/portal/DashboardShell";
 
 export default async function PortalLayout({
     children,

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ChangeRequest, CRStatus } from "@prisma/client";
-import LocalTime from "@/app/components/shared/LocalTime";
+import LocalTime from "@/components/shared/LocalTime";
 
 type CRWithUser = ChangeRequest & {
   requestedBy: { name: string; role: string };

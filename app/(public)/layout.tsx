@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Navbar from "@/app/components/public/Navbar";
-import Footer from "@/app/components/public/Footer";
+import Navbar from "@/components/public/Navbar";
+import Footer from "@/components/public/Footer";
 import { auth } from "@/lib/auth";
 
 export default async function PublicLayout({

@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import NotificationBell from "@/app/components/NotificationBell";
+import NotificationBell from "@/components/NotificationBell";
 import { NavLink } from "./NavLink";
 
 import { MobileNav } from "./MobileNav";

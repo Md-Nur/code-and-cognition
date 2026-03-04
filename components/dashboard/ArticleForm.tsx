@@ -8,7 +8,7 @@ import * as z from "zod";
 import { Loader2, ArrowLeft, Hash, Monitor, Image, Layers, LayoutGrid } from "lucide-react";
 import { createArticle, updateArticle } from "@/app/actions/articles";
 import { MarkdownEditor } from "./MarkdownEditor";
-import ImageUpload from "@/app/components/admin/ImageUpload";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 const articleSchema = z.object({
     title: z.string().min(1, "Title is required"),

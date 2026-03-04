@@ -3,7 +3,7 @@ import {
     qualifiedLeadEmailHtml,
     proposalSentEmailHtml,
     closedWonEmailHtml
-} from "@/app/components/emails/AutomatedEmails";
+} from "@/components/emails/AutomatedEmails";
 
 export async function triggerStatusEmail(
     status: string,
