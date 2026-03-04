@@ -50,4 +50,23 @@ export const closedWonEmailHtml = (clientName: string, serviceTitle: string) => 
         <p>We're looking forward to building something extraordinary together.</p>
     `;
     return withEmailLayout("Welcome to Code & Cognition", content);
+
+};
+
+export const newInsightEmailHtml = (title: string, excerpt: string, slug: string) => {
+    const content = `
+        <p>Hello there,</p>
+        <p>We've just published a new insight: <strong>${title}</strong>.</p>
+        
+        <div class="highlight-box">
+            ${excerpt || "Dive into our latest thought leadership piece on digital solutions and strategy."}
+        </div>
+
+        <div style="text-align: center;">
+            <a href="https://www.codencognition.com/insights/${slug}" class="button">Read the Full Article</a>
+        </div>
+
+        <p>Stay ahead of the curve with our latest updates and strategic insights.</p>
+    `;
+    return withEmailLayout("New Insight Published", content);
 };

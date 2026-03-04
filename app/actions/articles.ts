@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { triggerNewInsightEmail } from "@/lib/automation";
 
 const articleSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -33,6 +34,14 @@ export async function createArticle(data: ArticleInput) {
         const article = await prisma.article.create({
             data: validatedData,
         });
+
+        // Trigger email notification to subscribers
+        // We don't await this to avoid blocking the UI response
+        triggerNewInsightEmail(
+            article.title,
+            article.excerpt || "",
+            article.slug
+        ).catch(err => console.error("Email trigger error:", err));
 
         revalidatePath("/dashboard/insights");
         revalidatePath("/insights");
