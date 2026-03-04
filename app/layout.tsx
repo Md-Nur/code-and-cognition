@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import TrackingProvider from "@/components/TrackingProvider";
 import "./globals.css";
 
@@ -41,7 +42,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
-        <TrackingProvider />
+        <Suspense fallback={null}>
+          <TrackingProvider />
+        </Suspense>
         {children}
       </body>
     </html>
