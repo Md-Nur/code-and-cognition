@@ -105,7 +105,7 @@ export default function AdminClientsPage() {
                             <div className="text-xs font-bold truncate max-w-full">{c.name}</div>
                             {c.website && <div className="text-[10px] text-gray-500 truncate">{new URL(c.website).hostname}</div>}
                         </div>
-                        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute top-2 right-2 flex gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <button onClick={() => { setEditingClient(c); setIsModalOpen(true); }} className="p-1 bg-white/10 rounded hover:bg-white/20 text-gray-300">
                                 ✎
                             </button>
@@ -135,7 +135,7 @@ export default function AdminClientsPage() {
                                 </div>
                                 <ImageUpload
                                     label="Client Logo"
-                                    
+
                                     value={form.logoUrl}
                                     onChange={(url) => setForm({ ...form, logoUrl: url })}
                                     description="Prefer PNG with transparent background."

@@ -134,7 +134,7 @@ export default function EditableMilestones({ projectId, initialMilestones, userR
                         </div>
 
                         {canEdit && (
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 shrink-0">
+                            <div className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center gap-2 shrink-0">
                                 <button
                                     onClick={() => { setEditingId(milestone.id); setEditTitle(milestone.title); setEditDesc(milestone.description || ""); }}
                                     className="p-1.5 text-gray-500 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
