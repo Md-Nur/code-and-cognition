@@ -248,11 +248,11 @@ model LedgerEntry {
   note         String?
   withdrawalId String?
   expenseId    String?
+  expense      Expense?    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
   payment      Payment?    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   project      Project?    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user         User?       @relation(fields: [userId], references: [id])
   withdrawal   Withdrawal? @relation(fields: [withdrawalId], references: [id])
-  expense      Expense?    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }
 
 model Withdrawal {
@@ -454,10 +454,10 @@ model CaseStudy {
   industry          String
   clientName        String?
   summary           String
-  challenge         String          @db.Text
-  approach          String          @db.Text
-  solution          String          @db.Text
-  results           String          @db.Text
+  challenge         String
+  approach          String
+  solution          String
+  results           String
   highlightMetric   String?
   techStack         String[]
   coverImage        String?
@@ -467,9 +467,9 @@ model CaseStudy {
   isFeatured        Boolean         @default(false)
   seoTitle          String?
   seoDescription    String?
-  projectUrl        String?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+  projectUrl        String?
 }
 
 enum ProjectMemberRole {

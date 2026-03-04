@@ -27,17 +27,6 @@ export default function Navbar({ user }: NavbarProps) {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const pathname = usePathname();
 
-  const fetchUnreadCount = useCallback(async () => {
-    try {
-      const res = await fetch("/api/messages/unread-count");
-      if (res.ok) {
-        const data = await res.json();
-        setUnreadMessages(data.count);
-      }
-    } catch (error) {
-      alert("Failed to fetch unread count");
-    }
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,16 +35,13 @@ export default function Navbar({ user }: NavbarProps) {
     window.addEventListener("scroll", handleScroll);
 
     if (user) {
-      fetchUnreadCount();
-      const interval = setInterval(fetchUnreadCount, 30000);
       return () => {
         window.removeEventListener("scroll", handleScroll);
-        clearInterval(interval);
       };
     }
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [user, fetchUnreadCount]);
+  }, [user]);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";

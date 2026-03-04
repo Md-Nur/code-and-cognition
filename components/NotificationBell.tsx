@@ -22,24 +22,29 @@ export default function NotificationBell() {
 
     const unreadCount = mounted ? notifications.filter((n) => !n.isRead).length : 0;
 
-    const fetchNotifications = async () => {
-        try {
-            const res = await fetch("/api/notifications");
-            if (res.ok) {
-                const data = await res.json();
-                setNotifications(data);
-            }
-        } catch (error) {
-            alert("Failed to fetch notifications");
-        }
-    };
-
     useEffect(() => {
         setMounted(true);
-        fetchNotifications();
-        // Simple polling every 30 seconds
-        const interval = setInterval(fetchNotifications, 30000);
-        return () => clearInterval(interval);
+
+        // Use SSE for real-time notifications
+        const eventSource = new EventSource("/api/notifications/sse");
+
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                setNotifications(data);
+            } catch (error) {
+                console.error("Error parsing SSE data:", error);
+            }
+        };
+
+        eventSource.onerror = (error) => {
+            console.error("EventSource failed:", error);
+            // EventSource automatically retries on failure
+        };
+
+        return () => {
+            eventSource.close();
+        };
     }, []);
 
     useEffect(() => {
