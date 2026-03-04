@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Proposal, Booking, Service } from "@prisma/client";
 import { CheckCircle2, DollarSign, Clock, ArrowRight, ShieldCheck, AlertTriangle, X } from "lucide-react";
 import { approveProposalByToken } from "@/app/actions/proposals";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface PublicProposalReviewProps {
     proposal: Proposal & {
@@ -61,7 +61,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, title, children, loading }: 
                     <button
                         onClick={onConfirm}
                         disabled={loading}
-                        className="flex-1 btn-brand px-5 py-3 rounded-xl text-sm font-bold transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="flex-1 btn-brand px-5 py-3 rounded-xl text-sm font-bold transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap"
                     >
                         {loading ? (
                             <>
@@ -113,6 +113,8 @@ function ErrorModal({ isOpen, onClose, message }: ErrorModalProps) {
 
 export default function PublicProposalReview({ proposal }: PublicProposalReviewProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const paymentStatus = searchParams.get("payment");
     const [loading, setLoading] = useState(false);
     const [verified, setVerified] = useState(false);
     const [email, setEmail] = useState("");
@@ -131,19 +133,21 @@ export default function PublicProposalReview({ proposal }: PublicProposalReviewP
         }
     };
 
-    const handleSignAndPay = async () => {
+    const handleSignAndApprove = async () => {
         if (!proposal.viewToken) return;
-        
+
         // Close the confirm modal and start processing
         setShowConfirmModal(false);
         setLoading(true);
         try {
-            const res = await approveProposalByToken(proposal.viewToken, email);
-            if (res.ok) {
-                setVerified(false); // Reset to show success state via proposal.status
+            // Directly Approve Proposal
+            const result = await approveProposalByToken(proposal.viewToken, email);
+
+            if (result.ok) {
+                // Refresh to show approved state
                 router.refresh();
             } else {
-                setErrorMessage((res as { ok: false; error: string }).error || "Failed to approve proposal");
+                setErrorMessage(result.error || "Failed to approve proposal. Please try again.");
                 setShowErrorModal(true);
             }
         } catch (err) {
@@ -160,8 +164,12 @@ export default function PublicProposalReview({ proposal }: PublicProposalReviewP
                 <div className="w-20 h-20 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="w-10 h-10" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Proposal Approved!</h2>
-                <p className="text-gray-400 mb-8 text-balance">This proposal has been signed and the project is now officially active. Our team will contact you shortly with onboarding details.</p>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                    Proposal Approved & Project Active!
+                </h2>
+                <p className="text-gray-400 mb-8 text-balance">
+                    Thank you for your approval. Your project is now officially active and our engineering team has been notified.
+                </p>
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5 inline-block">
                     <p className="text-xs text-agency-accent font-medium">Transaction Reference: {proposal.id.toUpperCase()}</p>
                 </div>
@@ -206,11 +214,11 @@ export default function PublicProposalReview({ proposal }: PublicProposalReviewP
             <ConfirmModal
                 isOpen={showConfirmModal}
                 onClose={() => setShowConfirmModal(false)}
-                onConfirm={handleSignAndPay}
-                title="Authorize & Start Project"
+                onConfirm={handleSignAndApprove}
+                title="Authorize & Secure Payment"
                 loading={loading}
             >
-                By clicking <strong className="text-white">&ldquo;Sign &amp; Start Project&rdquo;</strong>, you confirm that you agree to the terms and payment conditions outlined in this proposal. The project will officially start immediately upon authorization.
+                By clicking <strong className="text-white">&ldquo;Sign &amp; Start Project&rdquo;</strong>, you agree to the terms and project conditions. The project will be initialized immediately after your approval.
             </ConfirmModal>
 
             {/* Error Modal */}
@@ -230,7 +238,7 @@ export default function PublicProposalReview({ proposal }: PublicProposalReviewP
                         <button
                             onClick={() => setShowConfirmModal(true)}
                             disabled={loading}
-                            className="btn-brand px-8 py-4 text-base font-bold flex items-center gap-3 shadow-[0_0_40px_-10px_rgba(var(--brand-rgb),0.5)] active:scale-95 transition-all disabled:opacity-70"
+                            className="btn-brand px-8 py-4 text-base font-bold flex items-center gap-3 shadow-[0_0_40px_-10px_rgba(var(--brand-rgb),0.5)] active:scale-95 transition-all disabled:opacity-70 whitespace-nowrap"
                         >
                             {loading ? (
                                 <>

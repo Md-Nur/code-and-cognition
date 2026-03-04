@@ -65,12 +65,17 @@ export default async function ServicesPage() {
                                         <p className="text-gray-400 text-lg leading-relaxed mb-12">
                                             {category.description}
                                         </p>
-                                        <Link
-                                            href="/contact"
-                                            className="btn-brand inline-flex items-center gap-2 px-8 py-4"
-                                        >
-                                            Request Proposal <ArrowUpRight className="w-4 h-4" />
-                                        </Link>
+                                        <div className="flex flex-col gap-4">
+                                            <Link
+                                                href="/contact"
+                                                className="btn-brand inline-flex items-center justify-center gap-2 px-8 py-4 w-fit"
+                                            >
+                                                Request Proposal <ArrowUpRight className="w-4 h-4" />
+                                            </Link>
+                                            <p className="text-sm text-gray-500">
+                                                Or contact sales directly at <a href="mailto:sales@codencognition.com" className="text-white hover:text-agency-accent transition-colors font-medium">sales@codencognition.com</a>
+                                            </p>
+                                        </div>
                                     </div>
 
                                     <div className="lg:col-span-8 space-y-12">

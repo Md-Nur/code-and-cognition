@@ -64,7 +64,7 @@ export default function ProposalReview({ proposal }: ProposalReviewProps) {
                     <button
                         onClick={handleSignAndPay}
                         disabled={loading}
-                        className="btn-brand px-8 py-4 text-base font-bold flex items-center gap-3 shadow-[0_0_40px_-10px_rgba(var(--brand-rgb),0.5)] active:scale-95 transition-all"
+                        className="btn-brand px-8 py-4 text-base font-bold flex items-center gap-3 shadow-[0_0_40px_-10px_rgba(var(--brand-rgb),0.5)] active:scale-95 transition-all whitespace-nowrap"
                     >
                         {loading ? "Processing..." : (
                             <>

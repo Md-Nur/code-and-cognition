@@ -177,13 +177,22 @@ export const approveProposal = withProxyValidation(
 
     const booking = proposal.booking;
 
-    const finderId = providedFinderId ||
+    let finderId = providedFinderId ||
       (session.user.role === Role.FOUNDER || session.user.role === Role.CO_FOUNDER
         ? session.user.id
         : (await prisma.user.findFirst({ where: { role: Role.FOUNDER } }))?.id);
 
+    // Verify finderId actually exists in the database (defense against stale sessions)
+    if (finderId) {
+      const finderExists = await prisma.user.findUnique({ where: { id: finderId } });
+      if (!finderExists) {
+        console.warn(`[AUTH] Stale session detected. finderId ${finderId} not found in DB. Falling back to primary founder.`);
+        finderId = (await prisma.user.findFirst({ where: { role: Role.FOUNDER } }))?.id;
+      }
+    }
+
     if (!finderId) {
-      return { ok: false, error: "No finder available" } as const;
+      return { ok: false, error: "No valid finder (Founder) available to initialize this project." } as const;
     }
 
     const projectTitle = proposal.title || `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
@@ -307,24 +316,22 @@ export const getProposalByToken = async (token: string) => {
   return proposal;
 };
 
-export const approveProposalByToken = async (token: string, email: string) => {
-  // Verify the proposal by token
+/**
+ * Internal logic to finalize a proposal approval, create a project, and notify stakeholders.
+ * This is called by both direct manual approval and automated payment callbacks.
+ */
+export const finalizeProposalApproval = async (proposalId: string) => {
   const proposal = await prisma.proposal.findUnique({
-    where: { viewToken: token },
+    where: { id: proposalId },
     include: { booking: { include: { service: true } } }
   });
 
   if (!proposal || !proposal.booking) {
-    return { ok: false, error: "Proposal not found" } as const;
-  }
-
-  // Verify identity by email (double verification: token in URL + email)
-  if (proposal.booking.clientEmail.toLowerCase() !== email.toLowerCase()) {
-    return { ok: false, error: "Email verification failed. Please use the email associated with this proposal." } as const;
+    throw new Error("Proposal booking not found");
   }
 
   if (proposal.status === "APPROVED") {
-    return { ok: false, error: "This proposal has already been approved." } as const;
+    return { proposal, project: await prisma.project.findUnique({ where: { id: proposal.projectId! } }) };
   }
 
   const booking = proposal.booking;
@@ -332,7 +339,7 @@ export const approveProposalByToken = async (token: string, email: string) => {
   // Find the founder to assign as the project finder
   const founder = await prisma.user.findFirst({ where: { role: Role.FOUNDER } });
   if (!founder) {
-    return { ok: false, error: "No founder available to start the project." } as const;
+    throw new Error("Critical: No founder account found in the system. Cannot initialize project.");
   }
 
   const projectTitle = proposal.title || `${booking.service?.title || "Consultation Project"} - ${booking.clientName}`;
@@ -414,9 +421,9 @@ export const approveProposalByToken = async (token: string, email: string) => {
       const adminNotifications = admins.map(admin => ({
         userId: admin.id,
         title: "Project Accepted",
-        message: `${booking.clientName} has accepted the proposal for ${result.project.title}.`,
+        message: `${booking.clientName} has accepted the proposal for ${result.project?.title}.`,
         type: "PROPOSAL_APPROVED" as const,
-        link: `/dashboard/projects/${result.project.id}`,
+        link: `/dashboard/projects/${result.project?.id}`,
       }));
 
       await createNotificationsBatch(adminNotifications);
@@ -428,10 +435,10 @@ export const approveProposalByToken = async (token: string, email: string) => {
   // Send Magic Link to Client for Project Access (Non-blocking)
   (async () => {
     try {
-      const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://www.codencognition.com"}/project/${result.project.viewToken}`;
+      const magicLinkUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://www.codencognition.com"}/project/${proposal.viewToken}`;
       await sendMail(
         booking.clientEmail,
-        `Your Project is Active: ${result.project.title}`,
+        `Your Project is Active: ${result.project?.title}`,
         `<div style="font-family: sans-serif; padding: 20px;">
             <h2>Project Successfully Initialized</h2>
             <p>Hi ${booking.clientName},</p>
@@ -446,6 +453,33 @@ export const approveProposalByToken = async (token: string, email: string) => {
     }
   })();
 
-  return { ok: true, ...result } as const;
+  return result;
 };
 
+export const approveProposalByToken = async (token: string, email: string) => {
+  // Verify the proposal by token
+  const proposal = await prisma.proposal.findUnique({
+    where: { viewToken: token },
+    include: { booking: { include: { service: true } } }
+  });
+
+  if (!proposal || !proposal.booking) {
+    return { ok: false, error: "Proposal not found" } as const;
+  }
+
+  // Verify identity by email (double verification: token in URL + email)
+  if (proposal.booking.clientEmail.toLowerCase() !== email.toLowerCase()) {
+    return { ok: false, error: "Email verification failed. Please use the email associated with this proposal." } as const;
+  }
+
+  if (proposal.status === "APPROVED") {
+    return { ok: false, error: "This proposal has already been approved." } as const;
+  }
+
+  try {
+    const result = await finalizeProposalApproval(proposal.id);
+    return { ok: true, ...result } as const;
+  } catch (error: any) {
+    return { ok: false, error: error.message || "Failed to approve proposal" } as const;
+  }
+};

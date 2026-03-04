@@ -35,8 +35,8 @@ export default function ContactPage() {
                                             <Mail className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-1">Email</span>
-                                            <a href="mailto:codencognition.bd@gmail.com" className="text-white font-medium hover:text-agency-accent transition-colors">codencognition.bd@gmail.com</a>
+                                            <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-1">Email (Sales)</span>
+                                            <a href="mailto:sales@codencognition.com" className="text-white font-medium hover:text-agency-accent transition-colors">sales@codencognition.com</a>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-6 group">
