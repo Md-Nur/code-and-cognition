@@ -87,7 +87,8 @@ export default function SchedulePage() {
                     setCurrency('BDT');
                 }
             } catch (error) {
-                alert("Failed to detect country");
+                // Silently default to USD if geo detection fails
+                console.warn('Geo detection failed, defaulting to USD', error);
             }
         };
         detectCountry();
