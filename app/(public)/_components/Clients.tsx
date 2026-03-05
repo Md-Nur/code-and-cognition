@@ -51,20 +51,20 @@ export default function Clients({ clients }: { clients: Client[] }) {
 /* ─── Logo Card ─────────────────────────────────────────────────────────────── */
 function LogoCard({ client }: { client: Client }) {
     const card = (
-        <div className="group/logo flex flex-col items-center justify-center gap-4 mx-6 w-[220px] h-[130px] shrink-0 rounded-2xl border border-white/[0.08] bg-white/[0.03] transition-all duration-500 hover:border-agency-accent/30 hover:bg-white/[0.06] hover:-translate-y-1">
+        <div className="group/logo flex flex-col items-center justify-center gap-2 md:gap-4 mx-3 md:mx-6 w-[140px] h-[90px] md:w-[220px] md:h-[130px] shrink-0 rounded-xl md:rounded-2xl border border-white/[0.08] bg-white/[0.03] transition-all duration-500 hover:border-agency-accent/30 hover:bg-white/[0.06] hover:-translate-y-1">
             {/* Subtle highlight effect */}
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover/logo:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-agency-accent/[0.05] to-transparent pointer-events-none" />
+            <div className="absolute inset-0 rounded-xl md:rounded-2xl opacity-0 group-hover/logo:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-agency-accent/[0.05] to-transparent pointer-events-none" />
 
-            <div className="relative h-12 flex items-center justify-center w-full px-6">
+            <div className="relative h-8 md:h-12 flex items-center justify-center w-full px-4 md:px-6">
                 <Image
                     src={client.logoUrl}
                     alt={client.name}
                     className="max-h-full max-w-full w-auto object-contain opacity-70 group-hover/logo:opacity-100 transition-all duration-500 scale-110 group-hover/logo:scale-125"
-                    width={150}
-                    height={50}
+                    width={100}
+                    height={36}
                 />
             </div>
-            <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-white/40 group-hover/logo:text-white/80 transition-colors duration-500 text-center px-4 leading-tight">
+            <span className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-white/40 group-hover/logo:text-white/80 transition-colors duration-500 text-center px-2 md:px-4 leading-tight">
                 {client.name}
             </span>
         </div>

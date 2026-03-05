@@ -267,3 +267,18 @@ h6 {
 .pause-marquee {
     animation-play-state: paused;
 }
+
+/* Faster marquee on mobile */
+@media (max-width: 768px) {
+    .animate-marquee {
+        animation-duration: 20s;
+    }
+
+    .animate-marquee-left {
+        animation-duration: 18s;
+    }
+
+    .animate-marquee-right {
+        animation-duration: 18s;
+    }
+}
