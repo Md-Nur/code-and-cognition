@@ -271,14 +271,14 @@ h6 {
 /* Faster marquee on mobile */
 @media (max-width: 768px) {
     .animate-marquee {
-        animation-duration: 20s;
+        animation-duration: 10s;
     }
 
     .animate-marquee-left {
-        animation-duration: 18s;
+        animation-duration: 8s;
     }
 
     .animate-marquee-right {
-        animation-duration: 18s;
+        animation-duration: 8s;
     }
 }
