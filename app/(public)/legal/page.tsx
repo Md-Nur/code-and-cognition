@@ -32,11 +32,11 @@ export default function LegalPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                             <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
                                 <h3 className="text-white font-semibold mb-2">Registration</h3>
-                                <p className="text-gray-400 text-sm">Registered in Rajshahi, Bangladesh.</p>
+                                <p className="text-gray-400 text-sm">Registered in Dhaka, Bangladesh.</p>
                             </div>
                             <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
                                 <h3 className="text-white font-semibold mb-2">Contact</h3>
-                                <p className="text-gray-400 text-sm">codencognition.bd@gmail.com</p>
+                                <p className="text-gray-400 text-sm">info@codencognition.com</p>
                             </div>
                         </div>
                     </section>

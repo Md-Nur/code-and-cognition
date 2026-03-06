@@ -1,11 +1,11 @@
 import { Role, Prisma, SplitType } from "@prisma/client";
 import { ExecutiveOverview } from "./ExecutiveOverview";
 import { Suspense } from "react";
-import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight, DollarSign, PieChart } from "lucide-react";
+import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { ExpenseAnalyticsChart, CompanyProfitChart } from "./DashboardCharts";
 import { ProfitData, ExpenseData } from "./DashboardCharts";
+import { FounderDashboardCharts } from "./FounderDashboardCharts";
 
 interface OverviewDispatcherProps {
     user: {
@@ -39,26 +39,29 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
             color: categoryColors[index % categoryColors.length]
         }));
 
-        // Fetch company profit (Sum of COMPANY_FUND LedgerEntries)
-        const ledgerEntries = await prisma.ledgerEntry.findMany({
+        // Fetch company revenue (Sum of Payments)
+        const payments = await prisma.payment.findMany({
             where: {
-                type: SplitType.COMPANY_FUND,
-                createdAt: { gte: sixMonthsAgo }
+                status: "APPROVED",
+                paidAt: { gte: sixMonthsAgo }
             },
-            select: { amountBDT: true, createdAt: true },
-            orderBy: { createdAt: 'asc' }
+            select: { amountBDT: true, amountUSD: true, paidAt: true },
+            orderBy: { paidAt: 'asc' }
         });
         
-        const profitByMonth = ledgerEntries.reduce((acc, entry) => {
-            const monthStr = entry.createdAt.toLocaleString('default', { month: 'short', year: 'numeric' });
+        const revenueByMonth = payments.reduce((acc, entry) => {
+            const date = entry.paidAt || new Date();
+            const monthStr = date.toLocaleString('default', { month: 'short', year: 'numeric' });
             if (!acc[monthStr]) {
                 acc[monthStr] = { month: monthStr, profit: 0 };
             }
+            // For revenue, we sum the actual payment amounts (BDT + USD converted or separately, 
+            // but for simplicity in this chart, we'll follow the existing pattern of showing BDT)
             acc[monthStr].profit += entry.amountBDT || 0;
             return acc;
         }, {} as Record<string, ProfitData>);
         
-        const profitData = Object.values(profitByMonth);
+        const profitData = Object.values(revenueByMonth);
 
 
         return (
@@ -67,33 +70,7 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
                     <ExecutiveOverview />
                 </Suspense>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col min-h-[300px]">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 rounded-xl bg-orange-500/5 flex items-center justify-center text-orange-500">
-                                <PieChart className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="text-white font-bold">Expense Analytics</h3>
-                                <p className="text-gray-500 text-xs">Expense breakdown by category over last 6 months</p>
-                            </div>
-                        </div>
-                        <ExpenseAnalyticsChart data={expenseData} />
-                    </div>
-                    
-                    <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col min-h-[300px]">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 rounded-xl bg-cyan-500/5 flex items-center justify-center text-cyan-500">
-                                <DollarSign className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="text-white font-bold">Company Profit</h3>
-                                <p className="text-gray-500 text-xs">Total project shares (Company Profit) collected over the last 6 months</p>
-                            </div>
-                        </div>
-                        <CompanyProfitChart data={profitData} />
-                    </div>
-                </div>
+                <FounderDashboardCharts expenseData={expenseData} profitData={profitData} />
             </div>
         );
     }
