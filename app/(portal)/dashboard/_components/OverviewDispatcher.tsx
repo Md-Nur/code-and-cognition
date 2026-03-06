@@ -1,10 +1,11 @@
-import { Role, Prisma } from "@prisma/client";
+import { Role, Prisma, SplitType } from "@prisma/client";
 import { ExecutiveOverview } from "./ExecutiveOverview";
 import { Suspense } from "react";
-import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight } from "lucide-react";
+import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight, DollarSign } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { RevenueChart, ProjectVelocityChart } from "./DashboardCharts";
+import { RevenueChart, CompanyProfitChart } from "./DashboardCharts";
+import { ProfitData } from "./DashboardCharts";
 
 interface OverviewDispatcherProps {
     user: {
@@ -42,28 +43,31 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
 
         const revenueData = Object.values(revenueByMonth);
 
-        // Fetch project stats for pie chart
-        const projectStats = await prisma.project.groupBy({
-            by: ['status'],
-            _count: { id: true }
+        // Fetch company profit (Company fund LedgerEntries minus EXPENSE LedgerEntries)
+        const ledgerEntries = await prisma.ledgerEntry.findMany({
+            where: {
+                type: { in: [SplitType.COMPANY_FUND, SplitType.EXPENSE] },
+                createdAt: { gte: sixMonthsAgo }
+            },
+            select: { type: true, amountBDT: true, createdAt: true },
+            orderBy: { createdAt: 'asc' }
         });
-
-        // Determine slice colors based on status
-        const getStatusColor = (status: string) => {
-            switch (status) {
-                case "ACTIVE": return "#10b981"; // emerald
-                case "COMPLETED": return "#3b82f6"; // blue
-                case "DELIVERED": return "#6366f1"; // indigo 
-                case "CANCELLED": return "#ef4444"; // red
-                default: return "#9ca3af"; // gray
+        
+        const profitByMonth = ledgerEntries.reduce((acc, entry) => {
+            const monthStr = entry.createdAt.toLocaleString('default', { month: 'short', year: 'numeric' });
+            if (!acc[monthStr]) {
+                acc[monthStr] = { month: monthStr, profit: 0 };
             }
-        };
+            if (entry.type === SplitType.COMPANY_FUND) {
+                acc[monthStr].profit += entry.amountBDT || 0;
+            } else if (entry.type === SplitType.EXPENSE) {
+                acc[monthStr].profit -= entry.amountBDT || 0;
+            }
+            return acc;
+        }, {} as Record<string, ProfitData>);
+        
+        const profitData = Object.values(profitByMonth);
 
-        const projectData = projectStats.map(stat => ({
-            name: stat.status,
-            value: stat._count.id,
-            color: getStatusColor(stat.status)
-        }));
 
         return (
             <div className="space-y-8">
@@ -87,15 +91,15 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
                     
                     <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col min-h-[300px]">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-500">
-                                <FolderKanban className="w-5 h-5" />
+                            <div className="w-10 h-10 rounded-xl bg-cyan-500/5 flex items-center justify-center text-cyan-500">
+                                <DollarSign className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-white font-bold">Project Velocity</h3>
-                                <p className="text-gray-500 text-xs">Distribution of all managed projects</p>
+                                <h3 className="text-white font-bold">Company Profit</h3>
+                                <p className="text-gray-500 text-xs">Net profit (Company Fund - Expenses) over last 6 months</p>
                             </div>
                         </div>
-                        <ProjectVelocityChart data={projectData} />
+                        <CompanyProfitChart data={profitData} />
                     </div>
                 </div>
             </div>
