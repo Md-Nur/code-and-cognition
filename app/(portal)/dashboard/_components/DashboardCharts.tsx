@@ -75,10 +75,10 @@ export function CompanyProfitChart({ data }: CompanyProfitChartProps) {
                         cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                         contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', borderRadius: '16px' }}
                         itemStyle={{ color: '#e5e7eb' }}
-                        formatter={(value: any) => [`৳${Number(value || 0).toLocaleString()}`, "Profit (BDT)"]}
+                        formatter={(value: any) => [`৳${Number(value || 0).toLocaleString()}`, "Company Profit (BDT)"]}
                     />
                     <Legend iconType="circle" wrapperStyle={{ paddingTop: "10px" }} />
-                    <Bar dataKey="profit" name="Profit (BDT)" fill="#06b6d4" radius={[4, 4, 0, 0]} barSize={16}>
+                    <Bar dataKey="profit" name="Company Profit (BDT)" fill="#06b6d4" radius={[4, 4, 0, 0]} barSize={16}>
                         {
                             data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.profit >= 0 ? "#06b6d4" : "#ef4444"} />

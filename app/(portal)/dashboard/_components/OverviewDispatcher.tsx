@@ -43,13 +43,13 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
 
         const revenueData = Object.values(revenueByMonth);
 
-        // Fetch company profit (Company fund LedgerEntries minus EXPENSE LedgerEntries)
+        // Fetch company profit (Sum of COMPANY_FUND LedgerEntries)
         const ledgerEntries = await prisma.ledgerEntry.findMany({
             where: {
-                type: { in: [SplitType.COMPANY_FUND, SplitType.EXPENSE] },
+                type: SplitType.COMPANY_FUND,
                 createdAt: { gte: sixMonthsAgo }
             },
-            select: { type: true, amountBDT: true, createdAt: true },
+            select: { amountBDT: true, createdAt: true },
             orderBy: { createdAt: 'asc' }
         });
         
@@ -58,11 +58,7 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
             if (!acc[monthStr]) {
                 acc[monthStr] = { month: monthStr, profit: 0 };
             }
-            if (entry.type === SplitType.COMPANY_FUND) {
-                acc[monthStr].profit += entry.amountBDT || 0;
-            } else if (entry.type === SplitType.EXPENSE) {
-                acc[monthStr].profit -= entry.amountBDT || 0;
-            }
+            acc[monthStr].profit += entry.amountBDT || 0;
             return acc;
         }, {} as Record<string, ProfitData>);
         
@@ -96,7 +92,7 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
                             </div>
                             <div>
                                 <h3 className="text-white font-bold">Company Profit</h3>
-                                <p className="text-gray-500 text-xs">Net profit (Company Fund - Expenses) over last 6 months</p>
+                                <p className="text-gray-500 text-xs">Total project shares (Company Profit) collected over the last 6 months</p>
                             </div>
                         </div>
                         <CompanyProfitChart data={profitData} />
