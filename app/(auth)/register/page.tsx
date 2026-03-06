@@ -24,13 +24,27 @@ function RegisterForm() {
     useEffect(() => {
         async function checkSetup() {
             try {
-                const res = await fetch("/api/auth/setup-check");
-                const data = await res.json();
-                setIsSetupMode(data.setupRequired);
+                // 1. Check if setup is required
+                const setupRes = await fetch("/api/auth/setup-check");
+                const setupData = await setupRes.json();
+                setIsSetupMode(setupData.setupRequired);
 
-                // If not in setup mode AND no token is present, redirect to login
-                if (!data.setupRequired && !token) {
+                // 2. If token is present, fetch invitation details to pre-fill email
+                if (token) {
+                    const inviteRes = await fetch(`/api/auth/invitation?token=${token}`);
+                    const inviteData = await inviteRes.json();
+                    
+                    if (inviteRes.ok) {
+                        setEmail(inviteData.data.email);
+                    } else {
+                        // Redirect if token is invalid
+                        router.push(`/login?error=${inviteData.error || "Invalid invitation token"}`);
+                        return;
+                    }
+                } else if (!setupData.setupRequired) {
+                    // Registration requires an invitation if not in setup mode
                     router.push("/login?error=Registration requires an invitation");
+                    return;
                 }
             } catch (err) {
                 setError("Something went wrong");

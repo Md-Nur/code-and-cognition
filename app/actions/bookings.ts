@@ -92,7 +92,7 @@ export async function createBookingAction(
 
       // Send Notification to Founders
       const founderEmails = founders.map(f => f.email).join(",");
-      const notificationTo = process.env.FOUNDER_EMAIL || founderEmails || "codencognition.bd@gmail.com";
+      const notificationTo = process.env.SMTP_USER || founderEmails || "codencognition.bd@gmail.com";
 
       await sendMail(
         notificationTo,

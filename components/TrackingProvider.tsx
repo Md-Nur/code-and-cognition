@@ -134,7 +134,7 @@ export default function TrackingProvider() {
                                 onClick={handleAccept}
                                 className="px-5 py-2 rounded-full bg-agency-accent text-white text-sm font-bold shadow-lg shadow-agency-accent/20 hover:scale-105 transition-transform"
                             >
-                                Accept Tracking
+                                Accept
                             </button>
                         </div>
                     </div>
