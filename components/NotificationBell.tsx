@@ -25,25 +25,32 @@ export default function NotificationBell() {
     useEffect(() => {
         setMounted(true);
 
-        // Use SSE for real-time notifications
-        const eventSource = new EventSource("/api/notifications/sse");
-
-        eventSource.onmessage = (event) => {
+        const fetchNotifications = async (signal?: AbortSignal) => {
             try {
-                const data = JSON.parse(event.data);
-                setNotifications(data);
+                const res = await fetch("/api/notifications", { signal });
+                if (res.ok) {
+                    const data = await res.json();
+                    setNotifications(data);
+                }
             } catch (error) {
-                console.error("Error parsing SSE data:", error);
+                if ((error as Error).name !== "AbortError") {
+                    console.error("Error fetching notifications:", error);
+                }
             }
         };
 
-        eventSource.onerror = (error) => {
-            console.error("EventSource failed:", error);
-            // EventSource automatically retries on failure
-        };
+        // Initial fetch
+        const controller = new AbortController();
+        fetchNotifications(controller.signal);
+
+        // Poll every 30 seconds
+        const interval = setInterval(() => {
+            fetchNotifications();
+        }, 30000);
 
         return () => {
-            eventSource.close();
+            controller.abort();
+            clearInterval(interval);
         };
     }, []);
 
