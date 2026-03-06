@@ -39,9 +39,9 @@ export default function Clients({ clients }: { clients: Client[] }) {
                         ))}
                     </div>
 
-                    {/* Edge fades - wider for smoother transition */}
-                    <div className="absolute inset-y-0 left-0 w-40 md:w-64 bg-gradient-to-r from-agency-black via-agency-black/80 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute inset-y-0 right-0 w-40 md:w-64 bg-gradient-to-l from-agency-black via-agency-black/80 to-transparent z-10 pointer-events-none" />
+                    {/* Edge fades - narrower on mobile for better visibility */}
+                    <div className="absolute inset-y-0 left-0 w-16 md:w-64 bg-gradient-to-r from-agency-black via-agency-black/80 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-y-0 right-0 w-16 md:w-64 bg-gradient-to-l from-agency-black via-agency-black/80 to-transparent z-10 pointer-events-none" />
                 </div>
             </div>
         </section>
@@ -51,7 +51,7 @@ export default function Clients({ clients }: { clients: Client[] }) {
 /* ─── Logo Card ─────────────────────────────────────────────────────────────── */
 function LogoCard({ client }: { client: Client }) {
     const card = (
-        <div className="group/logo flex flex-col items-center justify-center gap-2 md:gap-4 mx-3 md:mx-6 w-[140px] h-[90px] md:w-[220px] md:h-[130px] shrink-0 rounded-xl md:rounded-2xl border border-white/[0.08] bg-white/[0.03] transition-all duration-500 hover:border-agency-accent/30 hover:bg-white/[0.06] hover:-translate-y-1">
+        <div className="group/logo flex flex-col items-center justify-center gap-2 md:gap-4 mx-2 md:mx-6 w-[120px] h-[80px] md:w-[220px] md:h-[130px] shrink-0 rounded-xl md:rounded-2xl border border-white/[0.08] bg-white/[0.03] transition-all duration-500 hover:border-agency-accent/30 hover:bg-white/[0.06] hover:-translate-y-1">
             {/* Subtle highlight effect */}
             <div className="absolute inset-0 rounded-xl md:rounded-2xl opacity-0 group-hover/logo:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-agency-accent/[0.05] to-transparent pointer-events-none" />
 
