@@ -40,6 +40,9 @@ export default function LedgerPage() {
     const [filterFrom, setFilterFrom] = useState<string>("");
     const [filterTo, setFilterTo] = useState<string>("");
 
+    // Split type filter state
+    const [selectedSplitTypes, setSelectedSplitTypes] = useState<string[]>([]);
+
     async function fetchData() {
         const res = await fetch("/api/admin/ledger");
         if (res.ok) setData(await res.json());
@@ -111,7 +114,8 @@ export default function LedgerPage() {
                 source,
                 amountBDT: e.amountBDT,
                 amountUSD: e.amountUSD,
-                type
+                type,
+                splitType: e.type
             };
         }) || []),
         ...(data?.completedWithdrawals?.filter(w => w.status === 'REJECTED').map(w => ({
@@ -120,23 +124,38 @@ export default function LedgerPage() {
             source: `Withdrawal (Rejected): ${w.user?.name || 'User'}`,
             amountBDT: w.currency === "BDT" ? (w.status === 'REJECTED' ? 0 : -w.amount) : null,
             amountUSD: w.currency === "USD" ? (w.status === 'REJECTED' ? 0 : -w.amount) : null,
-            type: "WITHDRAWAL" as const
+            type: "WITHDRAWAL" as const,
+            splitType: "WITHDRAWAL" as const
         })) || [])
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    // Apply date filter
+    // Apply date and split type filter
     const filteredHistory = history.filter(entry => {
         const d = new Date(entry.date);
         if (filterMode === "month" && filterMonth) {
             const [yr, mo] = filterMonth.split("-").map(Number);
-            return d.getFullYear() === yr && d.getMonth() + 1 === mo;
+            if (!(d.getFullYear() === yr && d.getMonth() + 1 === mo)) return false;
         }
         if (filterMode === "range") {
             if (filterFrom && d < new Date(filterFrom)) return false;
             if (filterTo && d > new Date(filterTo + "T23:59:59")) return false;
         }
+
+        // Split type filter
+        if (selectedSplitTypes.length > 0) {
+            if (!selectedSplitTypes.includes(entry.splitType)) return false;
+        }
+
         return true;
     });
+
+    const toggleSplitType = (type: string) => {
+        setSelectedSplitTypes(prev =>
+            prev.includes(type)
+                ? prev.filter(t => t !== type)
+                : [...prev, type]
+        );
+    };
 
     return (
         <div className="space-y-12 pb-20">
@@ -197,58 +216,91 @@ export default function LedgerPage() {
                         <div className="flex flex-wrap items-center justify-between gap-3 px-2 border-l-4 border-blue-500">
                             <h2 className="text-xl font-bold">🏛️ Company Transaction History</h2>
                             {/* Filter Controls */}
-                            <div className="flex flex-wrap items-center gap-2">
-                                {/* Mode buttons */}
-                                <div className="flex rounded-xl overflow-hidden border border-white/10 text-[11px] font-semibold">
-                                    {(["all", "month", "range"] as const).map(m => (
-                                        <button
-                                            key={m}
-                                            onClick={() => setFilterMode(m)}
-                                            className={`px-3 py-1.5 transition-colors ${filterMode === m
-                                                    ? "bg-blue-500/30 text-blue-300"
-                                                    : "bg-white/5 text-gray-400 hover:bg-white/10"
-                                                }`}
-                                        >
-                                            {m === "all" ? "All" : m === "month" ? "Month" : "Range"}
-                                        </button>
-                                    ))}
-                                </div>
-                                {/* Month picker */}
-                                {filterMode === "month" && (
-                                    <input
-                                        type="month"
-                                        value={filterMonth}
-                                        onChange={e => setFilterMonth(e.target.value)}
-                                        className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
-                                    />
-                                )}
-                                {/* Date range picker */}
-                                {filterMode === "range" && (
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="date"
-                                            value={filterFrom}
-                                            onChange={e => setFilterFrom(e.target.value)}
-                                            className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
-                                        />
-                                        <span className="text-gray-500 text-xs">to</span>
-                                        <input
-                                            type="date"
-                                            value={filterTo}
-                                            onChange={e => setFilterTo(e.target.value)}
-                                            className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
-                                        />
-                                        {(filterFrom || filterTo) && (
+                            <div className="flex flex-wrap items-center gap-4">
+                                {/* Split Type Filters */}
+                                <div className="flex items-center gap-2 pr-4 border-r border-white/10">
+                                    <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                                        {[
+                                            { id: 'EXECUTION', label: 'Execution Share' },
+                                            { id: 'COMPANY_FUND', label: 'Project Share' },
+                                            { id: 'FINDER_FEE', label: 'Finder Share' }
+                                        ].map(t => (
                                             <button
-                                                onClick={() => { setFilterFrom(""); setFilterTo(""); }}
-                                                className="text-gray-500 hover:text-gray-300 transition-colors"
-                                                title="Clear dates"
+                                                key={t.id}
+                                                onClick={() => toggleSplitType(t.id)}
+                                                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${selectedSplitTypes.includes(t.id)
+                                                        ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+                                                        : "text-gray-500 hover:text-gray-300"
+                                                    }`}
                                             >
-                                                <X className="w-3.5 h-3.5" />
+                                                {t.label}
                                             </button>
-                                        )}
+                                        ))}
                                     </div>
-                                )}
+                                    {selectedSplitTypes.length > 0 && (
+                                        <button
+                                            onClick={() => setSelectedSplitTypes([])}
+                                            className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                                            title="Clear split filters"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {/* Mode buttons */}
+                                    <div className="flex rounded-xl overflow-hidden border border-white/10 text-[11px] font-semibold">
+                                        {(["all", "month", "range"] as const).map(m => (
+                                            <button
+                                                key={m}
+                                                onClick={() => setFilterMode(m)}
+                                                className={`px-3 py-1.5 transition-colors ${filterMode === m
+                                                        ? "bg-blue-500/30 text-blue-300"
+                                                        : "bg-white/5 text-gray-400 hover:bg-white/10"
+                                                    }`}
+                                            >
+                                                {m === "all" ? "All" : m === "month" ? "Month" : "Range"}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {/* Month picker */}
+                                    {filterMode === "month" && (
+                                        <input
+                                            type="month"
+                                            value={filterMonth}
+                                            onChange={e => setFilterMonth(e.target.value)}
+                                            className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
+                                        />
+                                    )}
+                                    {/* Date range picker */}
+                                    {filterMode === "range" && (
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="date"
+                                                value={filterFrom}
+                                                onChange={e => setFilterFrom(e.target.value)}
+                                                className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
+                                            />
+                                            <span className="text-gray-500 text-xs">to</span>
+                                            <input
+                                                type="date"
+                                                value={filterTo}
+                                                onChange={e => setFilterTo(e.target.value)}
+                                                className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500/50"
+                                            />
+                                            {(filterFrom || filterTo) && (
+                                                <button
+                                                    onClick={() => { setFilterFrom(""); setFilterTo(""); }}
+                                                    className="text-gray-500 hover:text-gray-300 transition-colors"
+                                                    title="Clear dates"
+                                                >
+                                                    <X className="w-3.5 h-3.5" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                         <div className="glass-panel overflow-hidden rounded-2xl border-white/5">
