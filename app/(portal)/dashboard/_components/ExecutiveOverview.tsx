@@ -49,9 +49,9 @@ export async function ExecutiveOverview() {
     const wonLeads = bookings.filter(b => b.status === "CLOSED_WON").length;
     const conversionRate = totalLeads > 0 ? (wonLeads / totalLeads) * 100 : 0;
 
-    const pipelineValueUSD = bookings
+    const pipelineValueBDT = bookings
         .filter(b => ["NEW", "QUALIFIED", "PROPOSAL_SENT"].includes(b.status))
-        .reduce((sum, b) => sum + (b.budgetUSD || 0), 0);
+        .reduce((sum, b) => sum + (b.budgetBDT || 0), 0);
 
     // Simple Sales Velocity (Average days to close)
     // We don't have a 'closedAt' field in Booking yet, so we'll approximate 
@@ -132,7 +132,7 @@ export async function ExecutiveOverview() {
 
             <DashboardCard
                 title="Pipeline Value"
-                value={`$${pipelineValueUSD.toLocaleString()}`}
+                value={`৳${pipelineValueBDT.toLocaleString()}`}
                 icon={<Briefcase className="w-5 h-5" />}
                 colorClass="text-orange-400"
             />

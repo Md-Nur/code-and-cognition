@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { RevenueChart, ProjectVelocityChart } from "./DashboardCharts";
 
 interface OverviewDispatcherProps {
     user: {
@@ -15,7 +16,55 @@ interface OverviewDispatcherProps {
 }
 
 export default async function OverviewDispatcher({ user }: OverviewDispatcherProps) {
-    if (user.role === Role.FOUNDER) {
+    if (user.role === Role.FOUNDER || user.role === Role.CO_FOUNDER) {
+        // Fetch revenue data for chart
+        // Basic grouping: last 6 months 
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const payments = await prisma.payment.findMany({
+            where: {
+                paidAt: { gte: sixMonthsAgo },
+            },
+            select: { amountBDT: true, amountUSD: true, paidAt: true },
+            orderBy: { paidAt: 'asc' }
+        });
+
+        const revenueByMonth = payments.reduce((acc, payment) => {
+            const monthStr = payment.paidAt.toLocaleString('default', { month: 'short', year: 'numeric' });
+            if (!acc[monthStr]) {
+                acc[monthStr] = { month: monthStr, bdt: 0, usd: 0 };
+            }
+            acc[monthStr].bdt += payment.amountBDT || 0;
+            acc[monthStr].usd += payment.amountUSD || 0;
+            return acc;
+        }, {} as Record<string, { month: string, bdt: number, usd: number }>);
+
+        const revenueData = Object.values(revenueByMonth);
+
+        // Fetch project stats for pie chart
+        const projectStats = await prisma.project.groupBy({
+            by: ['status'],
+            _count: { id: true }
+        });
+
+        // Determine slice colors based on status
+        const getStatusColor = (status: string) => {
+            switch (status) {
+                case "ACTIVE": return "#10b981"; // emerald
+                case "COMPLETED": return "#3b82f6"; // blue
+                case "DELIVERED": return "#6366f1"; // indigo 
+                case "CANCELLED": return "#ef4444"; // red
+                default: return "#9ca3af"; // gray
+            }
+        };
+
+        const projectData = projectStats.map(stat => ({
+            name: stat.status,
+            value: stat._count.id,
+            color: getStatusColor(stat.status)
+        }));
+
         return (
             <div className="space-y-8">
                 <Suspense fallback={<div className="h-64 glass-panel animate-pulse rounded-2xl" />}>
@@ -23,19 +72,30 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
                 </Suspense>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col items-center justify-center min-h-[300px] text-center">
-                        <div className="w-16 h-16 rounded-2xl bg-agency-accent/5 flex items-center justify-center text-agency-accent mb-6">
-                            <TrendingUp className="w-8 h-8" />
+                    <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col min-h-[300px]">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-10 h-10 rounded-xl bg-agency-accent/5 flex items-center justify-center text-agency-accent">
+                                <TrendingUp className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="text-white font-bold">Revenue Analytics</h3>
+                                <p className="text-gray-500 text-xs">Financial performance over last 6 months</p>
+                            </div>
                         </div>
-                        <h3 className="text-white font-bold mb-2">Revenue Analytics</h3>
-                        <p className="text-gray-500 text-sm max-w-xs">Financial performance and projections across all projects.</p>
+                        <RevenueChart data={revenueData} />
                     </div>
-                    <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col items-center justify-center min-h-[300px] text-center">
-                        <div className="w-16 h-16 rounded-2xl bg-blue-500/5 flex items-center justify-center text-blue-500 mb-6">
-                            <FolderKanban className="w-8 h-8" />
+                    
+                    <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col min-h-[300px]">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-10 h-10 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-500">
+                                <FolderKanban className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="text-white font-bold">Project Velocity</h3>
+                                <p className="text-gray-500 text-xs">Distribution of all managed projects</p>
+                            </div>
                         </div>
-                        <h3 className="text-white font-bold mb-2">Project Velocity</h3>
-                        <p className="text-gray-500 text-sm max-w-xs">Tracking milestone completion and delivery efficiency.</p>
+                        <ProjectVelocityChart data={projectData} />
                     </div>
                 </div>
             </div>
@@ -43,20 +103,79 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
     }
 
     if (user.role === Role.CONTRACTOR) {
+        // Find assigned projects
+        const assignedProjectMembers = await prisma.projectMember.findMany({
+            where: { userId: user.id },
+            include: { project: true }
+        });
+
+        const bgColors = ["bg-blue-500/10", "bg-emerald-500/10", "bg-purple-500/10", "bg-amber-500/10"];
+        const textColors = ["text-blue-500", "text-emerald-500", "text-purple-500", "text-amber-500"];
+
+        // Get actual earnings
+        const ledgerBalance = await prisma.ledgerBalance.findUnique({
+            where: { userId: user.id }
+        });
+
+        const totalEarnedBDT = ledgerBalance?.totalBDT || 0;
+        const totalEarnedUSD = ledgerBalance?.totalUSD || 0;
+
         return (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="glass-panel p-8 rounded-3xl border border-white/5">
-                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-4">Earnings</span>
-                    <div className="flex items-center justify-between">
-                        <span className="text-3xl font-bold">$0.00</span>
-                        <TrendingUp className="w-5 h-5 text-emerald-500" />
+                <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col justify-between min-h-[200px]">
+                    <div>
+                        <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-4">Total Earnings (BDT)</span>
+                        <div className="flex items-center justify-between">
+                            <span className="text-4xl font-bold text-white">৳{totalEarnedBDT.toLocaleString()}</span>
+                            <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                <TrendingUp className="w-5 h-5" />
+                            </div>
+                        </div>
                     </div>
+                    {totalEarnedUSD > 0 && (
+                        <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <span className="text-gray-500 text-xs font-semibold">USD Earnings</span>
+                            <span className="text-sm font-bold text-white">${totalEarnedUSD.toLocaleString()}</span>
+                        </div>
+                    )}
                 </div>
+
                 <div className="glass-panel p-8 rounded-3xl border border-white/5 md:col-span-2">
                     <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest block mb-6">Assigned Projects</span>
-                    <div className="text-center py-12 border border-dashed border-white/10 rounded-2xl">
-                        <p className="text-gray-500 text-sm">No active project assignments found.</p>
-                    </div>
+                    
+                    {assignedProjectMembers.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {assignedProjectMembers.map((member, i) => (
+                                <Link
+                                    key={member.projectId}
+                                    href={`/dashboard/projects/${member.projectId}`}
+                                    className="p-5 rounded-2xl border border-white/5 hover:border-white/10 transition-all group flex items-start gap-4"
+                                >
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${bgColors[i % bgColors.length]} ${textColors[i % textColors.length]}`}>
+                                        <FolderKanban className="w-6 h-6" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="font-bold text-white group-hover:text-agency-accent transition-colors truncate mb-1">
+                                            {member.project.title}
+                                        </h4>
+                                        <div className="flex items-center justify-between mt-2">
+                                            <span className="text-xs text-gray-400 font-medium px-2 py-0.5 rounded-full bg-white/5">
+                                                {member.project.status}
+                                            </span>
+                                            <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                Role: {member.role}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center">
+                            <FolderKanban className="w-10 h-10 text-gray-600 mb-3" />
+                            <p className="text-gray-400 text-sm">No active project assignments found.</p>
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -68,7 +187,7 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
             booking: {
                 clientEmail: user.email
             },
-            status: { in: ["SENT", "DRAFT"] } // Show only pending ones to client (wait, DRAFT should be hidden from client? Let's check logic)
+            status: { in: ["SENT", "DRAFT"] } 
         },
         include: {
             booking: { include: { service: true } }
