@@ -1,11 +1,11 @@
 import { Role, Prisma, SplitType } from "@prisma/client";
 import { ExecutiveOverview } from "./ExecutiveOverview";
 import { Suspense } from "react";
-import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight, DollarSign } from "lucide-react";
+import { FolderKanban, TrendingUp, Clock, AlertCircle, FileText, ArrowRight, DollarSign, PieChart } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { RevenueChart, CompanyProfitChart } from "./DashboardCharts";
-import { ProfitData } from "./DashboardCharts";
+import { ExpenseAnalyticsChart, CompanyProfitChart } from "./DashboardCharts";
+import { ProfitData, ExpenseData } from "./DashboardCharts";
 
 interface OverviewDispatcherProps {
     user: {
@@ -18,30 +18,26 @@ interface OverviewDispatcherProps {
 
 export default async function OverviewDispatcher({ user }: OverviewDispatcherProps) {
     if (user.role === Role.FOUNDER || user.role === Role.CO_FOUNDER) {
-        // Fetch revenue data for chart
-        // Basic grouping: last 6 months 
+        
+        // Fetch expense data for chart, assuming last 6 months 
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-        const payments = await prisma.payment.findMany({
-            where: {
-                paidAt: { gte: sixMonthsAgo },
-            },
-            select: { amountBDT: true, amountUSD: true, paidAt: true },
-            orderBy: { paidAt: 'asc' }
+        const expenses = await prisma.expense.groupBy({
+            by: ['category'],
+            _sum: { amountBDT: true },
+            where: { date: { gte: sixMonthsAgo } }
         });
 
-        const revenueByMonth = payments.reduce((acc, payment) => {
-            const monthStr = payment.paidAt.toLocaleString('default', { month: 'short', year: 'numeric' });
-            if (!acc[monthStr]) {
-                acc[monthStr] = { month: monthStr, bdt: 0, usd: 0 };
-            }
-            acc[monthStr].bdt += payment.amountBDT || 0;
-            acc[monthStr].usd += payment.amountUSD || 0;
-            return acc;
-        }, {} as Record<string, { month: string, bdt: number, usd: number }>);
+        const categoryColors = [
+            "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"
+        ];
 
-        const revenueData = Object.values(revenueByMonth);
+        const expenseData: ExpenseData[] = expenses.map((exp, index) => ({
+            category: exp.category || "Uncategorized",
+            amount: exp._sum.amountBDT || 0,
+            color: categoryColors[index % categoryColors.length]
+        }));
 
         // Fetch company profit (Sum of COMPANY_FUND LedgerEntries)
         const ledgerEntries = await prisma.ledgerEntry.findMany({
@@ -74,15 +70,15 @@ export default async function OverviewDispatcher({ user }: OverviewDispatcherPro
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col min-h-[300px]">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 rounded-xl bg-agency-accent/5 flex items-center justify-center text-agency-accent">
-                                <TrendingUp className="w-5 h-5" />
+                            <div className="w-10 h-10 rounded-xl bg-orange-500/5 flex items-center justify-center text-orange-500">
+                                <PieChart className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-white font-bold">Revenue Analytics</h3>
-                                <p className="text-gray-500 text-xs">Financial performance over last 6 months</p>
+                                <h3 className="text-white font-bold">Expense Analytics</h3>
+                                <p className="text-gray-500 text-xs">Expense breakdown by category over last 6 months</p>
                             </div>
                         </div>
-                        <RevenueChart data={revenueData} />
+                        <ExpenseAnalyticsChart data={expenseData} />
                     </div>
                     
                     <div className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col min-h-[300px]">
