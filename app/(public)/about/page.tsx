@@ -3,17 +3,17 @@ import Link from "next/link";
 import { MoveRight, Shield, Zap, Target } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Our Narrative | Code & Cognition — Strategic Digital Execution",
-    description: "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering.",
+    title: "About Us | Code & Cognition — Digital Solutions for Business",
+    description: "We provide AI solutions, digital marketing, video editing, and app/web development to help your business grow and succeed.",
     openGraph: {
-        title: "Our Narrative | Code & Cognition — Strategic Digital Execution",
-        description: "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering.",
+        title: "About Us | Code & Cognition",
+        description: "We build digital products that help businesses succeed through AI, marketing, and expert development.",
         images: ["/og-image.png"],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Our Narrative | Code & Cognition",
-        description: "We architect the future of execution. High-performance digital platforms and autonomous operations.",
+        title: "About Us | Code & Cognition",
+        description: "Smart digital solutions including AI, marketing, and development to help your business grow.",
         images: ["/og-image.png"],
     },
 };
@@ -33,7 +33,7 @@ export default function AboutPage() {
                             We Build Better <br /> Digital Solutions.
                         </h1>
                         <p className="text-gray-400 text-xl md:text-2xl leading-relaxed max-w-3xl">
-                            Code &amp; Cognition provides AI, marketing, video editing, and web development with a focus on quality and smart planning. We build digital products that bridge the gap between human intuition and machine precision.
+                            Code &amp; Cognition provides AI solutions, digital marketing, video editing, app and web development with a focus on quality and smart planning. We build digital products that help businesses succeed.
                         </p>
                     </div>
                 </div>

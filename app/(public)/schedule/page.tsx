@@ -142,7 +142,7 @@ export default function SchedulePage() {
                             Request Received
                         </h1>
                         <p className="text-lg text-base-content/70 max-w-2xl mx-auto px-4">
-                            Thank you for providing your details. Please select a time below to schedule our strategic consultation call.
+                            Thank you for providing your details. Please select a time below to pick a time for our call.
                         </p>
 
                         <div className="mt-8 rounded-2xl overflow-hidden">
@@ -167,23 +167,23 @@ export default function SchedulePage() {
                                 <span>By Application Only</span>
                             </div>
                             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
-                                Schedule a Strategic Consultation
+                                Book a Free Call
                             </h1>
                             <p className="text-lg">
-                                We partner with ambitious companies to build intelligent, scalable digital platforms. This application helps us understand your current challenges and ensures we provide maximum value during our call.
+                                We help companies build smart and reliable digital products. This form helps us understand your goals so we can give you the best advice during our call.
                             </p>
                         </div>
 
                         <hr className="border-base-300" />
 
                         <div className="space-y-6">
-                            <h3 className="font-semibold text-lg">What to expect:</h3>
+                            <h3 className="font-semibold text-lg">What we will talk about:</h3>
                             <ul className="space-y-4">
                                 {[
-                                    "Deep-dive into your current technological bottlenecks",
-                                    "Assessment of potential ROI for digital transformation",
-                                    "Initial mapping of strategic solutions and automation paths",
-                                    "Clear understanding of our engagement model and process",
+                                    "Look at your current technical problems",
+                                    "See how our digital solutions can help you grow",
+                                    "Plan the best path for your success",
+                                    "Understand how we work together",
                                 ].map((item, i) => (
                                     <li key={i} className="flex gap-4 items-start">
                                         <div className="mt-1 w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
@@ -348,7 +348,7 @@ export default function SchedulePage() {
                                     className="btn-brand w-full h-14 text-lg group relative overflow-hidden"
                                 >
                                     <span className="relative z-10 flex items-center justify-center gap-2">
-                                        {isSubmitting ? "Submitting..." : "Apply for Consultation"}
+                                        {isSubmitting ? "Submitting..." : "Schedule Your Call"}
                                         {!isSubmitting && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                                     </span>
                                 </button>

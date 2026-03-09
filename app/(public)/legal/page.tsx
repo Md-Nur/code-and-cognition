@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ArrowLeft, Shield, Scale, FileText } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Legal Disclosure | Code & Cognition",
-    description: "Company information, intellectual property rights, and governing law for Code & Cognition.",
+    title: "Legal Disclosure | Code & Cognition — Our Legal Rules",
+    description: "Our company details, rules for using our content, and legal guidelines.",
     openGraph: {
         title: "Legal Disclosure | Code & Cognition",
         description: "Company information, intellectual property rights, and governing law for Code & Cognition.",
@@ -35,8 +35,7 @@ export default function LegalPage() {
                     <section className="mb-12">
                         <h2 className="text-2xl font-bold text-white mb-6">Company Information</h2>
                         <p className="text-gray-400 leading-relaxed mb-4">
-                            Code & Cognition is a premium digital agency specializing in architectural high-performance digital systems,
-                            intelligent automation, and growth systems for global enterprise leaders.
+                            Code & Cognition provides AI solutions, digital marketing, video editing, and custom development for businesses.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                             <div className="p-6 rounded-2xl bg-white/5 border border-white/10">

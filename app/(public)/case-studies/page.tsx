@@ -13,8 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
     });
 
     return {
-        title: "Case Studies | Code & Cognition",
-        description: "Enterprise transformations and strategic digital architectural design.",
+        title: "Our Work | Code & Cognition — Helping Businesses Succeed",
+        description: "Helping businesses grow with AI, digital marketing, video editing, and custom development.",
         openGraph: {
             images: latestCaseStudy?.coverImage ? [latestCaseStudy.coverImage] : [],
         },

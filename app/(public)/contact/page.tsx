@@ -4,17 +4,17 @@ import { Mail, MessageSquare, Globe } from "lucide-react";
 import WhatsAppLink from "@/components/shared/WhatsAppLink";
 
 export const metadata: Metadata = {
-    title: "Request Strategic Consultation | Code & Cognition",
-    description: "Ready to transform your digital operations? Share your objectives and we'll architect a tailored roadmap for your success.",
+    title: "Book a Free Call | Code & Cognition",
+    description: "Ready to grow your business? Tell us about your goals, and we'll show you how we can help with AI, marketing, and development.",
     openGraph: {
-        title: "Request Strategic Consultation | Code & Cognition",
-        description: "Ready to transform your digital operations? Share your objectives and we'll architect a tailored roadmap for your success.",
+        title: "Book a Free Call | Code & Cognition",
+        description: "Talk to us about your business goals and get a clear plan for your success.",
         images: ["/og-image.png"],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Contact | Code & Cognition",
-        description: "Ready to transform your digital operations? Share your objectives and we'll architect a tailored roadmap.",
+        title: "Book a Free Call | Code & Cognition",
+        description: "Ready to grow? Let's talk about how our digital solutions can help.",
         images: ["/og-image.png"],
     },
 };
@@ -31,10 +31,10 @@ export default function ContactPage() {
                             Engagement
                         </span>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-tight">
-                            Schedule Strategic <br /> Consultation
+                            Book a Free <br /> Call
                         </h1>
                         <p className="text-gray-400 text-xl leading-relaxed">
-                            Ready to transform your digital operations? Share your objectives and we'll architect a tailored roadmap for your success.
+                            Ready to grow your business? Tell us about your goals, and we'll show you how we can help with AI, marketing, and development.
                         </p>
                     </div>
                 </div>
@@ -81,7 +81,7 @@ export default function ContactPage() {
                             <div className="p-8 rounded-[40px] bg-white/[0.02] border border-white/5">
                                 <h4 className="text-white font-bold mb-4">Engagement Note</h4>
                                 <p className="text-gray-400 text-sm leading-relaxed">
-                                    We prioritize deep, meaningful partnerships over high-volume transactions. Every proposal is carefully architected by our technical founders to ensure maximum strategic alignment.
+                                    We focus on building strong, long-term relationships. Every plan is carefully made by our experts to make sure it helps you reach your goals.
                                 </p>
                             </div>
                         </div>
@@ -92,12 +92,12 @@ export default function ContactPage() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-agency-accent/10 blur-[80px] rounded-full" />
                                 <div className="relative z-10 max-w-md">
                                     <h2 className="text-3xl font-bold text-white mb-6">Ready to Scale?</h2>
-                                    <p className="text-gray-400 mb-10 leading-relaxed">Fill out our strategic qualification form to help us understand your core challenges, and you'll be able to immediately select a consultation time.</p>
+                                    <p className="text-gray-400 mb-10 leading-relaxed">Fill out our simple form to help us understand your business, and you'll be able to pick a time for our call immediately.</p>
                                     <Link
                                         href="/schedule"
                                         className="btn-brand px-10 py-5 rounded-full text-base font-bold shadow-2xl shadow-agency-accent/20 inline-flex items-center gap-3 hover:-translate-y-1 transition-transform w-full justify-center"
                                     >
-                                        Apply for Consultation
+                                        Book a Free Call
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                                     </Link>
                                 </div>

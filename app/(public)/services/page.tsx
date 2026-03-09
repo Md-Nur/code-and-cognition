@@ -4,17 +4,17 @@ import Link from "next/link";
 import { ArrowUpRight, Zap, Target, Cpu, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Services | Code & Cognition — Strategic Digital Execution",
-    description: "Industrial-grade digital platforms, autonomous operations, and result engineering. We architect the future of performance for enterprise growth.",
+    title: "Our Services | Code & Cognition — Digital Solutions for Business",
+    description: "Helping businesses grow with AI solutions, digital marketing, video editing, and app/web development.",
     openGraph: {
-        title: "Services | Code & Cognition — Strategic Digital Execution",
-        description: "Industrial-grade digital platforms, autonomous operations, and result engineering. We architect the future of performance for enterprise growth.",
+        title: "Our Services | Code & Cognition",
+        description: "Expert digital solutions including AI, marketing, video, and development to help your business grow.",
         images: ["/og-image.png"],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Services | Code & Cognition — Strategic Digital Execution",
-        description: "Industrial-grade digital platforms, autonomous operations, and result engineering.",
+        title: "Our Services | Code & Cognition",
+        description: "Smart digital solutions for modern growth: AI, marketing, video editing, and development.",
         images: ["/og-image.png"],
     },
 };
@@ -38,7 +38,7 @@ export default async function ServicesPage() {
             id: "core-capabilities",
             name: "Core Capabilities",
             slug: "core",
-            description: "Offering AI, marketing, video editing, and web development to help you grow safely and quickly.",
+            description: "Offering AI, marketing, video editing, app and web development to help you grow safely and quickly.",
             services: services,
         }
     ];
@@ -55,7 +55,7 @@ export default async function ServicesPage() {
                         Smart Tech for <br /> Your Growth.
                     </h1>
                     <p className="text-gray-400 text-xl md:text-2xl leading-relaxed max-w-3xl">
-                        We don't do "generic". We build custom tools that actually help your business grow.
+                        We don't do "generic". We build custom solutions like AI, video, marketing, and development that actually help your business grow.
                     </p>
                 </header>
 

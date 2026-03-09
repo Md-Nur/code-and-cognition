@@ -17,8 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
     const featuredArticle = articles.find(a => a.isFeatured) || articles[0];
 
     return {
-        title: "Insights | Code & Cognition",
-        description: "Deep dives into technical excellence, enterprise automation, and the future of digital-first business operations.",
+        title: "Insights | Code & Cognition — Our Latest Updates & Tips",
+        description: "Tips and guides on AI, digital marketing, and building better websites for your business.",
         openGraph: {
             images: featuredArticle?.thumbnailUrl ? [featuredArticle.thumbnailUrl] : [],
         },
@@ -55,14 +55,14 @@ export default async function InsightsPage() {
                         <div className="flex items-center gap-3 mb-6 animate-slide-up">
                             <span className="w-8 h-px bg-agency-accent" />
                             <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] block">
-                                Knowledge & Perspectives
+                                Our Latest Updates
                             </span>
                         </div>
                         <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white mb-8 leading-[0.9] animate-slide-up animation-delay-100">
-                            Strategic <br /> Intelligence <span className="text-white/20 italic">for</span> <br /> Digital Leaders
+                            Smart Tips <br /> <span className="text-white/20 italic">for</span> <br /> Your Business
                         </h1>
                         <p className="text-gray-400 text-xl md:text-2xl leading-relaxed max-w-2xl animate-slide-up animation-delay-200">
-                            Deep dives into technical excellence, enterprise automation, and the future of digital-first business operations.
+                            Tips and guides on AI, digital marketing, and building better websites for your business.
                         </p>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ export default async function InsightsPage() {
                                         {featuredArticle.excerpt || "Strategic perspectives on architecting digital success through technical leadership and operational excellence."}
                                     </p>
                                     <span className="flex items-center gap-3 text-white/40 group-hover:text-white transition-all text-xs font-bold uppercase tracking-[0.2em]">
-                                        Explore Full Analysis <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+                                        Read More <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
                                     </span>
                                 </div>
                                 <div className="relative aspect-square lg:aspect-auto min-h-[400px] overflow-hidden">
