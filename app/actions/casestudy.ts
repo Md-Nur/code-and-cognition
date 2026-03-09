@@ -3,6 +3,8 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { Role } from "@prisma/client";
+import { withProxyValidation } from "@/lib/api-handler";
 
 const caseStudySchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -28,7 +30,7 @@ const caseStudySchema = z.object({
 
 type CaseStudyInput = z.infer<typeof caseStudySchema>;
 
-export async function createCaseStudy(data: CaseStudyInput) {
+export const createCaseStudy = withProxyValidation(async (data: CaseStudyInput) => {
     try {
         const validatedData = caseStudySchema.parse(data);
 
@@ -55,9 +57,9 @@ export async function createCaseStudy(data: CaseStudyInput) {
         }
         return { success: false, error: error.message || "Failed to create case study" };
     }
-}
+}, { requiredRole: [Role.FOUNDER, Role.CONTRACTOR] });
 
-export async function updateCaseStudy(id: string, data: Partial<CaseStudyInput>) {
+export const updateCaseStudy = withProxyValidation(async (id: string, data: Partial<CaseStudyInput>) => {
     try {
         // We only validate the fields that are present
         const updateSchema = caseStudySchema.partial();
@@ -88,9 +90,9 @@ export async function updateCaseStudy(id: string, data: Partial<CaseStudyInput>)
         }
         return { success: false, error: error.message || "Failed to update case study" };
     }
-}
+}, { requiredRole: [Role.FOUNDER, Role.CONTRACTOR] });
 
-export async function deleteCaseStudy(id: string) {
+export const deleteCaseStudy = withProxyValidation(async (id: string) => {
     try {
         await prisma.caseStudy.delete({
             where: { id },
@@ -103,4 +105,4 @@ export async function deleteCaseStudy(id: string) {
     } catch (error: any) {
         return { success: false, error: error.message || "Failed to delete case study" };
     }
-}
+}, { requiredRole: [Role.FOUNDER, Role.CONTRACTOR] });

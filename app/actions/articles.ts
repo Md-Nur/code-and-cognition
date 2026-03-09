@@ -4,6 +4,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { triggerNewInsightEmail } from "@/lib/automation";
+import { Role } from "@prisma/client";
+import { withProxyValidation } from "@/lib/api-handler";
 
 const articleSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -18,7 +20,7 @@ const articleSchema = z.object({
 
 type ArticleInput = z.infer<typeof articleSchema>;
 
-export async function createArticle(data: ArticleInput) {
+export const createArticle = withProxyValidation(async (data: ArticleInput) => {
     try {
         const validatedData = articleSchema.parse(data);
 
@@ -54,9 +56,9 @@ export async function createArticle(data: ArticleInput) {
         }
         return { success: false, error: error.message || "Failed to create article" };
     }
-}
+}, { requiredRole: [Role.FOUNDER, Role.CONTRACTOR] });
 
-export async function updateArticle(id: string, data: Partial<ArticleInput>) {
+export const updateArticle = withProxyValidation(async (id: string, data: Partial<ArticleInput>) => {
     try {
         const updateSchema = articleSchema.partial();
         const validatedData = updateSchema.parse(data);
@@ -87,9 +89,9 @@ export async function updateArticle(id: string, data: Partial<ArticleInput>) {
         }
         return { success: false, error: error.message || "Failed to update article" };
     }
-}
+}, { requiredRole: [Role.FOUNDER, Role.CONTRACTOR] });
 
-export async function deleteArticle(id: string) {
+export const deleteArticle = withProxyValidation(async (id: string) => {
     try {
         await prisma.article.delete({
             where: { id },
@@ -103,4 +105,4 @@ export async function deleteArticle(id: string) {
     } catch (error: any) {
         return { success: false, error: error.message || "Failed to delete article" };
     }
-}
+}, { requiredRole: [Role.FOUNDER, Role.CONTRACTOR] });

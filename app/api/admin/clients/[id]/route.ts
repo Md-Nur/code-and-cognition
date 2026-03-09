@@ -22,7 +22,7 @@ export const PUT = withAuth(async (req, { params }) => {
         console.error("Client Update Error:", error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER);
+}, Role.CONTRACTOR);
 
 export const DELETE = withAuth(async (req, { params }) => {
     try {

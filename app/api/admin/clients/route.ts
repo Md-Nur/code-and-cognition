@@ -8,7 +8,7 @@ export const GET = withAuth(async () => {
         orderBy: { order: "asc" },
     });
     return ApiResponse.success(clients);
-}, Role.FOUNDER);
+}, Role.CONTRACTOR);
 
 export const POST = withAuth(async (req) => {
     try {
@@ -27,4 +27,4 @@ export const POST = withAuth(async (req) => {
         console.error("Client Create Error:", error);
         return ApiResponse.error("Internal Server Error", 500);
     }
-}, Role.FOUNDER);
+}, Role.CONTRACTOR);

@@ -76,6 +76,9 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             items = [
                 ...common,
                 { name: "Lead Database", href: "/dashboard/leads", icon: Target },
+                { name: "Clients", href: "/dashboard/clients", icon: Briefcase },
+                { name: "Insights", href: "/dashboard/insights", icon: FileText },
+                { name: "Case Studies", href: "/dashboard/case-studies", icon: FileText },
                 { name: "Withdrawals", href: "/dashboard/withdrawals", icon: Wallet },
             ];
         } else {
