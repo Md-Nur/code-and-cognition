@@ -14,6 +14,8 @@ import {
     Cell
 } from "recharts";
 
+import { useState, useEffect } from "react";
+
 export interface ExpenseData {
     category: string;
     amount: number;
@@ -25,20 +27,32 @@ interface ExpenseAnalyticsChartProps {
 }
 
 export function ExpenseAnalyticsChart({ data }: ExpenseAnalyticsChartProps) {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     if (!data || data.length === 0) {
         return <div className="h-[250px] w-full flex items-center justify-center text-gray-500 text-sm">No expense data available</div>;
     }
 
     return (
-        <div className="h-[250px] w-full mt-4 text-xs font-sans">
+        <div className={`w-full mt-4 text-xs font-sans ${isMobile ? 'h-[350px]' : 'h-[250px]'}`}>
             <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <PieChart margin={isMobile ? { top: 0, right: 0, left: 0, bottom: 40 } : { top: 0, right: 0, left: 0, bottom: 0 }}>
                     <Pie
                         data={data}
                         cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
+                        cy={isMobile ? "40%" : "50%"}
+                        innerRadius={isMobile ? 50 : 60}
+                        outerRadius={isMobile ? 70 : 80}
                         paddingAngle={5}
                         dataKey="amount"
                         stroke="none"
@@ -53,7 +67,13 @@ export function ExpenseAnalyticsChart({ data }: ExpenseAnalyticsChartProps) {
                         itemStyle={{ color: '#e5e7eb' }}
                         formatter={(value: any) => [`৳${Number(value || 0).toLocaleString()}`, "Amount (BDT)"]}
                     />
-                    <Legend iconType="circle" layout="vertical" verticalAlign="middle" align="right" />
+                    <Legend 
+                        iconType="circle" 
+                        layout={isMobile ? "horizontal" : "vertical"} 
+                        verticalAlign={isMobile ? "bottom" : "middle"} 
+                        align={isMobile ? "center" : "right"}
+                        wrapperStyle={isMobile ? { paddingTop: '20px' } : undefined}
+                    />
                 </PieChart>
             </ResponsiveContainer>
         </div>
