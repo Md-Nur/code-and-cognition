@@ -52,13 +52,13 @@ export default function HeroSection() {
                                 <span className="relative inline-flex h-2 w-2 rounded-full bg-agency-accent" />
                             </span>
                             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-agency-accent">
-                                Strategic Intelligence &amp; Execution
+                                Smart Planning &amp; Skilled Building
                             </span>
                         </div>
 
                         {/* Headline */}
                         <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl font-extrabold strategic-heading text-white leading-[1.04] mb-7 animate-slide-up">
-                            Architecting the
+                            Smart Digital
                             <br className="hidden sm:block" />
                             <span
                                 className="bg-clip-text text-transparent"
@@ -66,14 +66,13 @@ export default function HeroSection() {
                                     backgroundImage: "linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%)",
                                 }}
                             >
-                                Future of&nbsp;Execution
+                                Solutions for Business
                             </span>
                         </h1>
 
                         {/* Sub-copy */}
                         <p className="text-gray-400 text-lg sm:text-xl leading-relaxed max-w-2xl mb-11 animate-slide-up animation-delay-200 mx-auto xl:mx-0 px-2 sm:px-0">
-                            We build high-performance digital ecosystems for growth-focused enterprises — transforming technical complexity into{" "}
-                            <span className="text-white/80 font-medium">sustainable competitive advantage.</span>
+                            We provide AI solutions, video editing, digital marketing, and web development to help your business grow.
                         </p>
 
                         {/* CTAs */}
@@ -82,7 +81,7 @@ export default function HeroSection() {
                                 href="/schedule"
                                 className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-sm sm:text-base transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(255,255,255,0.25)] active:scale-[0.98] w-full sm:w-auto overflow-hidden"
                             >
-                                Start Strategic Consultation
+                                Book a Free Meeting
                                 <MoveRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
                             </Link>
                             <Link
@@ -90,7 +89,7 @@ export default function HeroSection() {
                                 className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full border border-white/10 text-white font-bold text-sm sm:text-base transition-all duration-300 hover:bg-white/5 hover:border-white/25 w-full sm:w-auto backdrop-blur-sm"
                             >
                                 <Activity className="w-4 h-4 text-agency-accent" />
-                                View Engagements
+                                See Our Work
                             </Link>
                         </div>
 
@@ -98,8 +97,8 @@ export default function HeroSection() {
                         <div className="mt-14 pt-8 border-t border-white/[0.07] grid grid-cols-3 gap-4 sm:gap-8 animate-fade-in animation-delay-500 max-w-lg mx-auto xl:mx-0">
                             {[
                                 { value: "99.98%", label: "Uptime SLA" },
-                                { value: "3.4×", label: "Yield Velocity" },
-                                { value: "< 48h", label: "Time to Deploy" },
+                                { value: "3.4×", label: "Growth Speed" },
+                                { value: "< 48h", label: "How Fast We Build" },
                             ].map((stat) => (
                                 <div key={stat.label} className="text-center xl:text-left">
                                     <div className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-none">

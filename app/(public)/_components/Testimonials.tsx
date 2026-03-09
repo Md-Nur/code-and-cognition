@@ -17,10 +17,10 @@ export default async function Testimonials() {
                         Social Proof
                     </span>
                     <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
-                        Trusted by Industry Pioneers
+                        Trusted by Market Leaders
                     </h2>
                     <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                        We partner with ambitious leaders to deliver technical excellence and sustainable business growth.
+                        We work with top leaders to build better tech and help their businesses grow.
                     </p>
                 </div>
 

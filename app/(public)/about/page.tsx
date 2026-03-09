@@ -13,10 +13,10 @@ export default function AboutPage() {
                             Our Narrative
                         </span>
                         <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white mb-12 leading-[1.05]">
-                            Architecting <br /> the Invisible.
+                            We Build Better <br /> Digital Solutions.
                         </h1>
                         <p className="text-gray-400 text-xl md:text-2xl leading-relaxed max-w-3xl">
-                            Code & Cognition is a premium digital product studio dedicated to technical excellence and strategic execution. We believe that the best digital products are those that think—bridging the gap between human intuition and machine precision.
+                            Code &amp; Cognition provides AI, marketing, video editing, and web development with a focus on quality and smart planning. We build digital products that bridge the gap between human intuition and machine precision.
                         </p>
                     </div>
                 </div>
@@ -28,9 +28,9 @@ export default function AboutPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
                         <div className="space-y-12">
                             <div>
-                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Technical Strategy as a Service</h2>
+                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Smart Tech Planning</h2>
                                 <p className="text-gray-400 text-lg leading-relaxed">
-                                    We don't just build features; we architect systems. Every line of code we write and every interface we design is rooted in a deep understanding of your business objectives. We specialize in high-ticket digital operations where the cost of failure is high and the need for precision is paramount.
+                                    We don't just build features; we build systems. Every line of code and every design is based on your business goals. We focus on high-quality work where precision is most important.
                                 </p>
                             </div>
 
@@ -99,7 +99,7 @@ export default function AboutPage() {
             <section className="py-24 bg-white/[0.01] border-t border-white/5">
                 <div className="section-container text-center">
                     <span className="text-agency-accent font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">
-                        The Cognition Framework
+                        How We Work
                     </span>
                     <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-20">
                         How We Architect Success
@@ -107,9 +107,9 @@ export default function AboutPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { step: "01", title: "Discovery & Logic", desc: "We deconstruct your business challenges to identify the core technical requirements and strategic opportunities." },
-                            { step: "02", title: "Architectural Planning", desc: "A rigorous design phase where we define the system architecture, data models, and user journeys." },
-                            { step: "03", title: "Precision Execution", desc: "Founder-led implementation focusing on clean code, performant interfaces, and scalable infrastructure." }
+                            { step: "01", title: "Plan & Think", desc: "We look at your business challenges to find the best technical and strategic path." },
+                            { step: "02", title: "Design the System", desc: "A careful design phase where we plan the architecture and user experience." },
+                            { step: "03", title: "Execute it Right", desc: "Expert building with a focus on clean code and fast, reliable software." }
                         ].map((item) => (
                             <div key={item.step} className="p-12 rounded-[40px] border border-white/5 bg-agency-black relative group text-left">
                                 <span className="text-5xl font-bold text-white/2 mb-8 block group-hover:text-agency-accent/10 transition-colors">{item.step}</span>

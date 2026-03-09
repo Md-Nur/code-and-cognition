@@ -10,8 +10,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Architecting the Future of High-Ticket Execution | Code & Cognition",
-  description: "High-performance digital systems for global enterprise leaders. We transform technical complexity into sustainable competitive advantage through strategic execution.",
+  title: "Digital Solutions & Strategy for Your Business | Code & Cognition",
+  description: "We offer AI solutions, marketing, video editing, and development to help businesses succeed.",
 };
 
 export const dynamic = 'force-dynamic';
@@ -53,10 +53,10 @@ export default async function LandingPage() {
               Contact
             </span>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
-              Schedule Strategic Consultation
+              Book a Free Call
             </h2>
             <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Share your growth objectives and receive a tailored roadmap aligned to measurable execution outcomes.
+              Tell us about your goals, and we'll show you how we can help.
             </p>
           </div>
           <div className="flex justify-center mt-12 pb-12">
@@ -64,7 +64,7 @@ export default async function LandingPage() {
               href="/schedule"
               className="btn-brand px-12 py-5 rounded-full text-lg font-bold shadow-2xl shadow-agency-accent/20 flex items-center gap-3 hover:-translate-y-1 transition-transform"
             >
-              Start Your Application
+              Start Now
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
             </Link>
           </div>

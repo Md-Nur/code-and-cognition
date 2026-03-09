@@ -2,16 +2,16 @@ import { Layout, Cpu, TrendingUp, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 const STRATEGIC_MAP: { [key: string]: { label: string; icon: any } } = {
-    "Digital Platforms": { label: "Industrial-Grade Platforms", icon: Layout },
-    "Intelligent Automation": { label: "Autonomous Operations", icon: Cpu },
-    "Growth Systems": { label: "Result Engineering", icon: TrendingUp },
+    "Digital Platforms": { label: "Web & App Development", icon: Layout },
+    "Intelligent Automation": { label: "AI Solutions & Automation", icon: Cpu },
+    "Growth Systems": { label: "Marketing & Video Creation", icon: TrendingUp },
 };
 
 export default async function CorePillars() {
     const categories = [
-        { id: "1", name: "Digital Platforms", description: "Industrial-grade web applications and digital ecosystems built for scale and performance.", slug: "digital-platforms" },
-        { id: "2", name: "Intelligent Automation", description: "Custom AI integrations and workflow automations to reduce operational overhead.", slug: "intelligent-automation" },
-        { id: "3", name: "Growth Systems", description: "Data-driven technical marketing and conversion optimization infrastructure.", slug: "growth-systems" }
+        { id: "1", name: "Digital Platforms", description: "Modern websites and mobile apps built to help your business scale.", slug: "digital-platforms" },
+        { id: "2", name: "Intelligent Automation", description: "Smart AI tools and automation to make your work easier and faster.", slug: "intelligent-automation" },
+        { id: "3", name: "Growth Systems", description: "Professional video editing and digital marketing to reach more customers.", slug: "growth-systems" }
     ];
 
     return (
@@ -19,14 +19,14 @@ export default async function CorePillars() {
             <div className="section-container">
                 <div className="max-w-3xl mb-32">
                     <span className="section-tag">
-                        Capabilities
+                        What We Do
                     </span>
                     <h2 className="text-5xl md:text-7xl font-extrabold strategic-heading text-white mb-8">
-                        Precision-Engineered <br />
-                        <span className="text-gradient">Growth Infrastructure</span>
+                        Modern Solutions for <br />
+                        <span className="text-gradient">Your Growth</span>
                     </h2>
                     <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl">
-                        We deliver the technical foundation required to scale high-ticket operations with algorithmic precision and architectural integrity.
+                        We offer AI, marketing, video editing, and web development to help you succeed.
                     </p>
                 </div>
 

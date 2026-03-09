@@ -21,10 +21,10 @@ export default async function KnowledgeSection() {
                             Insights
                         </span>
                         <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
-                            Strategic Intelligence & <br /> Thought Leadership
+                            Our Latest Updates &amp; <br /> Tips
                         </h2>
                         <p className="text-gray-400 text-lg leading-relaxed">
-                            We share our perspectives on the intersection of technical excellence, enterprise automation, and business growth.
+                            We share what we've learned about building good tech and growing businesses.
                         </p>
                     </div>
                     <Link

@@ -27,7 +27,7 @@ export default async function ServicesPage() {
             id: "core-capabilities",
             name: "Core Capabilities",
             slug: "core",
-            description: "Architecting the technical foundation required to scale high-ticket operations with algorithmic precision.",
+            description: "Offering AI, marketing, video editing, and web development to help you grow safely and quickly.",
             services: services,
         }
     ];
@@ -41,10 +41,10 @@ export default async function ServicesPage() {
                         Our Capabilities
                     </span>
                     <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white mb-12 leading-[1.05]">
-                        Strategic Systems <br /> for Modern Growth.
+                        Smart Tech for <br /> Your Growth.
                     </h1>
                     <p className="text-gray-400 text-xl md:text-2xl leading-relaxed max-w-3xl">
-                        We avoid the generic service model, focusing instead on high-impact solution architecture that transforms technical potential into business value.
+                        We don't do "generic". We build custom tools that actually help your business grow.
                     </p>
                 </header>
 
@@ -94,9 +94,9 @@ export default async function ServicesPage() {
 
                                                     <div className="space-y-4 mb-10">
                                                         {[
-                                                            "Strategic Architecture",
-                                                            "Bespoke Implementation",
-                                                            "Ongoing Optimization"
+                                                            "Smart Architecture",
+                                                            "Custom Building",
+                                                            "Ongoing Support"
                                                         ].map(deliverable => (
                                                             <div key={deliverable} className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest text-white/30">
                                                                 <CheckCircle2 className="w-4 h-4 text-agency-accent/40" />

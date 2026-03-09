@@ -27,10 +27,10 @@ export default async function CaseStudies() {
                             Portfolio
                         </span>
                         <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
-                            Engineering Value for <br /> Global Market Leaders
+                            Helping Top Companies <br /> Succeed
                         </h2>
                         <p className="text-gray-400 text-lg leading-relaxed">
-                            Explore how we've helped ambitious companies architect digital systems that drive measurable business results.
+                            See how we help businesses build great tools and get real results.
                         </p>
                     </div>
                     <Link
