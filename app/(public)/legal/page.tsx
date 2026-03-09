@@ -1,7 +1,16 @@
-"use client";
-
+import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Shield, Scale, FileText } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Legal Disclosure | Code & Cognition",
+    description: "Company information, intellectual property rights, and governing law for Code & Cognition.",
+    openGraph: {
+        title: "Legal Disclosure | Code & Cognition",
+        description: "Company information, intellectual property rights, and governing law for Code & Cognition.",
+        images: ["/og-image.png"],
+    },
+};
 
 export default function LegalPage() {
     return (

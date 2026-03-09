@@ -1,6 +1,23 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { Mail, MessageSquare, Globe } from "lucide-react";
 import WhatsAppLink from "@/components/shared/WhatsAppLink";
+
+export const metadata: Metadata = {
+    title: "Request Strategic Consultation | Code & Cognition",
+    description: "Ready to transform your digital operations? Share your objectives and we'll architect a tailored roadmap for your success.",
+    openGraph: {
+        title: "Request Strategic Consultation | Code & Cognition",
+        description: "Ready to transform your digital operations? Share your objectives and we'll architect a tailored roadmap for your success.",
+        images: ["/og-image.png"],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Contact | Code & Cognition",
+        description: "Ready to transform your digital operations? Share your objectives and we'll architect a tailored roadmap.",
+        images: ["/og-image.png"],
+    },
+};
 
 export default function ContactPage() {
     return (

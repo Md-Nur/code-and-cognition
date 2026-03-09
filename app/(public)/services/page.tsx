@@ -4,8 +4,19 @@ import Link from "next/link";
 import { ArrowUpRight, Zap, Target, Cpu, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Services | Code & Cognition — Digital Product Studio",
-    description: "Enterprise-grade digital platforms, intelligent automation, and performance growth systems for ambitious brands.",
+    title: "Services | Code & Cognition — Strategic Digital Execution",
+    description: "Industrial-grade digital platforms, autonomous operations, and result engineering. We architect the future of performance for enterprise growth.",
+    openGraph: {
+        title: "Services | Code & Cognition — Strategic Digital Execution",
+        description: "Industrial-grade digital platforms, autonomous operations, and result engineering. We architect the future of performance for enterprise growth.",
+        images: ["/og-image.png"],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Services | Code & Cognition — Strategic Digital Execution",
+        description: "Industrial-grade digital platforms, autonomous operations, and result engineering.",
+        images: ["/og-image.png"],
+    },
 };
 
 const IconMap: { [key: string]: any } = {

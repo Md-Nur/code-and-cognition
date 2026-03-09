@@ -1,7 +1,16 @@
-"use client";
-
+import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Shield, Lock, Eye } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Privacy Policy | Code & Cognition",
+    description: "At Code & Cognition, we respect your privacy and are committed to protecting the personal data you share with us.",
+    openGraph: {
+        title: "Privacy Policy | Code & Cognition",
+        description: "At Code & Cognition, we respect your privacy and are committed to protecting the personal data you share with us.",
+        images: ["/og-image.png"],
+    },
+};
 
 export default function PrivacyPage() {
     return (

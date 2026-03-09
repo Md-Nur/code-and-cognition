@@ -26,7 +26,7 @@ export default async function CorePillars() {
                         <span className="text-gradient">Your Growth</span>
                     </h2>
                     <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl">
-                        We offer AI, marketing, video editing, and web development to help you succeed.
+                        We offer AI, marketing, video editing, app and web development to help you succeed.
                     </p>
                 </div>
 

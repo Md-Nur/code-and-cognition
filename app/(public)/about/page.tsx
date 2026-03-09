@@ -1,5 +1,22 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { MoveRight, Shield, Zap, Target } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Our Narrative | Code & Cognition — Strategic Digital Execution",
+    description: "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering.",
+    openGraph: {
+        title: "Our Narrative | Code & Cognition — Strategic Digital Execution",
+        description: "We architect the future of execution. High-performance digital platforms, autonomous operations, and result engineering.",
+        images: ["/og-image.png"],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Our Narrative | Code & Cognition",
+        description: "We architect the future of execution. High-performance digital platforms and autonomous operations.",
+        images: ["/og-image.png"],
+    },
+};
 
 export default function AboutPage() {
     return (
