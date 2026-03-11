@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import TrackingProvider from "@/components/TrackingProvider";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -42,6 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
+        <NextTopLoader color="#3b82f6" height={3} showSpinner={false} />
         <Suspense fallback={null}>
           <TrackingProvider />
         </Suspense>
