@@ -4,6 +4,7 @@ export interface NavLinkConfig {
 }
 
 export const navLinks: NavLinkConfig[] = [
+    { name: "Home", href: "/" },
     { name: "Services", href: "/services" },
     { name: "Case Studies", href: "/case-studies" },
     { name: "Insights", href: "/insights" },
