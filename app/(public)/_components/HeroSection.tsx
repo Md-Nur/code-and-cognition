@@ -57,9 +57,9 @@ export default function HeroSection() {
                         </div>
 
                         {/* Headline */}
-                        <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl font-extrabold strategic-heading text-white leading-[1.04] mb-7 animate-slide-up">
+                        <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold strategic-heading text-white leading-[1.04] mb-6 sm:mb-7 animate-slide-up">
                             Smart Digital
-                            <br className="hidden sm:block" />
+                            <br className="block" />
                             <span
                                 className="bg-clip-text text-transparent"
                                 style={{
@@ -94,17 +94,17 @@ export default function HeroSection() {
                         </div>
 
                         {/* Stats row */}
-                        <div className="mt-14 pt-8 border-t border-white/[0.07] grid grid-cols-3 gap-4 sm:gap-8 animate-fade-in animation-delay-500 max-w-lg mx-auto xl:mx-0">
+                        <div className="mt-12 sm:mt-14 pt-8 border-t border-white/[0.07] grid grid-cols-3 gap-2 sm:gap-8 animate-fade-in animation-delay-500 max-w-lg mx-auto xl:mx-0">
                             {[
                                 { value: "99.98%", label: "Uptime SLA" },
                                 { value: "3.4×", label: "Growth Speed" },
                                 { value: "< 48h", label: "How Fast We Build" },
                             ].map((stat) => (
                                 <div key={stat.label} className="text-center xl:text-left">
-                                    <div className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-none">
+                                    <div className="text-lg xs:text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-none px-1">
                                         {stat.value}
                                     </div>
-                                    <div className="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase tracking-[0.15em] mt-1">
+                                    <div className="text-[9px] sm:text-xs text-gray-500 font-semibold uppercase tracking-wider sm:tracking-[0.15em] mt-1.5 px-1">
                                         {stat.label}
                                     </div>
                                 </div>
