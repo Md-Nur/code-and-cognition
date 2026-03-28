@@ -36,7 +36,17 @@ export default function PrivacyPage() {
                         <h2 className="text-2xl font-bold text-white mb-6">Commitment to Privacy</h2>
                         <p className="text-gray-400 leading-relaxed mb-4">
                             We value your privacy and are committed to keeping your personal information safe.
-                            This policy explains how we collect and use information through our website and services.
+                            This policy explains how we collect and use information through our website, services, and mobile applications.
+                        </p>
+                    </section>
+
+                    <section className="mb-12 border-t border-white/5 pt-12">
+                        <h2 className="text-2xl font-bold text-white mb-6">Mobile Applications & Developer Accounts</h2>
+                        <p className="text-gray-400 leading-relaxed mb-4">
+                            This privacy policy also applies to all mobile applications developed, published, and maintained by Code & Cognition, including those published under our developer entity <strong>NurTech</strong> on digital distribution platforms such as Google Play.
+                        </p>
+                        <p className="text-gray-400 leading-relaxed">
+                            Specifically, this policy governs the data collection and privacy practices for applications including, but not limited to, <strong>LexTax BD</strong>. When you use our mobile applications, we ensure that any information collected is strictly necessary for providing the app's functionality and is protected in accordance with this policy.
                         </p>
                     </section>
 
